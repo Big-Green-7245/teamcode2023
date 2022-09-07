@@ -1,9 +1,9 @@
 <h1 align="center">teamcode 2022-2023</h1>
 <p align="center">Codebase for FTC game season 2022-23, POWERPLAY</p>
 
-# Working with Android Studio
+## Working with Android Studio
 
-## Setting up Android Studio
+### Setting up Android Studio
 
 To work with the repository in Android Studio, first clone the newest (currently 7.2) version of FtcRobotController App. Then, replace the teamcode folder with this repository.
 
@@ -18,7 +18,7 @@ rm *
 git clone https://github.com/Big-Green-7245/teamcode2022_23.git .
 ```
 
-## Uploading the code
+### Uploading the code
 
 To upload code to the device, connect to the Control Hub via USB or WiFi-Direct. Select the device and upload.
 
@@ -29,7 +29,7 @@ To upload code to the device, connect to the Control Hub via USB or WiFi-Direct.
 
 Once connected, it should look like the above.
 
-## Making sure the code updates
+### Making sure the code updates
 
 Every TeleOp/Autonomous program should have a programVer variable to keep track of version increments. Sometimes Android Studio does not update the code right away.
 
