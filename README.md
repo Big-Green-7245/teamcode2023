@@ -7,7 +7,7 @@
 
 To work with the repository in Android Studio, first clone the newest (currently 7.2) version of FtcRobotController App. Then, replace the teamcode folder with this repository.
 
-This can be easily done through git, in the terminal.
+This can be easily done through git. In the terminal, move to a folder where you keep your robotics stuff, and enter the following commands.
 
 ```bash
 git clone https://github.com/FIRST-Tech-Challenge/FtcRobotController.git
@@ -15,7 +15,7 @@ cd FtcRobotController/
 sudo rm -r .git
 cd TeamCode/src/main/java/org/firstinspires/ftc/teamcode/
 rm *
-git clone https://github.com/Big-Green-7245/teamcode2022_23.git .
+git clone https://github.com/Big-Green-7245/teamcode2022_23.git
 ```
 
 ### Uploading the code
