@@ -32,15 +32,15 @@ public class DriveTrain implements Modulable
 
         backRight = hwMap.get(DcMotor.class, "rightBack");
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
 
         frontLeft = hwMap.get(DcMotor.class, "leftFront");
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
 
         frontRight = hwMap.get(DcMotor.class, "rightFront");
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
 
         setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
