@@ -28,11 +28,11 @@ public class DriveTrain implements Modulable
 
         backLeft = hwMap.get(DcMotor.class, "leftBack");
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
 
         backRight = hwMap.get(DcMotor.class, "rightBack");
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
 
         frontLeft = hwMap.get(DcMotor.class, "leftFront");
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -51,10 +51,10 @@ public class DriveTrain implements Modulable
         double speedy = factor * powery;
         double offset = factor * turn;
 
-        frontLeft.setPower(Range.clip(speedy-speedx-offset,-1,1));
-        frontRight.setPower(Range.clip(speedy+speedx+offset,-1,1));
-        backLeft.setPower(Range.clip(speedy+speedx-offset,-1,1));
-        backRight.setPower(Range.clip(speedy-speedx+offset,-1,1));
+        frontLeft.setPower(Range.clip(speedy+speedx+offset,-1,1));
+        frontRight.setPower(Range.clip(speedy-speedx-offset,-1,1));
+        backLeft.setPower(Range.clip(speedy-speedx+offset,-1,1));
+        backRight.setPower(Range.clip(speedy+speedx-offset,-1,1));
     }
 
     public void translate(double power, double dX, double dY, double dTheta, double timeout)
