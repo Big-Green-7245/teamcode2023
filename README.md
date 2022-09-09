@@ -5,9 +5,19 @@
 
 ### Setting up Android Studio
 
+Simply run the following command in the terminal on macOS/linux to setup Git and the FtcRobotController Android Studio Project
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Big-Green-7245/teamcode2022_23/main/.assets/setupRepo.sh)"
+```
+
+---
+
+**Alternatively, follow the follow guide**
+
 To work with the repository in Android Studio, first clone the newest (currently 7.2) version of FtcRobotController App. Then, replace the teamcode folder with this repository.
 
-This can be easily done through git. In the terminal, move to a folder where you keep your robotics stuff, and enter the following commands.
+This can be easily done through git. In the terminal, move to a folder where you keep your robotics stuff, and run the following commands.
 
 ```bash
 git clone https://github.com/FIRST-Tech-Challenge/FtcRobotController.git
