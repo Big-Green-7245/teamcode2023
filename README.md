@@ -32,8 +32,13 @@ git clone https://github.com/Big-Green-7245/teamcode2022_23.git .
 
 To upload code to the device, connect to the Control Hub via USB or WiFi-Direct. Select the device and upload.
 
-> Note if connected wirelessly, Android Studio might require cli adb connection first with
-> `adb connect 192.168.43.1:5555`
+*Note if connected wirelessly, Android Studio might require cli adb connection first with the following command*
+
+```bash
+adb connect 192.168.43.1:5555
+```
+
+---
 
 ![Connected](.assets/connectedDevice.png)
 
