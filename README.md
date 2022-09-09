@@ -15,7 +15,7 @@ cd FtcRobotController/
 sudo rm -r .git
 cd TeamCode/src/main/java/org/firstinspires/ftc/teamcode/
 rm *
-git clone https://github.com/Big-Green-7245/teamcode2022_23.git
+git clone https://github.com/Big-Green-7245/teamcode2022_23.git .
 ```
 
 ### Uploading the code
