@@ -44,10 +44,18 @@ public class TeleOpTest extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
+            if(gp1.pressing(ButtonHelper.dpad_up)) driveTrain.translate(0.4, 0, 50, 0, 10);
+            if(gp1.pressing(ButtonHelper.dpad_down)) driveTrain.translate(0.4, 0, -50, 0, 10);
+            if(gp1.pressing(ButtonHelper.dpad_left)) driveTrain.translate(0.4, -50, 0, 0, 10);
+            if(gp1.pressing(ButtonHelper.dpad_right)) driveTrain.translate(0.4, 50, 0, 0, 10);
+            if(gp1.pressing(ButtonHelper.x)) driveTrain.translate(0.4, 50, 0, 180, 10);
+            if(gp1.pressing(ButtonHelper.b)) driveTrain.translate(0.4, 50, 0, -180, 10);
+
             // Other control methods
-            if(gp2.pressing(gp2.x)) {
+            if(gp2.pressing(ButtonHelper.x)) {
                 // Do something
             }
+
 
             // Display data for telemetry
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);

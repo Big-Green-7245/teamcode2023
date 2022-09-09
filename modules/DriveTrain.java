@@ -63,10 +63,10 @@ public class DriveTrain implements Modulable
         int dFL, dFR, dBL, dBR;
 
         // Determine new target position, and pass to motor controller
-        dFL = (int)((-dY -dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE);
-        dFR = (int)((-dY +dX * XY_CORRECTION) * COUNTS_PER_INCH - dTheta * COUNTS_PER_DEGREE);
-        dBL = (int)((-dY +dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE);
-        dBR = (int)((-dY -dX * XY_CORRECTION) * COUNTS_PER_INCH - dTheta * COUNTS_PER_DEGREE);
+        dFL = (int)((-dY +dX * XY_CORRECTION) * COUNTS_PER_INCH - dTheta * COUNTS_PER_DEGREE);
+        dFR = (int)((-dY -dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE);
+        dBL = (int)((-dY -dX * XY_CORRECTION) * COUNTS_PER_INCH - dTheta * COUNTS_PER_DEGREE);
+        dBR = (int)((-dY +dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE);
 
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);
         setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
