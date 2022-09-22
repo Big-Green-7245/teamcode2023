@@ -46,6 +46,14 @@ public class DriveTrain implements Modulable
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    /**
+     * Sets the power to the motors directly
+     *
+     * @param powerx power for horizontal movement, positive right
+     * @param powery power for vertical movement, positive up
+     * @param turn power for rotational movement, positive is CCW
+     * @param factor applied to all power
+     */
     public void move(double powerx, double powery, double turn, double factor) {
         double speedx = factor * powerx;
         double speedy = factor * powery;
@@ -57,6 +65,14 @@ public class DriveTrain implements Modulable
         backRight.setPower(Range.clip(speedy+speedx-offset,-1,1));
     }
 
+    /**
+     * Translate robot by given displacement
+     * @param power the power when running to target
+     * @param dX horizontal displacement, positive is right
+     * @param dY vertical displacement, positive is up
+     * @param dTheta rotational displacement, positive is CCW
+     * @param timeout time before terminating RUN_TO_POSITION
+     */
     public void translate(double power, double dX, double dY, double dTheta, double timeout)
     {
         int newFLTarget, newFRTarget, newBLTarget, newBRTarget;
@@ -109,15 +125,27 @@ public class DriveTrain implements Modulable
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    /**
+     * Returns encoder positions of encoders
+     * @return array containing position of each wheel
+     */
     public double[] getEncPos() {
         return new double[]{frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition()};
     }
 
+    /**
+     * Returns string containing current positions of ecoders
+     * @return string containing position of each wheel
+     */
     public String getEncPosStr() {
         return "FL=" + frontLeft.getCurrentPosition() + " FR" + frontRight.getCurrentPosition() +
                 " BL" + backLeft.getCurrentPosition() + " BR" + backRight.getCurrentPosition();
     }
 
+    /**
+     * Set power to all motors
+     * @param powerForAll the power for all wheels
+     */
     public void setPowerToAllDriveMotors(double powerForAll) {
         frontLeft.setPower(powerForAll);
         frontRight.setPower(powerForAll);
@@ -125,6 +153,10 @@ public class DriveTrain implements Modulable
         backRight.setPower(powerForAll);
     }
 
+    /**
+     * Set mode to all motors
+     * @param runModeForAll desired mode for motors
+     */
     public void setModeToAllDriveMotors(DcMotor.RunMode runModeForAll) {
         frontLeft.setMode(runModeForAll);
         frontRight.setMode(runModeForAll);
@@ -132,6 +164,10 @@ public class DriveTrain implements Modulable
         backRight.setMode(runModeForAll);
     }
 
+    /**
+     * Set zero power behavior to all motors
+     * @param zeroPowerBehaviorForAll desired zeroPowerBehavior for motors
+     */
     public void setZeroPowerBehaviorToAllDriveMotors(DcMotor.ZeroPowerBehavior zeroPowerBehaviorForAll) {
         frontLeft.setZeroPowerBehavior(zeroPowerBehaviorForAll);
         frontRight.setZeroPowerBehavior(zeroPowerBehaviorForAll);
@@ -139,6 +175,9 @@ public class DriveTrain implements Modulable
         backRight.setZeroPowerBehavior(zeroPowerBehaviorForAll);
     }
 
+    /**
+     * Wrapper method for stopping the robot, sets 0 power to all motors
+     */
     public void stop() {
         setPowerToAllDriveMotors(0);
     }

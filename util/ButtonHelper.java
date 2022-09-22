@@ -4,23 +4,17 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import java.util.Arrays;
 
 /**
- * ButtonHelper - Utility to detect 'pressing' events (change of state) for user-interface
- * applications
+ * ButtonHelper - Utility to organize gamepad state and 'pressing' events (change of state)
  */
 
 public class ButtonHelper {
     private Gamepad gamepad;
 
-    /*
-    Buttons:
-    dpad_up dpad_down dpad_left dpad_right a b x y guide start back left_bumper right_bumper
-    left_stick_button right_stick_button (15)
-     */
     private boolean[] buttons = new boolean[15];
     private boolean[] held = new boolean[15];
 
     /**
-     * A button for use in the pressed(), released(), and pressing() methods
+     * Buttons for use in the pressed(), released(), and pressing() methods
      */
     public static final int dpad_up            =  0,
                             dpad_down          =  1,
