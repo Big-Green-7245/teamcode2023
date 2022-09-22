@@ -33,7 +33,7 @@ public class TeleOpTest extends LinearOpMode {
         TelemetryWrapper.init(telemetry, 16);
 
         // Wait for start
-        TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer + "\t Press start to start >");
+        TelemetryWrapper.setLine(1, "TeleOpTest v" + programVer + "\t Press start to start >");
         waitForStart();
 
         while(opModeIsActive()) {
