@@ -4,23 +4,26 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
-
-// Class import
+import org.firstinspires.ftc.teamcode.modules.Claw;
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
+import org.firstinspires.ftc.teamcode.modules.LinearSlide;
+import org.firstinspires.ftc.teamcode.modules.Rotation;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 @TeleOp(name = "TeleOpTest", group = "opmode")
 public class TeleOpTest extends LinearOpMode {
     // Define attributes
-    final String programVer = "1.0";
+    final String programVer = "1.3";
     final double speedMultiplier = 0.75;
 
     // Declare modules
     DriveTrain driveTrain;
     ButtonHelper gp1, gp2;
-    Servo claw;
+    LinearSlide linearSlide;
+    Rotation rotation;
+
+    Claw coneClaw;
 
     @Override
     public void runOpMode() {
@@ -28,14 +31,22 @@ public class TeleOpTest extends LinearOpMode {
         driveTrain = new DriveTrain();
         gp1 = new ButtonHelper(gamepad1);
         gp2 = new ButtonHelper(gamepad2);
-        claw = hardwareMap.get(Servo.class, "claw");
+        linearSlide = new LinearSlide();
+        rotation = new Rotation();
+        coneClaw = new Claw();
 
         driveTrain.init(hardwareMap);
+        linearSlide.init(hardwareMap);
+        rotation.init(hardwareMap);
+        coneClaw.init(hardwareMap);
+
         TelemetryWrapper.init(telemetry, 16);
 
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOpTest v" + programVer + "\t Press start to start >");
         waitForStart();
+
+        boolean clawOpened = false;
 
         while (opModeIsActive()) {
             // Update ButtonHelper
@@ -45,18 +56,21 @@ public class TeleOpTest extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
-            if (gp1.pressing(ButtonHelper.dpad_up)) driveTrain.translate(0.4, 0, 50, 0, 10);
-            if (gp1.pressing(ButtonHelper.dpad_down)) driveTrain.translate(0.4, 0, -50, 0, 10);
-            if (gp1.pressing(ButtonHelper.dpad_left)) driveTrain.translate(0.4, -50, 0, 0, 10);
-            if (gp1.pressing(ButtonHelper.dpad_right)) driveTrain.translate(0.4, 50, 0, 0, 10);
-            if (gp1.pressing(ButtonHelper.x)) driveTrain.translate(0.4, 50, 0, 180, 10);
-            if (gp1.pressing(ButtonHelper.b)) driveTrain.translate(0.4, 50, 0, -180, 10);
+            // LinearSlide movement
+            linearSlide.move(gamepad1.y ? 100 : gamepad1.a ? -100 : 0, 1);
+
+            // Rotate
+            rotation.move(gamepad1.x ? 0.2 : gamepad1.b ? -0.2 : 0);
 
             // Move the claw
-            if (gp1.pressing(ButtonHelper.dpad_up)) claw.setPosition(0.6);
-            else if (gp1.pressing(ButtonHelper.dpad_down)) claw.setPosition(0.7);
-            else if (gp1.pressing(ButtonHelper.dpad_left)) claw.setPosition(0.8);
-            else if (gp1.pressing(ButtonHelper.dpad_right)) claw.setPosition(0.9);
+            TelemetryWrapper.setLine(3, "up" + gp1.pressed(ButtonHelper.dpad_up));
+            TelemetryWrapper.setLine(4, "down" + gp1.pressed(ButtonHelper.dpad_down));
+            TelemetryWrapper.setLine(5, "left" + gp1.pressed(ButtonHelper.dpad_left));
+            TelemetryWrapper.setLine(6, "right" + gp1.pressed(ButtonHelper.dpad_right));
+
+            TelemetryWrapper.setLine(7, "clawOpened: " + clawOpened);
+            if (gp1.pressing(ButtonHelper.dpad_up)) clawOpened = !clawOpened;
+            coneClaw.clawOpen(clawOpened);
 
             // Display data for telemetry
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
