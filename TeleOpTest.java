@@ -22,8 +22,8 @@ public class TeleOpTest extends LinearOpMode {
     ButtonHelper gp1, gp2;
     LinearSlide linearSlide;
     Rotation rotation;
-
     Claw coneClaw;
+
 
     @Override
     public void runOpMode() {
@@ -69,6 +69,10 @@ public class TeleOpTest extends LinearOpMode {
             TelemetryWrapper.setLine(6, "right" + gp1.pressed(ButtonHelper.dpad_right));
 
             TelemetryWrapper.setLine(7, "clawOpened: " + clawOpened);
+
+            TelemetryWrapper.setLine(8, "CURRENTS");
+            TelemetryWrapper.setLine(9, "DriveTrain Currents:" + driveTrain.getMotorCurrentsString());
+            TelemetryWrapper.setLine(10, "LinearSlide Current: " + linearSlide.getCurrent());
             if (gp1.pressing(ButtonHelper.dpad_up)) clawOpened = !clawOpened;
             coneClaw.clawOpen(clawOpened);
 

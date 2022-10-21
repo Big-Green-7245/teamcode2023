@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.modules;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.*;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.*;
 
 
@@ -16,29 +17,29 @@ public class DriveTrain implements Modulable
 
     public HardwareMap hwMap;
 
-    public DcMotor backLeft;
-    public DcMotor frontLeft;
-    public DcMotor backRight;
-    public DcMotor frontRight;
+    public DcMotorEx backLeft;
+    public DcMotorEx frontLeft;
+    public DcMotorEx backRight;
+    public DcMotorEx frontRight;
 
     @Override
     public void init(HardwareMap map)
     {
         hwMap = map;
 
-        backLeft = hwMap.get(DcMotor.class, "leftBack");
+        backLeft = (DcMotorEx) hwMap.get(DcMotor.class, "leftBack");
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
 
-        backRight = hwMap.get(DcMotor.class, "rightBack");
+        backRight = (DcMotorEx) hwMap.get(DcMotor.class, "rightBack");
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
-        frontLeft = hwMap.get(DcMotor.class, "leftFront");
+        frontLeft = (DcMotorEx) hwMap.get(DcMotor.class, "leftFront");
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
 
-        frontRight = hwMap.get(DcMotor.class, "rightFront");
+        frontRight = (DcMotorEx) hwMap.get(DcMotor.class, "rightFront");
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
 
@@ -130,7 +131,8 @@ public class DriveTrain implements Modulable
      * @return array containing position of each wheel
      */
     public double[] getEncPos() {
-        return new double[]{frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition()};
+        return new double[]{frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(),
+                backLeft.getCurrentPosition(), backRight.getCurrentPosition()};
     }
 
     /**
@@ -143,9 +145,22 @@ public class DriveTrain implements Modulable
     }
 
     /**
-     * Set power to all motors
-     * @param powerForAll the power for all wheels
+     *
      */
+    public double[] getMotorCurrents() {
+        return new double[]{frontLeft.getCurrent(CurrentUnit.AMPS), frontRight.getCurrent(CurrentUnit.AMPS),
+                backLeft.getCurrent(CurrentUnit.AMPS), backRight.getCurrent(CurrentUnit.AMPS)};
+    }
+
+    public String getMotorCurrentsString() {
+        return "FL=" + frontLeft.getCurrent(CurrentUnit.AMPS) + " FR" + frontRight.getCurrent(CurrentUnit.AMPS) +
+                " BL" + backLeft.getCurrent(CurrentUnit.AMPS) + " BR" + backRight.getCurrent(CurrentUnit.AMPS);
+    }
+
+        /**
+         * Set power to all motors
+         * @param powerForAll the power for all wheels
+         */
     public void setPowerToAllDriveMotors(double powerForAll) {
         frontLeft.setPower(powerForAll);
         frontRight.setPower(powerForAll);
