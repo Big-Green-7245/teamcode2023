@@ -18,25 +18,12 @@ public class LinearSlide implements Modulable {
         hwMap = hardwareMap;
         linearSlide = (DcMotorEx) hardwareMap.get(DcMotor.class, "linearSlide");
         linearSlide.setDirection(DcMotor.Direction.REVERSE);
-        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void move(double power) {
-        linearSlide.setTargetPosition(linearSlide.getCurrentPosition() + (int) (power * 100));
-        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(power);
-    }
-
-    public void altMove(double power) {
-        if((int)(power) == 0) {
-            linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            linearSlide.setPower(0.05);
-        }
-        else{
-            linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            linearSlide.setPower(power);
-        }
+        linearSlide.setPower(Math.abs(power) > 0.1 ? power : 0.1);
     }
 
     public double getCurrent() {
