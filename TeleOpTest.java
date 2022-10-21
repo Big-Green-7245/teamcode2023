@@ -57,7 +57,7 @@ public class TeleOpTest extends LinearOpMode {
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
             // LinearSlide movement
-            linearSlide.altMove(gamepad1.y ? 1 : gamepad1.a ? -1 : 0);
+            linearSlide.move(gamepad1.y ? 1 : gamepad1.a ? -0.7 : 0);
 
             // Rotate
             rotation.move(gamepad1.x ? 0.2 : gamepad1.b ? -0.2 : 0);
