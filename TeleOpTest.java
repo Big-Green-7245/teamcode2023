@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 @TeleOp(name = "TeleOpTest", group = "opmode")
 public class TeleOpTest extends LinearOpMode {
     // Define attributes
-    final String programVer = "1.3";
+    final String programVer = "1.4";
     final double speedMultiplier = 0.75;
 
     // Declare modules
@@ -57,7 +57,7 @@ public class TeleOpTest extends LinearOpMode {
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
             // LinearSlide movement
-            linearSlide.move(gamepad1.y ? 100 : gamepad1.a ? -100 : 0, 1);
+            linearSlide.altMove(gamepad1.y ? 1 : gamepad1.a ? -1 : 0);
 
             // Rotate
             rotation.move(gamepad1.x ? 0.2 : gamepad1.b ? -0.2 : 0);

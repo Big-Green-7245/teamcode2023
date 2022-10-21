@@ -19,9 +19,20 @@ public class LinearSlide implements Modulable {
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void move(int target, double power) {
-        linearSlide.setTargetPosition(linearSlide.getCurrentPosition() + target);
+    public void move(double power) {
+        linearSlide.setTargetPosition(linearSlide.getCurrentPosition() + (int) (power * 100));
         linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlide.setPower(power);
+    }
+
+    public void altMove(double power) {
+        if((int)(power) == 0) {
+            linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            linearSlide.setPower(0.05);
+        }
+        else{
+            linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            linearSlide.setPower(power);
+        }
     }
 }
