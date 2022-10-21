@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 @TeleOp(name = "TeleOpTest", group = "opmode")
 public class TeleOpTest extends LinearOpMode {
     // Define attributes
-    final String programVer = "1.4";
+    final String programVer = "1.5";
     final double speedMultiplier = 0.75;
 
     // Declare modules
