@@ -13,22 +13,17 @@ import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 import java.util.Arrays;
 
-@TeleOp(name = "TeleOpTest", group = "opmode")
-public class TeleOpTest extends LinearOpMode {
+@TeleOp(name = "TeleOpCalib", group = "opmode")
+public class TeleOpCalib extends LinearOpMode {
     // Define attributes
     final String programVer = "1.5";
     final double speedMultiplier = 0.75;
-
-    final double GROUND_LEVEL = 0;
-    final double LOW_LEVEL = 0;
-    final double MID_LEVEL = 0;
-    final double HIGH_LEVEL = 0;
 
 
     // Declare modules
     DriveTrain driveTrain;
     ButtonHelper gp1, gp2;
-//    Elevator linearSlide;
+    //    Elevator linearSlide;
 //    Pivot rotation;
 //    Claw coneClaw;
     Intake intake;
@@ -67,22 +62,18 @@ public class TeleOpTest extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
-            // LinearSlide movement
-            if (gp1.pressing(ButtonHelper.x))  intake.placeCone(0);
-            else if (gp1.pressing(ButtonHelper.a))  intake.placeCone(1);
-            else if (gp1.pressing(ButtonHelper.b))  intake.placeCone(2);
-            else if (gp1.pressing(ButtonHelper.y))  intake.placeCone(3);
+            // LinearSlide Calib
+            if (gp1.pressing(ButtonHelper.x))  TelemetryWrapper.setLine(3, "Level 1 is: " + intake.elevator.getEncPos());
+            else if (gp1.pressing(ButtonHelper.a))  TelemetryWrapper.setLine(4, "Level 1 is: " + intake.elevator.getEncPos());
+            else if (gp1.pressing(ButtonHelper.b))  TelemetryWrapper.setLine(5, "Level 1 is: " + intake.elevator.getEncPos());
+            else if (gp1.pressing(ButtonHelper.y))  TelemetryWrapper.setLine(6, "Level 1 is: " + intake.elevator.getEncPos());
 
-//            linearSlide.move(gamepad1.y ? 1 : gamepad1.a ? -0.7 : 0);
-//
-//            // Rotate
-//            rotation.move(gamepad1.x ? 0.2 : gamepad1.b ? -0.2 : 0);
+            // Move LinearSlide
+            intake.elevator.move(gamepad1.y ? 1 : gamepad1.a ? -0.7 : 0);
 
-            // Move the claw
-            TelemetryWrapper.setLine(3, "up" + gp1.pressed(ButtonHelper.dpad_up));
-            TelemetryWrapper.setLine(4, "down" + gp1.pressed(ButtonHelper.dpad_down));
-            TelemetryWrapper.setLine(5, "left" + gp1.pressed(ButtonHelper.dpad_left));
-            TelemetryWrapper.setLine(6, "right" + gp1.pressed(ButtonHelper.dpad_right));
+            // Rotate
+            intake.pivot.move(gamepad1.x ? 0.2 : gamepad1.b ? -0.2 : 0);
+
 
             TelemetryWrapper.setLine(7, "clawOpened: " + clawOpened);
 
