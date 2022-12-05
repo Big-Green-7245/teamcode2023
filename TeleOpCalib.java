@@ -69,10 +69,10 @@ public class TeleOpCalib extends LinearOpMode {
             else if (gp1.pressing(ButtonHelper.y))  TelemetryWrapper.setLine(6, "Level 1 is: " + intake.elevator.getEncPos());
 
             // Move LinearSlide
-            intake.elevator.move(gamepad1.y ? 1 : gamepad1.a ? -0.7 : 0);
+            intake.elevator.move(gp1.pressing(ButtonHelper.dpad_up) ? 1 : gp1.pressing(ButtonHelper.dpad_down) ? -0.7 : 0);
 
             // Rotate
-            intake.pivot.move(gamepad1.x ? 0.2 : gamepad1.b ? -0.2 : 0);
+            intake.pivot.move(gp1.pressing(ButtonHelper.dpad_right) ? 0.2 : gp1.pressing(ButtonHelper.dpad_left) ? -0.2 : 0);
 
 
             TelemetryWrapper.setLine(7, "clawOpened: " + clawOpened);
@@ -82,8 +82,8 @@ public class TeleOpCalib extends LinearOpMode {
             TelemetryWrapper.setLine(10, "LinearSlide Current: " + intake.elevator.getCurrent());
             TelemetryWrapper.setLine(11, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
             TelemetryWrapper.setLine(12, "LinearSlide Encoder: " + intake.elevator.getEncPos());
-            if (gp1.pressing(ButtonHelper.dpad_up)) clawOpened = !clawOpened;
-            intake.claw.clawOpen(clawOpened);
+//            if (gp1.pressing(ButtonHelper.dpad_up)) clawOpened = !clawOpened;
+//            intake.claw.clawOpen(clawOpened);
 
             // Display data for telemetry
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
