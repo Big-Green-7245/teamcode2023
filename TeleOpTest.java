@@ -45,8 +45,7 @@ public class TeleOpTest extends LinearOpMode {
 //        coneClaw = new Claw();
         intake = new Intake();
         intake.init(hardwareMap);
-
-//        driveTrain.init(hardwareMap);
+        driveTrain.init(hardwareMap);
 //        linearSlide.init(hardwareMap);
 //        rotation.init(hardwareMap);
 //        coneClaw.init(hardwareMap);

@@ -17,7 +17,7 @@ public class Intake implements Modulable
     private final int MID_LEVEL_POSITION = 0;
     private final int HIGH_LEVEL_POSITION = 0;
 
-    private final int[] LEVELS = new int[]{0, 0, 0, 0};
+    private final int[] LEVELS = new int[]{-3108, 6343, 11808, 18084};
     private final int SAFE_ROT_LEVEL = 0;
 
     public final int GROUND = 0;
@@ -29,6 +29,12 @@ public class Intake implements Modulable
     public void init(HardwareMap map)
     {
         hwMap = map;
+        elevator = new Elevator();
+        pivot = new Pivot();
+        claw = new Claw();
+        elevator.init(hwMap);
+        pivot.init(hwMap);
+        claw.init(hwMap);
 
         // Additional Initializations
     }
