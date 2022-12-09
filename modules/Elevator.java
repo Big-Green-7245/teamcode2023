@@ -27,7 +27,7 @@ public class Elevator implements Modulable {
         elevatorBtn = hardwareMap.get(RevTouchSensor.class, "elevatorBtn");
         elevator.setDirection(DcMotor.Direction.REVERSE);
         while(!elevatorBtn.isPressed()){
-            move(-0.1);
+            move(-0.2);
         }
         elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

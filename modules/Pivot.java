@@ -22,6 +22,9 @@ public class Pivot implements Modulable {
     public void init(HardwareMap hardwareMap) {
         hwMap = hardwareMap;
         rotation = hardwareMap.get(DcMotor.class, "rotation");
+        intakeButton = hardwareMap.get(TouchSensor.class, "intakeBtn");
+        placeButton = hardwareMap.get(TouchSensor.class, "placeBtn");
+        setIntakeOrientation(true);
     }
 
     public void move(double power) {

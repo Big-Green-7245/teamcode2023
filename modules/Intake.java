@@ -17,7 +17,7 @@ public class Intake implements Modulable
     private final int MID_LEVEL_POSITION = 0;
     private final int HIGH_LEVEL_POSITION = 0;
 
-    private final int[] LEVELS = new int[]{-3108, 6343, 11808, 18084};
+    private final int[] LEVELS = new int[]{0, 6343+3108, 11808+3108, 18084+3108};
     private final int SAFE_ROT_LEVEL = 0;
 
     public final int GROUND = 0;

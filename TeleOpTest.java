@@ -57,6 +57,7 @@ public class TeleOpTest extends LinearOpMode {
         waitForStart();
 
         boolean clawOpened = false;
+        boolean atIntakeRot = true;
 
         while (opModeIsActive()) {
             // Update ButtonHelper
@@ -72,10 +73,6 @@ public class TeleOpTest extends LinearOpMode {
             else if (gp1.pressing(ButtonHelper.b))  intake.placeCone(2);
             else if (gp1.pressing(ButtonHelper.y))  intake.placeCone(3);
 
-//            linearSlide.move(gamepad1.y ? 1 : gamepad1.a ? -0.7 : 0);
-//
-//            // Rotate
-//            rotation.move(gamepad1.x ? 0.2 : gamepad1.b ? -0.2 : 0);
 
             // Move the claw
             TelemetryWrapper.setLine(3, "up" + gp1.pressed(ButtonHelper.dpad_up));
@@ -92,6 +89,10 @@ public class TeleOpTest extends LinearOpMode {
             TelemetryWrapper.setLine(12, "LinearSlide Encoder: " + intake.elevator.getEncPos());
             if (gp1.pressing(ButtonHelper.dpad_up)) clawOpened = !clawOpened;
             intake.claw.clawOpen(clawOpened);
+            if(gp1.pressing(ButtonHelper.dpad_right)){
+                intake.pivot.setIntakeOrientation(!atIntakeRot);
+                atIntakeRot = !atIntakeRot;
+            }
 
             // Display data for telemetry
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
