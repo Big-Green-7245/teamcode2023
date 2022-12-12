@@ -6,15 +6,15 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Pivot implements Modulable, Tickable {
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
+
+    private static final double POWER = 0.2;
 
     public HardwareMap hwMap;
     private DcMotor rotation;
 
     public TouchSensor intakeButton;
     public TouchSensor placeButton;
-
-    private final double POWER = 0.2;
     /**
      * The target orientation that the claw is currently moving to.
      */

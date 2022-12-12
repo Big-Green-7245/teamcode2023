@@ -17,12 +17,6 @@ public class TeleOpTest extends LinearOpMode {
     final String programVer = "1.6";
     final double speedMultiplier = 0.75;
 
-    final double GROUND_LEVEL = 0;
-    final double LOW_LEVEL = 0;
-    final double MID_LEVEL = 0;
-    final double HIGH_LEVEL = 0;
-
-
     // Declare modules
     DriveTrain driveTrain;
     ButtonHelper gp1, gp2;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
+
 import java.util.Arrays;
 
 /**
@@ -8,10 +9,10 @@ import java.util.Arrays;
  */
 
 public class ButtonHelper {
-    private Gamepad gamepad;
+    private final Gamepad gamepad;
 
-    private boolean[] buttons = new boolean[15];
-    private boolean[] held = new boolean[15];
+    private final boolean[] buttons = new boolean[15];
+    private final boolean[] held = new boolean[15];
 
     /**
      * Buttons for use in the pressed(), released(), and pressing() methods

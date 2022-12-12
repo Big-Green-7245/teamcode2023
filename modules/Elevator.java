@@ -10,14 +10,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 public class Elevator implements Modulable, Tickable {
-    private ElapsedTime runtime = new ElapsedTime();
+    private static final double POWER = 0.7;
+    private final ElapsedTime runtime = new ElapsedTime();
 
     public HardwareMap hwMap;
     private DcMotorEx elevator;
 
     public TouchSensor elevatorBtn;
 
-    private final double POWER = 0.7;
 
     @Override
     public void init(HardwareMap hardwareMap) {
@@ -47,7 +47,7 @@ public class Elevator implements Modulable, Tickable {
     }
 
     public void moveToPos(int position) {
-        elevator.setTargetPosition((int) position);
+        elevator.setTargetPosition(position);
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevator.setPower(POWER);
