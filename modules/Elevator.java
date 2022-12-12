@@ -29,6 +29,7 @@ public class Elevator implements Modulable {
         while(!elevatorBtn.isPressed()){
             move(-0.2);
         }
+        move(0);
         elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
