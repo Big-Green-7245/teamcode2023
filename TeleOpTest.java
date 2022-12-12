@@ -4,19 +4,17 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.modules.Claw;
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
-import org.firstinspires.ftc.teamcode.modules.Elevator;
 import org.firstinspires.ftc.teamcode.modules.Intake;
-import org.firstinspires.ftc.teamcode.modules.Pivot;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
+
 import java.util.Arrays;
 
 @TeleOp(name = "TeleOpTest", group = "opmode")
 public class TeleOpTest extends LinearOpMode {
     // Define attributes
-    final String programVer = "1.5";
+    final String programVer = "1.6";
     final double speedMultiplier = 0.75;
 
     final double GROUND_LEVEL = 0;
@@ -36,6 +34,10 @@ public class TeleOpTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        TelemetryWrapper.init(telemetry, 16);
+
+        TelemetryWrapper.setLine(1, "TeleOpTest v" + programVer + "\t Initializing");
+
         // Robot modules initialization
         driveTrain = new DriveTrain();
         gp1 = new ButtonHelper(gamepad1);
@@ -50,11 +52,11 @@ public class TeleOpTest extends LinearOpMode {
 //        rotation.init(hardwareMap);
 //        coneClaw.init(hardwareMap);
 
-        TelemetryWrapper.init(telemetry, 16);
-
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOpTest v" + programVer + "\t Press start to start >");
-        waitForStart();
+        while (!isStarted()) {
+            intake.tickBeforeStart();
+        }
 
         boolean clawOpened = false;
         boolean atIntakeRot = true;
@@ -64,14 +66,17 @@ public class TeleOpTest extends LinearOpMode {
             gp1.update();
             gp2.update();
 
+            // Tick modules
+            intake.tick();
+
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
             // LinearSlide movement
-            if (gp1.pressing(ButtonHelper.x))  intake.placeCone(0);
-            else if (gp1.pressing(ButtonHelper.a))  intake.placeCone(1);
-            else if (gp1.pressing(ButtonHelper.b))  intake.placeCone(2);
-            else if (gp1.pressing(ButtonHelper.y))  intake.placeCone(3);
+            if (gp1.pressing(ButtonHelper.x)) intake.placeCone(0);
+            else if (gp1.pressing(ButtonHelper.a)) intake.placeCone(1);
+            else if (gp1.pressing(ButtonHelper.b)) intake.placeCone(2);
+            else if (gp1.pressing(ButtonHelper.y)) intake.placeCone(3);
 
 
             // Move the claw
@@ -98,6 +103,5 @@ public class TeleOpTest extends LinearOpMode {
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
             TelemetryWrapper.setLine(2, "Other info...");
         }
-
     }
 }

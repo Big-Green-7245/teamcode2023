@@ -6,11 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
-public class Elevator implements Modulable {
+public class Elevator implements Modulable, Tickable {
     private ElapsedTime runtime = new ElapsedTime();
 
     public HardwareMap hwMap;
@@ -26,13 +25,21 @@ public class Elevator implements Modulable {
         elevator = (DcMotorEx) hardwareMap.get(DcMotor.class, "linearSlide");
         elevatorBtn = hardwareMap.get(RevTouchSensor.class, "elevatorBtn");
         elevator.setDirection(DcMotor.Direction.REVERSE);
-        while(!elevatorBtn.isPressed()){
-            move(-0.2);
-        }
-        move(0);
         elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    /**
+     * Moves the elevator down if it is not in the lowest position.
+     */
+    @Override
+    public void tickBeforeStart() {
+        if (elevatorBtn.isPressed()) {
+            move(0);
+        } else {
+            move(-0.2);
+        }
     }
 
     public void move(double power) {

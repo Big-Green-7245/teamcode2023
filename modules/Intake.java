@@ -3,8 +3,7 @@ package org.firstinspires.ftc.teamcode.modules;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Intake implements Modulable
-{
+public class Intake implements Modulable, Tickable {
     private ElapsedTime runtime = new ElapsedTime();
 
     public HardwareMap hwMap;
@@ -42,15 +41,24 @@ public class Intake implements Modulable
     public void placeCone(int level)
     {
         elevator.moveToPos(SAFE_ROT_LEVEL);
-        pivot.setIntakeOrientation(true); //Make sure function do not wait. TODO
+        pivot.setIntakeOrientation(true);
         elevator.moveToPos(LEVELS[level]);
         claw.clawOpen(true);
         elevator.moveToPos(SAFE_ROT_LEVEL);
-        pivot.setIntakeOrientation(false); //Make sure function do not wait. TODO
+        pivot.setIntakeOrientation(false);
         claw.clawOpen(false);
 
     }
 
-    // Additional methods for functionality
+    @Override
+    public void tickBeforeStart() {
+        elevator.tickBeforeStart();
+        pivot.tickBeforeStart();
+    }
+
+    @Override
+    public void tick() {
+        pivot.tick();
+    }
 }
 
