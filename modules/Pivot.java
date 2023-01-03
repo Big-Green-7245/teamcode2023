@@ -13,13 +13,22 @@ public class Pivot implements Modulable, Tickable {
     public HardwareMap hwMap;
     private DcMotor rotation;
 
-    public TouchSensor intakeButton;
-    public TouchSensor placeButton;
+    private TouchSensor intakeButton;
+    private TouchSensor placeButton;
     /**
      * The target orientation that the claw is currently moving to.
      */
     private boolean targetOrientation;
+    public static final boolean INTAKE_ORIENTATION = false;
+    public static final boolean PLACE_ORIENTATION = true;
 
+    public TouchSensor getIntakeButton() {
+        return intakeButton;
+    }
+
+    public TouchSensor getPlaceButton() {
+        return placeButton;
+    }
 
     @Override
     public void init(HardwareMap hardwareMap) {
@@ -28,11 +37,15 @@ public class Pivot implements Modulable, Tickable {
         intakeButton = hardwareMap.get(TouchSensor.class, "intakeBtn");
         placeButton = hardwareMap.get(TouchSensor.class, "placeBtn");
         rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        setIntakeOrientation(true);
+        setIntakeOrientation(INTAKE_ORIENTATION);
     }
 
     public void move(double power) {
         rotation.setPower(power);
+    }
+
+    public boolean getTargetOrientation() {
+        return targetOrientation;
     }
 
     /**
@@ -40,6 +53,13 @@ public class Pivot implements Modulable, Tickable {
      */
     public void setIntakeOrientation(boolean orientation) {
         targetOrientation = orientation;
+    }
+
+    /**
+     * Toggles the intake orientation.
+     */
+    public void toggleIntakeOrientation() {
+        targetOrientation = !targetOrientation;
     }
 
     @Override
@@ -51,12 +71,16 @@ public class Pivot implements Modulable, Tickable {
      * Ticks the pivot to move towards the target orientation.
      */
     public void tick() {
-        if (targetOrientation && !intakeButton.isPressed()) {
+        if (!targetOrientation && !intakeButton.isPressed()) {
             move(POWER);
-        } else if (!targetOrientation && !placeButton.isPressed()) {
+        } else if (targetOrientation && !placeButton.isPressed()) {
             move(-POWER);
         } else {
             move(0);
         }
+    }
+
+    public boolean isAtTargetPos() {
+        return (targetOrientation && placeButton.isPressed()) || (!targetOrientation && intakeButton.isPressed());
     }
 }

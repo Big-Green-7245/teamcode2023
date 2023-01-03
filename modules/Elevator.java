@@ -7,14 +7,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 public class Elevator implements Modulable, Tickable {
     private static final double POWER = 0.7;
     private final ElapsedTime runtime = new ElapsedTime();
 
     public HardwareMap hwMap;
-    private DcMotorEx elevator;
+    public DcMotorEx elevator;
 
     public TouchSensor elevatorBtn;
 
@@ -35,11 +34,7 @@ public class Elevator implements Modulable, Tickable {
      */
     @Override
     public void tickBeforeStart() {
-        if (elevatorBtn.isPressed()) {
-            move(0);
-        } else {
-            move(-0.2);
-        }
+        moveToGround();
     }
 
     public void move(double power) {
@@ -49,21 +44,32 @@ public class Elevator implements Modulable, Tickable {
     public void moveToPos(int position) {
         elevator.setTargetPosition(position);
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevator.setPower(POWER);
-        while(elevator.isBusy()) {
-            TelemetryWrapper.setLine(0, "Elevator running " + elevator.getCurrentPosition());
+    }
+
+    public void moveToGround() {
+        if (elevatorBtn.isPressed()) {
+            elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            move(0);
+        } else {
+            move(-0.2);
         }
-        // Hold position
-        elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public boolean isAtTargetPos() {
+        return Math.abs(elevator.getTargetPosition() - elevator.getCurrentPosition()) < elevator.getTargetPositionTolerance();
     }
 
     public double getCurrent() {
         return elevator.getCurrent(CurrentUnit.AMPS);
     }
 
-    public double getPower(){return elevator.getPower();}
+    public double getPower() {
+        return elevator.getPower();
+    }
 
-    public double getEncPos(){return (elevator.getCurrentPosition());}
+    public double getEncPos() {
+        return (elevator.getCurrentPosition());
+    }
 }

@@ -28,21 +28,21 @@ public class EncoderAuto extends LinearOpMode {
         if (parkSpace == 1) {
             driveTrain.translate(SPEED, -22.75 - 11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
-            intake.placeCone(1);
+            intake.startPlaceCone(1);
             driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
             driveTrain.translate(SPEED, 11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 22.75, 0, 10);
         } else if (parkSpace == 2) {
             driveTrain.translate(SPEED, 11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
-            intake.placeCone(1);
+            intake.startPlaceCone(1);
             driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
             driveTrain.translate(SPEED, -11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 22.75, 0, 10);
         } else if (parkSpace == 3) {
             driveTrain.translate(SPEED, 11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
-            intake.placeCone(1);
+            intake.startPlaceCone(1);
             driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
             driveTrain.translate(SPEED, -11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 22.75, 0, 10);

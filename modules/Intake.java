@@ -23,6 +23,8 @@ public class Intake implements Modulable, Tickable {
     public Claw claw;
     public Pivot pivot;
     public Elevator elevator;
+    private int targetLevel = 0;
+    private PlaceState currentPlaceState = PlaceState.IDLE;
 
     @Override
     public void init(HardwareMap map) {
@@ -37,16 +39,24 @@ public class Intake implements Modulable, Tickable {
         // Additional Initializations
     }
 
-    public void placeCone(int level)
-    {
-        elevator.moveToPos(SAFE_ROT_LEVEL);
-        pivot.setIntakeOrientation(true);
-        elevator.moveToPos(LEVELS[level]);
-        claw.clawOpen(true);
-        elevator.moveToPos(SAFE_ROT_LEVEL);
-        pivot.setIntakeOrientation(false);
+    /**
+     * Start the pickup process with the pivot at the intake position.
+     */
+    public void startPickUp() {
+        elevator.moveToGround();
+        //wait
         claw.clawOpen(false);
+    }
 
+    /**
+     * Start to place the cone with the pivot at either position.
+     *
+     * @param level the level to place the cone at
+     */
+    public void startPlaceCone(int level) {
+        elevator.moveToPos(LEVELS[targetLevel]);
+        currentPlaceState = PlaceState.ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL;
+        targetLevel = level;
     }
 
     @Override
@@ -58,6 +68,31 @@ public class Intake implements Modulable, Tickable {
     @Override
     public void tick() {
         pivot.tick();
+        // Place the cone
+        if (currentPlaceState == PlaceState.ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL /*&& elevator.elevator.getCurrentPosition() > SAFE_ROT_LEVEL*/) {
+            pivot.setIntakeOrientation(Pivot.PLACE_ORIENTATION);
+            currentPlaceState = PlaceState.PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION;
+        } else if (currentPlaceState == PlaceState.PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION && pivot.isAtTargetPos() && elevator.isAtTargetPos()) {
+            claw.clawOpen(true);
+            currentPlaceState = PlaceState.OPENING_CLAW;
+        } else if (currentPlaceState == PlaceState.OPENING_CLAW && claw.isAtTargetPos()) {
+            pivot.setIntakeOrientation(Pivot.INTAKE_ORIENTATION);
+            currentPlaceState = PlaceState.PIVOT_MOVING_TO_INTAKE_ORIENTATION;
+        } else if (currentPlaceState == PlaceState.PIVOT_MOVING_TO_INTAKE_ORIENTATION && pivot.isAtTargetPos()) {
+            elevator.moveToGround();
+            currentPlaceState = PlaceState.ELEVATOR_MOVING_TO_GROUND;
+        } else if (currentPlaceState == PlaceState.ELEVATOR_MOVING_TO_GROUND && elevator.isAtTargetPos()) {
+            currentPlaceState = PlaceState.IDLE;
+        }
+    }
+
+    private enum PlaceState {
+        IDLE,
+        ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL,
+        PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION,
+        OPENING_CLAW,
+        PIVOT_MOVING_TO_INTAKE_ORIENTATION,
+        ELEVATOR_MOVING_TO_GROUND
     }
 }
 

@@ -53,7 +53,6 @@ public class TeleOpTest extends LinearOpMode {
         }
 
         boolean clawOpened = false;
-        boolean atIntakeRot = true;
 
         while (opModeIsActive()) {
             // Update ButtonHelper
@@ -67,10 +66,10 @@ public class TeleOpTest extends LinearOpMode {
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
             // LinearSlide movement
-            if (gp1.pressing(ButtonHelper.x)) intake.placeCone(0);
-            else if (gp1.pressing(ButtonHelper.a)) intake.placeCone(1);
-            else if (gp1.pressing(ButtonHelper.b)) intake.placeCone(2);
-            else if (gp1.pressing(ButtonHelper.y)) intake.placeCone(3);
+            if (gp1.pressing(ButtonHelper.x)) intake.startPlaceCone(0);
+            else if (gp1.pressing(ButtonHelper.a)) intake.startPlaceCone(1);
+            else if (gp1.pressing(ButtonHelper.b)) intake.startPlaceCone(2);
+            else if (gp1.pressing(ButtonHelper.y)) intake.startPlaceCone(3);
 
 
             // Move the claw
@@ -89,9 +88,12 @@ public class TeleOpTest extends LinearOpMode {
             if (gp1.pressing(ButtonHelper.dpad_up)) clawOpened = !clawOpened;
             intake.claw.clawOpen(clawOpened);
             if(gp1.pressing(ButtonHelper.dpad_right)){
-                intake.pivot.setIntakeOrientation(!atIntakeRot);
-                atIntakeRot = !atIntakeRot;
+                intake.pivot.toggleIntakeOrientation();
             }
+
+            TelemetryWrapper.setLine(13, "Pivot: " + intake.pivot.getTargetOrientation());
+            TelemetryWrapper.setLine(14, "Intake button: " + intake.pivot.getIntakeButton().isPressed());
+            TelemetryWrapper.setLine(15, "Place button: " + intake.pivot.getPlaceButton().isPressed());
 
             // Display data for telemetry
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
