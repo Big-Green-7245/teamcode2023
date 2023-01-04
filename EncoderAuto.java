@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -60,41 +59,27 @@ public class EncoderAuto extends LinearOpMode {
         initTfod();
         if (tfod != null) {
             tfod.activate();
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(1.0, 16.0 / 9.0);
         }
-        while(!this.isStarted()){
+        while (!this.isStarted()) {
             parkSpace = detectLabel();
             TelemetryWrapper.setLine(3, "Park Space: " + parkSpace);
         }
         waitForStart();
+        driveTrain.translate(SPEED, 0, 45.5, 0, 10);
+        driveTrain.translate(SPEED, 11.375, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
+        intake.startPlaceCone(1);
+        while (intake.getCurrentState() != Intake.State.IDLE) {
+        }
+        driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
+        driveTrain.translate(SPEED, -11.375, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 22.75, 0, 10);
         if (parkSpace == 1) {
-            driveTrain.translate(SPEED, 11.375, 0, 0, 10);
-            driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
-            intake.startPlaceCone(1);
-            while(intake.getCurrentState() != Intake.State.IDLE){}
-            driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
-            driveTrain.translate(SPEED, -11.375, 0, 0, 10);
-            driveTrain.translate(SPEED, 0, 22.75, 0, 10);
             driveTrain.translate(SPEED, -22.75, 0, 0, 10);
-        } else if (parkSpace == 2) {
-            driveTrain.translate(SPEED, 11.375, 0, 0, 10);
-            driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
-            intake.startPlaceCone(1);
-            while(intake.getCurrentState() != Intake.State.IDLE){}
-            driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
-            driveTrain.translate(SPEED, -11.375, 0, 0, 10);
-            driveTrain.translate(SPEED, 0, 22.75, 0, 10);
         } else if (parkSpace == 3) {
-            driveTrain.translate(SPEED, 11.375, 0, 0, 10);
-            driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
-            intake.startPlaceCone(1);
-            while(intake.getCurrentState() != Intake.State.IDLE){}
-            driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
-            driveTrain.translate(SPEED, -11.375, 0, 0, 10);
-            driveTrain.translate(SPEED, 0, 22.75, 0, 10);
             driveTrain.translate(SPEED, 22.75, 0, 0, 10);
         }
-
     }
 
     /**

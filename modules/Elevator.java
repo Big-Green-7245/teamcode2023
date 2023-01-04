@@ -25,10 +25,8 @@ public class Elevator implements Modulable, Tickable {
         elevatorBtn = hardwareMap.get(RevTouchSensor.class, "elevatorBtn"); // Control Hub 1
         elevator.setDirection(DcMotor.Direction.REVERSE);
         elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        elevator.setTargetPosition(10);
-        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**
