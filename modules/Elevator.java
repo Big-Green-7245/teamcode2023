@@ -21,8 +21,8 @@ public class Elevator implements Modulable, Tickable {
     @Override
     public void init(HardwareMap hardwareMap) {
         hwMap = hardwareMap;
-        elevator = (DcMotorEx) hardwareMap.get(DcMotor.class, "linearSlide");
-        elevatorBtn = hardwareMap.get(RevTouchSensor.class, "elevatorBtn");
+        elevator = (DcMotorEx) hardwareMap.get(DcMotor.class, "linearSlide"); // Expansion Hub 0
+        elevatorBtn = hardwareMap.get(RevTouchSensor.class, "elevatorBtn"); // Control Hub 1
         elevator.setDirection(DcMotor.Direction.REVERSE);
         elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

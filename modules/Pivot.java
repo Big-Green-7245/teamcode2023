@@ -33,9 +33,9 @@ public class Pivot implements Modulable, Tickable {
     @Override
     public void init(HardwareMap hardwareMap) {
         hwMap = hardwareMap;
-        rotation = hardwareMap.get(DcMotor.class, "rotation");
-        intakeButton = hardwareMap.get(TouchSensor.class, "intakeBtn");
-        placeButton = hardwareMap.get(TouchSensor.class, "placeBtn");
+        rotation = hardwareMap.get(DcMotor.class, "rotation"); // Expansion Hub 1
+        intakeButton = hardwareMap.get(TouchSensor.class, "intakeBtn"); // Expansion Hub 1
+        placeButton = hardwareMap.get(TouchSensor.class, "placeBtn"); // Expansion Hub 3
         rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         setIntakeOrientation(INTAKE_ORIENTATION);
     }

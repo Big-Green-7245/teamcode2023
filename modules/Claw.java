@@ -17,7 +17,7 @@ public class Claw implements Modulable {
     public void init(HardwareMap map) {
         hwMap = map;
 
-        claw = map.get(Servo.class, "claw");
+        claw = map.get(Servo.class, "claw"); // Control Hub 5
 
         // Additional Initializations
     }
