@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.Intake;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
@@ -60,6 +62,18 @@ public class TeleOpCalib extends LinearOpMode {
 
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
+
+            // DriveEnc Calib
+            if (gp1.pressing(ButtonHelper.left_stick_button)){
+                driveTrain.setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                driveTrain.setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);
+                driveTrain.translate(0.4, 10, 0, 0, 10);
+            }
+            if (gp1.pressing(ButtonHelper.right_stick_button)){
+                driveTrain.setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                driveTrain.setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);
+                driveTrain.translate(0.4, 0, 10, 0, 10 );
+            }
 
             // LinearSlide Calib
             if (gp1.pressing(ButtonHelper.x))  TelemetryWrapper.setLine(3, "Level 1 is: " + intake.elevator.getEncPos());
