@@ -58,9 +58,6 @@ public class TeleOpCalib extends LinearOpMode {
             gp1.update();
             gp2.update();
 
-            // Tick the intake
-            intake.tick();
-
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
@@ -83,7 +80,7 @@ public class TeleOpCalib extends LinearOpMode {
 //            else if (gp1.pressing(ButtonHelper.y))  TelemetryWrapper.setLine(6, "Level 4 is: " + intake.elevator.getEncPos());
 
             // Move LinearSlide
-            intake.elevator.move(gp1.pressed(ButtonHelper.dpad_up), gp1.pressed(ButtonHelper.dpad_up) ? 1 : gp1.pressed(ButtonHelper.dpad_down) ? -0.7 : 0);
+            intake.elevator.moveUsingEncoder(gp1.pressed(ButtonHelper.dpad_up) ? 1 : gp1.pressed(ButtonHelper.dpad_down) ? -0.7 : 0);
             TelemetryWrapper.setLine(15, "Elevator Power:" + intake.elevator.getPower());
 
             // Rotate
@@ -97,9 +94,6 @@ public class TeleOpCalib extends LinearOpMode {
             TelemetryWrapper.setLine(12, "LinearSlide Encoder: " + intake.elevator.getEncPos());
             if (gp1.pressing(ButtonHelper.a)) {
                 intake.claw.toggleClaw();
-            }
-            if (gp1.pressing(ButtonHelper.x)) {
-                intake.elevator.moveToGround();
             }
 
             // Display data for telemetry

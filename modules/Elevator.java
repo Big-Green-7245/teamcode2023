@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Elevator implements Modulable, Tickable {
@@ -18,13 +17,10 @@ public class Elevator implements Modulable, Tickable {
 
     public TouchSensor elevatorBtn;
 
-    private boolean isGrounding;
-
 
     @Override
     public void init(HardwareMap hardwareMap) {
         hwMap = hardwareMap;
-        isGrounding = false;
         elevator = (DcMotorEx) hardwareMap.get(DcMotor.class, "linearSlide"); // Expansion Hub 0
         elevatorBtn = hardwareMap.get(RevTouchSensor.class, "elevatorBtn"); // Control Hub 1
         elevator.setDirection(DcMotor.Direction.REVERSE);
@@ -49,12 +45,9 @@ public class Elevator implements Modulable, Tickable {
     @Override
     public void tick() {
         if (elevatorBtn.isPressed()) {
-            isGrounding = false;
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            elevator.setTargetPosition(Math.max(elevator.getTargetPosition(), 0));
-//            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }else if (isGrounding){
-            move(-0.2);
+            elevator.setTargetPosition(Math.max(elevator.getTargetPosition(), 0));
+            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
 
@@ -67,10 +60,9 @@ public class Elevator implements Modulable, Tickable {
 //            elevator.setPower(power);
 //        }
 //    }
-    public void move(double power) {
-        elevator.setMode((DcMotor.RunMode.RUN_USING_ENCODER));
+    public void moveUsingEncoder(double power) {
+        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         elevator.setPower(power);
-
     }
 
     public void moveToPos(int position) {
@@ -80,12 +72,11 @@ public class Elevator implements Modulable, Tickable {
     }
 
     public void moveToGround() {
-
-        isGrounding = true;
+        moveToPos(-100000);
     }
 
     public boolean isAtTargetPos() {
-        return Math.abs(elevator.getTargetPosition() - elevator.getCurrentPosition()) < elevator.getTargetPositionTolerance();
+        return !elevator.isBusy();
     }
 
     public double getCurrent() {

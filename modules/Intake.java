@@ -59,9 +59,9 @@ public class Intake implements Modulable, Tickable {
      * @param level the level to place the cone at
      */
     public void startPlaceCone(int level) {
-        elevator.moveToPos(LEVELS[targetLevel]);
-        currentState = State.ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL;
         targetLevel = level;
+        elevator.moveToPos(LEVELS[targetLevel]);
+        currentState = State.ELEVATOR_MOVING_TO_PLACE_ORIENTATION;
     }
 
     @Override
@@ -75,10 +75,10 @@ public class Intake implements Modulable, Tickable {
         pivot.tick();
         elevator.tick();
         // Place the cone
-        if (currentState == State.ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL /*&& elevator.elevator.getCurrentPosition() > SAFE_ROT_LEVEL*/) {
+        if (currentState == State.ELEVATOR_MOVING_TO_PLACE_ORIENTATION && elevator.isAtTargetPos()) {
             pivot.setIntakeOrientation(Pivot.PLACE_ORIENTATION);
-            currentState = State.PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION;
-        } else if (currentState == State.PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION && pivot.isAtTargetPos() && elevator.isAtTargetPos()) {
+            currentState = State.PIVOT_MOVING_TO_PLACE_ORIENTATION;
+        } else if (currentState == State.PIVOT_MOVING_TO_PLACE_ORIENTATION && pivot.isAtTargetPos()) {
             claw.clawOpen(true);
             time = System.currentTimeMillis();
             currentState = State.OPENING_CLAW;
@@ -95,8 +95,8 @@ public class Intake implements Modulable, Tickable {
 
     public enum State {
         IDLE,
-        ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL,
-        PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION,
+        ELEVATOR_MOVING_TO_PLACE_ORIENTATION,
+        PIVOT_MOVING_TO_PLACE_ORIENTATION,
         OPENING_CLAW,
         PIVOT_MOVING_TO_INTAKE_ORIENTATION,
         ELEVATOR_MOVING_TO_GROUND
