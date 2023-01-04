@@ -25,6 +25,7 @@ public class Intake implements Modulable, Tickable {
     public Elevator elevator;
     private int targetLevel = 0;
     private PlaceState currentPlaceState = PlaceState.IDLE;
+    private long time = 0;
 
     @Override
     public void init(HardwareMap map) {
@@ -74,8 +75,9 @@ public class Intake implements Modulable, Tickable {
             currentPlaceState = PlaceState.PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION;
         } else if (currentPlaceState == PlaceState.PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION && pivot.isAtTargetPos() && elevator.isAtTargetPos()) {
             claw.clawOpen(true);
+            time = System.currentTimeMillis();
             currentPlaceState = PlaceState.OPENING_CLAW;
-        } else if (currentPlaceState == PlaceState.OPENING_CLAW && claw.isAtTargetPos()) {
+        } else if (currentPlaceState == PlaceState.OPENING_CLAW && System.currentTimeMillis() > time + 500) {
             pivot.setIntakeOrientation(Pivot.INTAKE_ORIENTATION);
             currentPlaceState = PlaceState.PIVOT_MOVING_TO_INTAKE_ORIENTATION;
         } else if (currentPlaceState == PlaceState.PIVOT_MOVING_TO_INTAKE_ORIENTATION && pivot.isAtTargetPos()) {
