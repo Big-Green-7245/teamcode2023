@@ -18,16 +18,21 @@ public class Elevator implements Modulable, Tickable {
 
     public TouchSensor elevatorBtn;
 
+    private boolean isGrounding;
+
 
     @Override
     public void init(HardwareMap hardwareMap) {
         hwMap = hardwareMap;
+        isGrounding = false;
         elevator = (DcMotorEx) hardwareMap.get(DcMotor.class, "linearSlide"); // Expansion Hub 0
         elevatorBtn = hardwareMap.get(RevTouchSensor.class, "elevatorBtn"); // Control Hub 1
         elevator.setDirection(DcMotor.Direction.REVERSE);
         elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elevator.setTargetPosition(10);
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -44,25 +49,39 @@ public class Elevator implements Modulable, Tickable {
     @Override
     public void tick() {
         if (elevatorBtn.isPressed()) {
+            isGrounding = false;
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elevator.setTargetPosition(Math.max(elevator.getTargetPosition(), 0));
+//            elevator.setTargetPosition(Math.max(elevator.getTargetPosition(), 0));
+//            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }else if (isGrounding){
+            move(-0.2);
         }
     }
 
-    public void move(boolean direction, double power) {
-        moveToPos(elevator.getCurrentPosition() + (direction ? 100 : -100));
+//    public void move(boolean direction, double power) {
+//        if (power == 0) {
+//            moveToPos(elevator.getCurrentPosition());
+//            elevator.setPower(POWER);
+//        } else {
+//            moveToPos(elevator.getCurrentPosition() + (direction ? 100 : -100));
+//            elevator.setPower(power);
+//        }
+//    }
+    public void move(double power) {
+        elevator.setMode((DcMotor.RunMode.RUN_USING_ENCODER));
         elevator.setPower(power);
+
     }
 
     public void moveToPos(int position) {
-        elevator.setTargetPosition(position);
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevator.setTargetPosition(position);
         elevator.setPower(POWER);
     }
 
     public void moveToGround() {
-        moveToPos(-100000);
+
+        isGrounding = true;
     }
 
     public boolean isAtTargetPos() {

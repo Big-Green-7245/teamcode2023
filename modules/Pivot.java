@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Pivot implements Modulable, Tickable {
     private final ElapsedTime runtime = new ElapsedTime();
 
-    private static final double POWER = 0.2;
+    private static final double POWER = 0.5;
 
     public HardwareMap hwMap;
     private DcMotor rotation;

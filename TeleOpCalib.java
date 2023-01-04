@@ -77,10 +77,10 @@ public class TeleOpCalib extends LinearOpMode {
             }
 
             // LinearSlide Calib
-            if (gp1.pressing(ButtonHelper.x))  TelemetryWrapper.setLine(3, "Level 1 is: " + intake.elevator.getEncPos());
-            else if (gp1.pressing(ButtonHelper.a))  TelemetryWrapper.setLine(4, "Level 2 is: " + intake.elevator.getEncPos());
-            else if (gp1.pressing(ButtonHelper.b))  TelemetryWrapper.setLine(5, "Level 3 is: " + intake.elevator.getEncPos());
-            else if (gp1.pressing(ButtonHelper.y))  TelemetryWrapper.setLine(6, "Level 4 is: " + intake.elevator.getEncPos());
+//            if (gp1.pressing(ButtonHelper.x))  TelemetryWrapper.setLine(3, "Level 1 is: " + intake.elevator.getEncPos());
+//            else if (gp1.pressing(ButtonHelper.a))  TelemetryWrapper.setLine(4, "Level 2 is: " + intake.elevator.getEncPos());
+//            else if (gp1.pressing(ButtonHelper.b))  TelemetryWrapper.setLine(5, "Level 3 is: " + intake.elevator.getEncPos());
+//            else if (gp1.pressing(ButtonHelper.y))  TelemetryWrapper.setLine(6, "Level 4 is: " + intake.elevator.getEncPos());
 
             // Move LinearSlide
             intake.elevator.move(gp1.pressed(ButtonHelper.dpad_up), gp1.pressed(ButtonHelper.dpad_up) ? 1 : gp1.pressed(ButtonHelper.dpad_down) ? -0.7 : 0);
@@ -95,10 +95,10 @@ public class TeleOpCalib extends LinearOpMode {
             TelemetryWrapper.setLine(10, "LinearSlide Current: " + intake.elevator.getCurrent());
             TelemetryWrapper.setLine(11, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
             TelemetryWrapper.setLine(12, "LinearSlide Encoder: " + intake.elevator.getEncPos());
-            if (gp1.pressing(ButtonHelper.left_bumper)) {
+            if (gp1.pressing(ButtonHelper.a)) {
                 intake.claw.toggleClaw();
             }
-            if (gp1.pressing(ButtonHelper.right_bumper)) {
+            if (gp1.pressing(ButtonHelper.x)) {
                 intake.elevator.moveToGround();
             }
 
