@@ -52,8 +52,6 @@ public class TeleOpTest extends LinearOpMode {
             intake.tickBeforeStart();
         }
 
-        boolean clawOpened = false;
-
         while (opModeIsActive()) {
             // Update ButtonHelper
             gp1.update();
@@ -72,28 +70,26 @@ public class TeleOpTest extends LinearOpMode {
             else if (gp1.pressing(ButtonHelper.y)) intake.startPlaceCone(3);
 
 
-            // Move the claw
             TelemetryWrapper.setLine(3, "up" + gp1.pressed(ButtonHelper.dpad_up));
             TelemetryWrapper.setLine(4, "down" + gp1.pressed(ButtonHelper.dpad_down));
             TelemetryWrapper.setLine(5, "left" + gp1.pressed(ButtonHelper.dpad_left));
             TelemetryWrapper.setLine(6, "right" + gp1.pressed(ButtonHelper.dpad_right));
-
-            TelemetryWrapper.setLine(7, "clawOpened: " + clawOpened);
 
             TelemetryWrapper.setLine(8, "CURRENTS");
             TelemetryWrapper.setLine(9, "DriveTrain Currents:" + driveTrain.getMotorCurrentsString());
             TelemetryWrapper.setLine(10, "LinearSlide Current: " + intake.elevator.getCurrent());
             TelemetryWrapper.setLine(11, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
             TelemetryWrapper.setLine(12, "LinearSlide Encoder: " + intake.elevator.getEncPos());
-            if (gp1.pressing(ButtonHelper.dpad_up)) clawOpened = !clawOpened;
-            intake.claw.clawOpen(clawOpened);
-            if(gp1.pressing(ButtonHelper.dpad_right)){
+
+            // Move the claw
+            if (gp1.pressing(ButtonHelper.dpad_up)) {
+                intake.claw.toggleClaw();
+            }
+            if (gp1.pressing(ButtonHelper.dpad_right)) {
                 intake.pivot.toggleIntakeOrientation();
             }
 
-            TelemetryWrapper.setLine(13, "Pivot: " + intake.pivot.getTargetOrientation());
-            TelemetryWrapper.setLine(14, "Intake button: " + intake.pivot.getIntakeButton().isPressed());
-            TelemetryWrapper.setLine(15, "Place button: " + intake.pivot.getPlaceButton().isPressed());
+            TelemetryWrapper.setLine(13, "Current State: " + intake.getCurrentState());
 
             // Display data for telemetry
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);

@@ -9,7 +9,7 @@ public class Intake implements Modulable, Tickable {
     private static final int MID_LEVEL_POSITION = 0;
     private static final int HIGH_LEVEL_POSITION = 0;
 
-    private static final int[] LEVELS = new int[]{0, 6343 + 3108, 11808 + 3108, 18084 + 3108};
+    private static final int[] LEVELS = new int[]{0, 9451, 14916, 21192};
     private static final int SAFE_ROT_LEVEL = 0;
 
     public static final int GROUND = 0;
@@ -24,8 +24,12 @@ public class Intake implements Modulable, Tickable {
     public Pivot pivot;
     public Elevator elevator;
     private int targetLevel = 0;
-    private PlaceState currentPlaceState = PlaceState.IDLE;
+    private State currentState = State.IDLE;
     private long time = 0;
+
+    public State getCurrentState() {
+        return currentState;
+    }
 
     @Override
     public void init(HardwareMap map) {
@@ -56,7 +60,7 @@ public class Intake implements Modulable, Tickable {
      */
     public void startPlaceCone(int level) {
         elevator.moveToPos(LEVELS[targetLevel]);
-        currentPlaceState = PlaceState.ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL;
+        currentState = State.ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL;
         targetLevel = level;
     }
 
@@ -70,25 +74,25 @@ public class Intake implements Modulable, Tickable {
     public void tick() {
         pivot.tick();
         // Place the cone
-        if (currentPlaceState == PlaceState.ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL /*&& elevator.elevator.getCurrentPosition() > SAFE_ROT_LEVEL*/) {
+        if (currentState == State.ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL /*&& elevator.elevator.getCurrentPosition() > SAFE_ROT_LEVEL*/) {
             pivot.setIntakeOrientation(Pivot.PLACE_ORIENTATION);
-            currentPlaceState = PlaceState.PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION;
-        } else if (currentPlaceState == PlaceState.PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION && pivot.isAtTargetPos() && elevator.isAtTargetPos()) {
+            currentState = State.PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION;
+        } else if (currentState == State.PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION && pivot.isAtTargetPos() && elevator.isAtTargetPos()) {
             claw.clawOpen(true);
             time = System.currentTimeMillis();
-            currentPlaceState = PlaceState.OPENING_CLAW;
-        } else if (currentPlaceState == PlaceState.OPENING_CLAW && System.currentTimeMillis() > time + 500) {
+            currentState = State.OPENING_CLAW;
+        } else if (currentState == State.OPENING_CLAW && System.currentTimeMillis() > time + 500) {
             pivot.setIntakeOrientation(Pivot.INTAKE_ORIENTATION);
-            currentPlaceState = PlaceState.PIVOT_MOVING_TO_INTAKE_ORIENTATION;
-        } else if (currentPlaceState == PlaceState.PIVOT_MOVING_TO_INTAKE_ORIENTATION && pivot.isAtTargetPos()) {
+            currentState = State.PIVOT_MOVING_TO_INTAKE_ORIENTATION;
+        } else if (currentState == State.PIVOT_MOVING_TO_INTAKE_ORIENTATION && pivot.isAtTargetPos()) {
             elevator.moveToGround();
-            currentPlaceState = PlaceState.ELEVATOR_MOVING_TO_GROUND;
-        } else if (currentPlaceState == PlaceState.ELEVATOR_MOVING_TO_GROUND && elevator.isAtTargetPos()) {
-            currentPlaceState = PlaceState.IDLE;
+            currentState = State.ELEVATOR_MOVING_TO_GROUND;
+        } else if (currentState == State.ELEVATOR_MOVING_TO_GROUND && elevator.isAtTargetPos()) {
+            currentState = State.IDLE;
         }
     }
 
-    private enum PlaceState {
+    private enum State {
         IDLE,
         ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL,
         PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION,

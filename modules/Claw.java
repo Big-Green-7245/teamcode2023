@@ -11,7 +11,7 @@ public class Claw implements Modulable {
     private final ElapsedTime runtime = new ElapsedTime();
     public HardwareMap hwMap;
     public Servo claw;
-    private boolean targetPos;
+    private boolean open;
 
     @Override
     public void init(HardwareMap map) {
@@ -23,12 +23,17 @@ public class Claw implements Modulable {
     }
 
     public void clawOpen(boolean state) {
-        targetPos = state;
-        claw.setPosition(state ? OPENED_POS : CLOSED_POS);
+        open = state;
+        startMoveClaw();
     }
 
-    public boolean isAtTargetPos() {
-        return claw.getPosition() == (targetPos ? OPENED_POS : CLOSED_POS);
+    public void toggleClaw() {
+        open = !open;
+        startMoveClaw();
+    }
+
+    private void startMoveClaw() {
+        claw.setPosition(open ? OPENED_POS : CLOSED_POS);
     }
 
     // Additional methods for functionality

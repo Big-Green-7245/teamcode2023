@@ -53,8 +53,6 @@ public class TeleOpCalib extends LinearOpMode {
         TelemetryWrapper.setLine(1, "TeleOpTest v" + programVer + "\t Press start to start >");
         waitForStart();
 
-        boolean clawOpened = false;
-
         while (opModeIsActive()) {
             // Update ButtonHelper
             gp1.update();
@@ -89,15 +87,14 @@ public class TeleOpCalib extends LinearOpMode {
             intake.pivot.move(gp1.pressed(ButtonHelper.dpad_right) ? 0.2 : gp1.pressed(ButtonHelper.dpad_left) ? -0.2 : 0);
 
 
-            TelemetryWrapper.setLine(7, "clawOpened: " + clawOpened);
-
             TelemetryWrapper.setLine(8, "CURRENTS");
             TelemetryWrapper.setLine(9, "DriveTrain Currents:" + driveTrain.getMotorCurrentsString());
             TelemetryWrapper.setLine(10, "LinearSlide Current: " + intake.elevator.getCurrent());
             TelemetryWrapper.setLine(11, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
             TelemetryWrapper.setLine(12, "LinearSlide Encoder: " + intake.elevator.getEncPos());
-            if (gp1.pressing(ButtonHelper.left_bumper)) clawOpened = !clawOpened;
-            intake.claw.clawOpen(clawOpened);
+            if (gp1.pressing(ButtonHelper.dpad_up)) {
+                intake.claw.toggleClaw();
+            }
 
             // Display data for telemetry
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);

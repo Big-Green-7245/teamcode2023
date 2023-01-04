@@ -51,10 +51,8 @@ public class Elevator implements Modulable, Tickable {
         if (elevatorBtn.isPressed()) {
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            move(0);
-        } else {
-            move(-0.2);
         }
+        elevator.setTargetPosition(0);
     }
 
     public boolean isAtTargetPos() {
@@ -70,6 +68,6 @@ public class Elevator implements Modulable, Tickable {
     }
 
     public double getEncPos() {
-        return (elevator.getCurrentPosition());
+        return elevator.getCurrentPosition();
     }
 }
