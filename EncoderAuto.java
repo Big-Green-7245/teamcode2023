@@ -48,14 +48,14 @@ public class EncoderAuto extends LinearOpMode {
      * Detection engine.
      */
     private TFObjectDetector tfod;
-
-    public void init(HardwareMap hwMap){
+    @Override
+    public void runOpMode() {
         TelemetryWrapper.init(telemetry, 16);
         TelemetryWrapper.setLine(1, "Autonomous v" + programVer + "\t Initializing");
         driveTrain = new DriveTrain();
-        driveTrain.init(hwMap);
+        driveTrain.init(hardwareMap);
         intake = new Intake();
-        intake.init(hwMap);
+        intake.init(hardwareMap);
         initVuforia();
         initTfod();
         if (tfod != null) {
@@ -66,16 +66,15 @@ public class EncoderAuto extends LinearOpMode {
             parkSpace = detectLabel();
             TelemetryWrapper.setLine(3, "Park Space: " + parkSpace);
         }
-    }
-    @Override
-    public void runOpMode() {
+        waitForStart();
         if (parkSpace == 1) {
-            driveTrain.translate(SPEED, -22.75 - 11.375, 0, 0, 10);
+            driveTrain.translate(SPEED, 11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
             intake.startPlaceCone(1);
             driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
-            driveTrain.translate(SPEED, 11.375, 0, 0, 10);
+            driveTrain.translate(SPEED, -11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 22.75, 0, 10);
+            driveTrain.translate(SPEED, -22.75, 0, 0, 10);
         } else if (parkSpace == 2) {
             driveTrain.translate(SPEED, 11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
