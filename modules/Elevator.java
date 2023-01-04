@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Elevator implements Modulable, Tickable {
@@ -34,11 +35,24 @@ public class Elevator implements Modulable, Tickable {
      */
     @Override
     public void tickBeforeStart() {
-        moveToGround();
+        tick();
     }
 
-    public void move(double power) {
-        elevator.setPower(Math.abs(power) > 0.1 ? power : 0);
+    /**
+     * Check if the slider is on the ground. If it is, reset the encoder.
+     */
+    @Override
+    public void tick() {
+        if (elevatorBtn.isPressed()) {
+            elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            elevator.setTargetPosition(Math.max(elevator.getTargetPosition(), 0));
+        }
+    }
+
+    public void move(boolean direction, double power) {
+        moveToPos(elevator.getCurrentPosition() + (direction ? 100 : -100));
+        elevator.setPower(power);
     }
 
     public void moveToPos(int position) {
@@ -48,11 +62,7 @@ public class Elevator implements Modulable, Tickable {
     }
 
     public void moveToGround() {
-        if (elevatorBtn.isPressed()) {
-            elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        elevator.setTargetPosition(0);
+        moveToPos(-100000);
     }
 
     public boolean isAtTargetPos() {

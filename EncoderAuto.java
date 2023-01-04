@@ -29,6 +29,7 @@ public class EncoderAuto extends LinearOpMode {
             driveTrain.translate(SPEED, -22.75 - 11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
             intake.startPlaceCone(1);
+            while(intake.getCurrentState() != Intake.State.IDLE){}
             driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
             driveTrain.translate(SPEED, 11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 22.75, 0, 10);
@@ -36,6 +37,7 @@ public class EncoderAuto extends LinearOpMode {
             driveTrain.translate(SPEED, 11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
             intake.startPlaceCone(1);
+            while(intake.getCurrentState() != Intake.State.IDLE){}
             driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
             driveTrain.translate(SPEED, -11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 22.75, 0, 10);
@@ -43,6 +45,7 @@ public class EncoderAuto extends LinearOpMode {
             driveTrain.translate(SPEED, 11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
             intake.startPlaceCone(1);
+            while(intake.getCurrentState() != Intake.State.IDLE){}
             driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
             driveTrain.translate(SPEED, -11.375, 0, 0, 10);
             driveTrain.translate(SPEED, 0, 22.75, 0, 10);

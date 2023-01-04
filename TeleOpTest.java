@@ -48,6 +48,9 @@ public class TeleOpTest extends LinearOpMode {
 
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOpTest v" + programVer + "\t Press start to start >");
+
+        // Move elevator and pivot to starting position
+        intake.elevator.moveToGround();
         while (!isStarted()) {
             intake.tickBeforeStart();
         }

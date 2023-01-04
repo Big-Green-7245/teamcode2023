@@ -73,6 +73,7 @@ public class Intake implements Modulable, Tickable {
     @Override
     public void tick() {
         pivot.tick();
+        elevator.tick();
         // Place the cone
         if (currentState == State.ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL /*&& elevator.elevator.getCurrentPosition() > SAFE_ROT_LEVEL*/) {
             pivot.setIntakeOrientation(Pivot.PLACE_ORIENTATION);
@@ -92,7 +93,7 @@ public class Intake implements Modulable, Tickable {
         }
     }
 
-    private enum State {
+    public enum State {
         IDLE,
         ELEVATOR_MOVING_TO_SAFE_ROT_LEVEL,
         PIVOT_AND_ELEVATOR_MOVING_TO_PLACE_ORIENTATION,

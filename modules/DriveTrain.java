@@ -11,8 +11,8 @@ public class DriveTrain implements Modulable
 {
     private ElapsedTime runtime = new ElapsedTime();
 
-    final double XY_CORRECTION = 1;
-    final double COUNTS_PER_INCH = 50;
+    final double XY_CORRECTION = 3.06/2.85;
+    final double COUNTS_PER_INCH = 50*2.54/ 3.06;
     final double COUNTS_PER_DEGREE = 1;
 
     public HardwareMap hwMap;
