@@ -5,18 +5,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Elevator implements Modulable, Tickable {
     private static final double POWER = 0.7;
-    private final ElapsedTime runtime = new ElapsedTime();
 
     public HardwareMap hwMap;
-    public DcMotorEx elevator;
-
-    public TouchSensor elevatorBtn;
-
+    private DcMotorEx elevator;
+    private TouchSensor elevatorBtn;
 
     @Override
     public void init(HardwareMap hardwareMap) {
@@ -29,16 +25,27 @@ public class Elevator implements Modulable, Tickable {
         elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    /**
-     * Moves the elevator down if it is not in the lowest position.
-     */
-    @Override
-    public void tickBeforeStart() {
-        tick();
+    public void moveUsingEncoder(double power) {
+        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elevator.setPower(power);
+    }
+
+    public void startMoveToPos(int position) {
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevator.setTargetPosition(position);
+        elevator.setPower(POWER);
     }
 
     /**
-     * Check if the slider is on the ground. If it is, reset the encoder.
+     * Starts to move the elevator to the ground position.
+     * Remember to call {@link #tick()} to stop the elevator when it reaches the ground.
+     */
+    public void startMoveToGround() {
+        startMoveToPos(-100000);
+    }
+
+    /**
+     * Checks if the slider is pressing the button. If it is, reset the encoder.
      */
     @Override
     public void tick() {
@@ -47,30 +54,6 @@ public class Elevator implements Modulable, Tickable {
             elevator.setTargetPosition(Math.max(elevator.getTargetPosition(), 0));
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-    }
-
-//    public void move(boolean direction, double power) {
-//        if (power == 0) {
-//            moveToPos(elevator.getCurrentPosition());
-//            elevator.setPower(POWER);
-//        } else {
-//            moveToPos(elevator.getCurrentPosition() + (direction ? 100 : -100));
-//            elevator.setPower(power);
-//        }
-//    }
-    public void moveUsingEncoder(double power) {
-        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        elevator.setPower(power);
-    }
-
-    public void moveToPos(int position) {
-        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elevator.setTargetPosition(position);
-        elevator.setPower(POWER);
-    }
-
-    public void moveToGround() {
-        moveToPos(-100000);
     }
 
     public boolean isAtTargetPos() {
@@ -85,6 +68,11 @@ public class Elevator implements Modulable, Tickable {
         return elevator.getPower();
     }
 
+    /**
+     * Only works when {@link #elevator} is in {@link DcMotor.RunMode#RUN_USING_ENCODER}!.
+     * @return the current reading of the encoder for this motor
+     * @see DcMotor#getCurrentPosition()
+     */
     public double getEncPos() {
         return elevator.getCurrentPosition();
     }

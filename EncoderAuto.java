@@ -15,10 +15,11 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import java.util.List;
 
+@SuppressWarnings("FieldCanBeLocal")
 @Autonomous(name = "EncoderAuto", group = "opmode")
 public class EncoderAuto extends LinearOpMode {
     // Define attributes
-    final String programVer = "1.0";
+    private final String programVer = "1.0";
     private static final double SPEED = 0.5;
     private int parkSpace = 0;
     private DriveTrain driveTrain;
@@ -27,26 +28,20 @@ public class EncoderAuto extends LinearOpMode {
     //Declare model for object detection
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/signal.tflite";
 
-    private static final String[] LABELS = {
-            "1 Blue",
-            "2 Green",
-            "3 Red"
-    };
+    private static final String[] LABELS = {"1 Blue", "2 Green", "3 Red"};
 
-    private static final String VUFORIA_KEY =
-            "AQIK9eP/////AAABmSfuIJd+0UVOt6G7lBD1wM8kaTvNDhfhZpIcg4Pa/wr6OIq8nARnVDLguWK5ae82T2dSvfb8NkfNPauXPlSmvwsWWq7zq+BfO5BfhaOsn3SNZKpBGKm8i3KMBnp48rD6oz/nQ8FATjUNv7j0W/CdhgWbete4GpVS7FC0Cr+6/iJGF1mqCEsCgiWx02sLd5NFkYqp+uKh5uiEtA/CC3T86hR/khTaX3BsnnXG9hUGh0t+lwxzL9ontudjc1ldRIhylOGnPUB0v6ht4R/X9iprB9yc1Je0D0e/Ra8ysLGROAxf8SAbuotjU2J7qmam6en3b9X0A0FrVMX1zI7W2vAzmJgrEaXZ+NmjgvsKGjI16/Qe";
+    private static final String VUFORIA_KEY = "AQIK9eP/////AAABmSfuIJd+0UVOt6G7lBD1wM8kaTvNDhfhZpIcg4Pa/wr6OIq8nARnVDLguWK5ae82T2dSvfb8NkfNPauXPlSmvwsWWq7zq+BfO5BfhaOsn3SNZKpBGKm8i3KMBnp48rD6oz/nQ8FATjUNv7j0W/CdhgWbete4GpVS7FC0Cr+6/iJGF1mqCEsCgiWx02sLd5NFkYqp+uKh5uiEtA/CC3T86hR/khTaX3BsnnXG9hUGh0t+lwxzL9ontudjc1ldRIhylOGnPUB0v6ht4R/X9iprB9yc1Je0D0e/Ra8ysLGROAxf8SAbuotjU2J7qmam6en3b9X0A0FrVMX1zI7W2vAzmJgrEaXZ+NmjgvsKGjI16/Qe";
 
     /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
+     * The instance of the Vuforia localization engine.
      */
     private VuforiaLocalizer vuforia;
 
     /**
-     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
-     * Detection engine.
+     * The instance of the TensorFlow Object Detection engine.
      */
     private TFObjectDetector tfod;
+
     @Override
     public void runOpMode() {
         TelemetryWrapper.init(telemetry, 16);
@@ -69,8 +64,9 @@ public class EncoderAuto extends LinearOpMode {
         driveTrain.translate(SPEED, 0, 45.5, 0, 10);
         driveTrain.translate(SPEED, 11.375, 0, 0, 10);
         driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
-        intake.startPlaceCone(1);
-        while (intake.getCurrentState() != Intake.State.IDLE) {
+        intake.startPlaceCone(Intake.HIGH);
+        while (intake.getCurrentState().isNotIdle()) {
+            sleep(10);
         }
         driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
         driveTrain.translate(SPEED, -11.375, 0, 0, 10);
@@ -102,8 +98,7 @@ public class EncoderAuto extends LinearOpMode {
      * Initialize the TensorFlow Object Detection engine.
      */
     private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.75f;
         tfodParameters.isModelTensorFlow2 = true;
@@ -116,7 +111,8 @@ public class EncoderAuto extends LinearOpMode {
         tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
-    private int detectLabel(){
+    private int detectLabel() {
+        int parkSpace = 2;
         if (tfod != null) {
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
@@ -124,16 +120,13 @@ public class EncoderAuto extends LinearOpMode {
                 if (updatedRecognitions.size() == 1) {
                     Recognition recognition = updatedRecognitions.get(0);
                     TelemetryWrapper.setLine(2, "Detected: " + recognition.getLabel());
-                    if (recognition.getLabel().equals("1 Blue")) {
-                        parkSpace = 2;
-                    } else if (recognition.getLabel().equals("2 Green")) {
+                    if (recognition.getLabel().equals("1 Green")) {
                         parkSpace = 1;
                     } else if (recognition.getLabel().equals("3 Red")) {
                         parkSpace = 3;
                     }
-                }else{
+                } else {
                     TelemetryWrapper.setLine(2, "Detected: None");
-                    parkSpace = 2;
                 }
             }
         }

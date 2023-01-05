@@ -3,68 +3,48 @@ package org.firstinspires.ftc.teamcode.modules;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Pivot implements Modulable, Tickable {
-    private final ElapsedTime runtime = new ElapsedTime();
-
     private static final double POWER = 0.3;
-
-    public HardwareMap hwMap;
+    public static final boolean INTAKE_ORIENTATION = false;
+    public static final boolean PLACE_ORIENTATION = true;
     private DcMotor rotation;
-
     private TouchSensor intakeButton;
     private TouchSensor placeButton;
     /**
      * The target orientation that the claw is currently moving to.
      */
     private boolean targetOrientation;
-    public static final boolean INTAKE_ORIENTATION = false;
-    public static final boolean PLACE_ORIENTATION = true;
-
-    public TouchSensor getIntakeButton() {
-        return intakeButton;
-    }
-
-    public TouchSensor getPlaceButton() {
-        return placeButton;
-    }
 
     @Override
     public void init(HardwareMap hardwareMap) {
-        hwMap = hardwareMap;
         rotation = hardwareMap.get(DcMotor.class, "rotation"); // Expansion Hub 1
         intakeButton = hardwareMap.get(TouchSensor.class, "intakeBtn"); // Expansion Hub 1
         placeButton = hardwareMap.get(TouchSensor.class, "placeBtn"); // Expansion Hub 3
         rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        setIntakeOrientation(INTAKE_ORIENTATION);
+        setTargetOrientation(INTAKE_ORIENTATION);
     }
 
     public void move(double power) {
         rotation.setPower(power);
     }
 
-    public boolean getTargetOrientation() {
-        return targetOrientation;
-    }
-
     /**
-     * @param orientation whether to be at intake orientation
+     * @param orientation whether to be at intake orientation, use {@link #INTAKE_ORIENTATION} or {@link #PLACE_ORIENTATION}
      */
-    public void setIntakeOrientation(boolean orientation) {
+    public void setTargetOrientation(boolean orientation) {
         targetOrientation = orientation;
     }
 
     /**
-     * Toggles the intake orientation.
+     * Toggles the target orientation.
      */
-    public void toggleIntakeOrientation() {
+    public void toggleTargetOrientation() {
         targetOrientation = !targetOrientation;
     }
 
-    @Override
-    public void tickBeforeStart() {
-        tick();
+    public boolean isAtTargetPos() {
+        return (targetOrientation && placeButton.isPressed()) || (!targetOrientation && intakeButton.isPressed());
     }
 
     /**
@@ -78,9 +58,5 @@ public class Pivot implements Modulable, Tickable {
         } else {
             move(0);
         }
-    }
-
-    public boolean isAtTargetPos() {
-        return (targetOrientation && placeButton.isPressed()) || (!targetOrientation && intakeButton.isPressed());
     }
 }

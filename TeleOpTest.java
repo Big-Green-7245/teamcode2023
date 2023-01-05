@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-// Standard Lib
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
@@ -11,19 +9,17 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import java.util.Arrays;
 
+@SuppressWarnings("FieldCanBeLocal")
 @TeleOp(name = "TeleOpTest", group = "opmode")
 public class TeleOpTest extends LinearOpMode {
     // Define attributes
-    final String programVer = "1.6";
-    final double speedMultiplier = 0.75;
+    private final String programVer = "1.6";
+    private final double speedMultiplier = 0.75;
 
     // Declare modules
-    DriveTrain driveTrain;
-    ButtonHelper gp1, gp2;
-//    Elevator linearSlide;
-//    Pivot rotation;
-//    Claw coneClaw;
-    Intake intake;
+    private ButtonHelper gp1, gp2;
+    private DriveTrain driveTrain;
+    private Intake intake;
 
 
     @Override
@@ -33,24 +29,18 @@ public class TeleOpTest extends LinearOpMode {
         TelemetryWrapper.setLine(1, "TeleOpTest v" + programVer + "\t Initializing");
 
         // Robot modules initialization
-        driveTrain = new DriveTrain();
         gp1 = new ButtonHelper(gamepad1);
         gp2 = new ButtonHelper(gamepad2);
-//        linearSlide = new Elevator();
-//        rotation = new Pivot();
-//        coneClaw = new Claw();
+        driveTrain = new DriveTrain();
         intake = new Intake();
         intake.init(hardwareMap);
         driveTrain.init(hardwareMap);
-//        linearSlide.init(hardwareMap);
-//        rotation.init(hardwareMap);
-//        coneClaw.init(hardwareMap);
 
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOpTest v" + programVer + "\t Press start to start >");
 
-        // Move elevator and pivot to starting position
-        intake.elevator.moveToGround();
+        // Move elevator and pivot to starting position while waiting for start
+        intake.elevator.startMoveToGround();
         while (!isStarted()) {
             intake.tickBeforeStart();
         }
@@ -67,11 +57,22 @@ public class TeleOpTest extends LinearOpMode {
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
             // LinearSlide movement
-            if (gp1.pressing(ButtonHelper.x)) intake.startPlaceCone(0);
-            else if (gp1.pressing(ButtonHelper.a)) intake.startPlaceCone(1);
-            else if (gp1.pressing(ButtonHelper.b)) intake.startPlaceCone(2);
-            else if (gp1.pressing(ButtonHelper.y)) intake.startPlaceCone(3);
+            if (gp1.pressing(ButtonHelper.x)) intake.startPlaceCone(Intake.GROUND);
+            else if (gp1.pressing(ButtonHelper.a)) intake.startPlaceCone(Intake.LOW);
+            else if (gp1.pressing(ButtonHelper.b)) intake.startPlaceCone(Intake.MID);
+            else if (gp1.pressing(ButtonHelper.y)) intake.startPlaceCone(Intake.HIGH);
 
+            // Move the claw
+            if (gp1.pressing(ButtonHelper.dpad_up)) {
+                intake.toggleClaw();
+            }
+            if (gp1.pressing(ButtonHelper.dpad_right)) {
+                intake.togglePivot();
+            }
+
+            // Update Telemetry
+            TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
+            TelemetryWrapper.setLine(2, "Other info...");
 
             TelemetryWrapper.setLine(3, "up" + gp1.pressed(ButtonHelper.dpad_up));
             TelemetryWrapper.setLine(4, "down" + gp1.pressed(ButtonHelper.dpad_down));
@@ -84,19 +85,7 @@ public class TeleOpTest extends LinearOpMode {
             TelemetryWrapper.setLine(11, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
             TelemetryWrapper.setLine(12, "LinearSlide Encoder: " + intake.elevator.getEncPos());
 
-            // Move the claw
-            if (gp1.pressing(ButtonHelper.dpad_up)) {
-                intake.claw.toggleClaw();
-            }
-            if (gp1.pressing(ButtonHelper.dpad_right)) {
-                intake.pivot.toggleIntakeOrientation();
-            }
-
             TelemetryWrapper.setLine(13, "Current State: " + intake.getCurrentState());
-
-            // Display data for telemetry
-            TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
-            TelemetryWrapper.setLine(2, "Other info...");
         }
     }
 }

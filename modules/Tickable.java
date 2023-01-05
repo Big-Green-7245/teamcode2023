@@ -8,6 +8,7 @@ public interface Tickable {
      * Called after initialization is complete and before start is pressed.
      */
     default void tickBeforeStart() {
+        tick();
     }
 
     /**
