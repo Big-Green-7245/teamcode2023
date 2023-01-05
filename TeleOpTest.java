@@ -33,8 +33,8 @@ public class TeleOpTest extends LinearOpMode {
         gp2 = new ButtonHelper(gamepad2);
         driveTrain = new DriveTrain();
         intake = new Intake();
-        intake.init(hardwareMap);
         driveTrain.init(hardwareMap);
+        intake.init(hardwareMap);
 
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOpTest v" + programVer + "\t Press start to start >");
@@ -66,8 +66,11 @@ public class TeleOpTest extends LinearOpMode {
             if (gp1.pressing(ButtonHelper.dpad_up)) {
                 intake.toggleClaw();
             }
-            if (gp1.pressing(ButtonHelper.dpad_right)) {
+            if (gp1.pressing(ButtonHelper.dpad_left)) {
                 intake.togglePivot();
+            }
+            if(gp1.pressing(ButtonHelper.dpad_right)){
+                intake.confirmPlacePosition();
             }
 
             // Update Telemetry
@@ -83,8 +86,8 @@ public class TeleOpTest extends LinearOpMode {
             TelemetryWrapper.setLine(9, "DriveTrain Currents:" + driveTrain.getMotorCurrentsString());
             TelemetryWrapper.setLine(10, "LinearSlide Current: " + intake.elevator.getCurrent());
             TelemetryWrapper.setLine(11, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
-            TelemetryWrapper.setLine(12, "LinearSlide Encoder: " + intake.elevator.getEncPos());
-
+            TelemetryWrapper.setLine(12, "LinearSlide EncoderTarget: " + intake.elevator.getCurrentTarget());
+            TelemetryWrapper.setLine(14, "LinearSlide Encoder: " + intake.elevator.getEncPos());
             TelemetryWrapper.setLine(13, "Current State: " + intake.getCurrentState());
         }
     }

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Elevator implements Modulable, Tickable {
-    private static final double POWER = 0.7;
+    private static final double POWER = 1;
 
     public HardwareMap hwMap;
     private DcMotorEx elevator;
@@ -31,14 +31,15 @@ public class Elevator implements Modulable, Tickable {
     }
 
     public void startMoveToPos(int position) {
-        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevator.setTargetPosition(position);
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevator.setPower(POWER);
     }
 
     /**
      * Starts to move the elevator to the ground position.
-     * Remember to call {@link #tick()} to stop the elevator when it reaches the ground.
+     * ONLY call this function once for every move to ground!
+     * YOU MUST call {@link #tick()} in a loop to stop the elevator when it reaches the ground.
      */
     public void startMoveToGround() {
         startMoveToPos(-100000);
@@ -50,6 +51,7 @@ public class Elevator implements Modulable, Tickable {
     @Override
     public void tick() {
         if (elevatorBtn.isPressed()) {
+            elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             elevator.setTargetPosition(Math.max(elevator.getTargetPosition(), 0));
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -67,6 +69,8 @@ public class Elevator implements Modulable, Tickable {
     public double getPower() {
         return elevator.getPower();
     }
+
+    public double getCurrentTarget(){return elevator.getTargetPosition();}
 
     /**
      * Only works when {@link #elevator} is in {@link DcMotor.RunMode#RUN_USING_ENCODER}!.

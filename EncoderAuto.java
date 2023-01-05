@@ -21,7 +21,7 @@ public class EncoderAuto extends LinearOpMode {
     // Define attributes
     private final String programVer = "1.0";
     private static final double SPEED = 0.5;
-    private int parkSpace = 0;
+    private int parkSpace = 2;
     private DriveTrain driveTrain;
     private Intake intake;
 
@@ -56,17 +56,36 @@ public class EncoderAuto extends LinearOpMode {
             tfod.activate();
             tfod.setZoom(1.0, 16.0 / 9.0);
         }
+
+        // Wait for start
+        intake.elevator.startMoveToGround();
         while (!this.isStarted()) {
-            parkSpace = detectLabel();
+            int newLabel = detectLabel();
+            if (newLabel != 0) {
+                parkSpace = newLabel;
+            }
+            intake.tickBeforeStart();
             TelemetryWrapper.setLine(3, "Park Space: " + parkSpace);
+            TelemetryWrapper.setLine(4, "LinearSlide EncoderTarget: " + intake.elevator.getCurrentTarget());
+            TelemetryWrapper.setLine(5, "LinearSlide Encoder: " + intake.elevator.getEncPos());
         }
-        waitForStart();
-        driveTrain.translate(SPEED, 0, 45.5, 0, 10);
-        driveTrain.translate(SPEED, 11.375, 0, 0, 10);
-        driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
+
+        intake.setClawOpen(false);
+        sleep(200);
         intake.startPlaceCone(Intake.HIGH);
+        driveTrain.translate(SPEED, 0, 55, 0, 10);
+        driveTrain.translate(SPEED, 11, 0, 0, 10);
+        while (intake.getCurrentState() != Intake.State.WAITING_FOR_PLACE_INPUT) {
+            TelemetryWrapper.setLine(4, "LinearSlide EncoderTarget: " + intake.elevator.getCurrentTarget());
+            TelemetryWrapper.setLine(5, "LinearSlide Encoder: " + intake.elevator.getEncPos());
+            intake.tick();
+        }
+        driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
+        intake.confirmPlacePosition();
         while (intake.getCurrentState().isNotIdle()) {
-            sleep(10);
+            TelemetryWrapper.setLine(4, "LinearSlide EncoderTarget: " + intake.elevator.getCurrentTarget());
+            TelemetryWrapper.setLine(5, "LinearSlide Encoder: " + intake.elevator.getEncPos());
+            intake.tick();
         }
         driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
         driveTrain.translate(SPEED, -11.375, 0, 0, 10);
@@ -112,7 +131,7 @@ public class EncoderAuto extends LinearOpMode {
     }
 
     private int detectLabel() {
-        int parkSpace = 2;
+        int detectedLabel = 0;
         if (tfod != null) {
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
@@ -120,16 +139,18 @@ public class EncoderAuto extends LinearOpMode {
                 if (updatedRecognitions.size() == 1) {
                     Recognition recognition = updatedRecognitions.get(0);
                     TelemetryWrapper.setLine(2, "Detected: " + recognition.getLabel());
-                    if (recognition.getLabel().equals("1 Green")) {
-                        parkSpace = 1;
+                    if (recognition.getLabel().equals("2 Green")) {
+                        detectedLabel = 1;
+                    } else if (recognition.getLabel().equals("1 Blue")) {
+                        detectedLabel = 2;
                     } else if (recognition.getLabel().equals("3 Red")) {
-                        parkSpace = 3;
+                        detectedLabel = 3;
                     }
                 } else {
                     TelemetryWrapper.setLine(2, "Detected: None");
                 }
             }
         }
-        return parkSpace;
+        return detectedLabel;
     }
 }

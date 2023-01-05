@@ -17,10 +17,10 @@ public class Claw implements Modulable {
     /**
      * Makes the claw start to move towards the specified position.
      *
-     * @param state open or close the claw
+     * @param open open or close the claw
      */
-    public void setClawOpen(boolean state) {
-        open = state;
+    public void setClawOpen(boolean open) {
+        this.open = open;
         startMoveClaw();
     }
 
