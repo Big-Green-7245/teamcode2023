@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 // Standard Lib
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -82,25 +83,26 @@ public class EncoderAuto extends LinearOpMode {
         sleep(500);
         intake.startPlaceCone(Intake.HIGH, true);
         driveTrain.translate(SPEED, 0, 55, 0, 10);
-        driveTrain.translate(SPEED, sideOfField ? -11 : 11, 0, 0, 10);
+        driveTrain.translate(SPEED, sideOfField ? -16 : 9.5, 0, 0, 10);
         while (intake.getCurrentState() != Intake.State.WAITING_FOR_PLACE_INPUT) {
             TelemetryWrapper.setLine(4, "LinearSlide EncoderTarget: " + intake.elevator.getCurrentTarget());
             TelemetryWrapper.setLine(5, "LinearSlide Encoder: " + intake.elevator.getEncPos());
             intake.tick();
         }
-        driveTrain.translate(SPEED, 0, 11.375 / 3, 0, 10);
+        driveTrain.translate(SPEED, 0, 4.5, 0, 10);
         intake.confirmPlacePosition();
+        sleep(1000);
+        driveTrain.translate(SPEED, 0, -4.5, 0, 10);
         while (intake.getCurrentState().isNotIdle()) {
             TelemetryWrapper.setLine(4, "LinearSlide EncoderTarget: " + intake.elevator.getCurrentTarget());
             TelemetryWrapper.setLine(5, "LinearSlide Encoder: " + intake.elevator.getEncPos());
             intake.tick();
         }
-        driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
-        driveTrain.translate(SPEED, sideOfField ? 11 : -11, 0, 0, 10);
+        driveTrain.translate(SPEED, sideOfField ? 16 : -9.5, 0, 0, 10);
         if (parkSpace == 1) {
-            driveTrain.translate(SPEED, -22.75, 0, 0, 10);
+            driveTrain.translate(SPEED, -24, 0, 0, 10);
         } else if (parkSpace == 3) {
-            driveTrain.translate(SPEED, 22.75, 0, 0, 10);
+            driveTrain.translate(SPEED, 24, 0, 0, 10);
         }
     }
 
