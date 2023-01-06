@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.modules;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake implements Modulable, Tickable {
-    private static final int[] LEVELS = new int[]{0, 9451, 14916, 21000};
+    private static final int[] LEVELS = new int[]{0, 9451, 14916, 21200};
     public static final int GROUND = 0;
     public static final int LOW = 1;
     public static final int MID = 2;

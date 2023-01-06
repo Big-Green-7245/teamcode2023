@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 // Standard Lib
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -16,12 +15,17 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")
-@Autonomous(name = "EncoderAuto", group = "opmode")
 public class EncoderAuto extends LinearOpMode {
     // Define attributes
     private final String programVer = "1.0";
     private static final double SPEED = 0.5;
+    protected static final boolean LEFT = false;
+    protected static final boolean RIGHT = true;
     private int parkSpace = 2;
+    /**
+     * Whether the robot is on the left or right side of the alliance station.
+     */
+    private final boolean sideOfField;
     private DriveTrain driveTrain;
     private Intake intake;
 
@@ -41,6 +45,10 @@ public class EncoderAuto extends LinearOpMode {
      * The instance of the TensorFlow Object Detection engine.
      */
     private TFObjectDetector tfod;
+
+    public EncoderAuto(boolean sideOfField) {
+        this.sideOfField = sideOfField;
+    }
 
     @Override
     public void runOpMode() {
@@ -71,10 +79,10 @@ public class EncoderAuto extends LinearOpMode {
         }
 
         intake.setClawOpen(false);
-        sleep(200);
-        intake.startPlaceCone(Intake.HIGH);
+        sleep(500);
+        intake.startPlaceCone(Intake.HIGH, true);
         driveTrain.translate(SPEED, 0, 55, 0, 10);
-        driveTrain.translate(SPEED, 11, 0, 0, 10);
+        driveTrain.translate(SPEED, sideOfField ? -11 : 11, 0, 0, 10);
         while (intake.getCurrentState() != Intake.State.WAITING_FOR_PLACE_INPUT) {
             TelemetryWrapper.setLine(4, "LinearSlide EncoderTarget: " + intake.elevator.getCurrentTarget());
             TelemetryWrapper.setLine(5, "LinearSlide Encoder: " + intake.elevator.getEncPos());
@@ -88,8 +96,7 @@ public class EncoderAuto extends LinearOpMode {
             intake.tick();
         }
         driveTrain.translate(SPEED, 0, -11.375 / 3, 0, 10);
-        driveTrain.translate(SPEED, -11.375, 0, 0, 10);
-        driveTrain.translate(SPEED, 0, 22.75, 0, 10);
+        driveTrain.translate(SPEED, sideOfField ? 11 : -11, 0, 0, 10);
         if (parkSpace == 1) {
             driveTrain.translate(SPEED, -22.75, 0, 0, 10);
         } else if (parkSpace == 3) {

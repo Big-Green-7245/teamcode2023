@@ -73,7 +73,7 @@ public class Elevator implements Modulable, Tickable {
     public double getCurrentTarget(){return elevator.getTargetPosition();}
 
     /**
-     * Only works when {@link #elevator} is in {@link DcMotor.RunMode#RUN_USING_ENCODER}!.
+     * Encoders may not work when the wire is not compatible with the motor.
      * @return the current reading of the encoder for this motor
      * @see DcMotor#getCurrentPosition()
      */
