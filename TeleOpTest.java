@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.Intake;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 public class TeleOpTest extends LinearOpMode {
     // Define attributes
     private final String programVer = "1.6";
-    private final double speedMultiplier = 0.75;
+    private final double speedMultiplier = 0.55;
 
     // Declare modules
     private ButtonHelper gp1, gp2;
@@ -56,20 +57,23 @@ public class TeleOpTest extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
+            intake.elevator.moveUsingEncoder(-gamepad2.left_stick_y);
+
             // LinearSlide movement
-            if (gp1.pressing(ButtonHelper.x)) intake.startPlaceCone(Intake.GROUND);
-            else if (gp1.pressing(ButtonHelper.a)) intake.startPlaceCone(Intake.LOW);
-            else if (gp1.pressing(ButtonHelper.b)) intake.startPlaceCone(Intake.MID);
-            else if (gp1.pressing(ButtonHelper.y)) intake.startPlaceCone(Intake.HIGH);
+            if (gp2.pressing(ButtonHelper.x)) intake.startPlaceCone(Intake.GROUND);
+            else if (gp2.pressing(ButtonHelper.a)) intake.startPlaceCone(Intake.LOW);
+            else if (gp2.pressing(ButtonHelper.b)) intake.startPlaceCone(Intake.MID);
+            else if (gp2.pressing(ButtonHelper.y)) intake.startPlaceCone(Intake.HIGH);
+
 
             // Move the claw
-            if (gp1.pressing(ButtonHelper.dpad_up)) {
+            if (gp2.pressing(ButtonHelper.dpad_up)) {
                 intake.toggleClaw();
             }
-            if (gp1.pressing(ButtonHelper.dpad_left)) {
+            if (gp2.pressing(ButtonHelper.dpad_left)) {
                 intake.togglePivot();
             }
-            if(gp1.pressing(ButtonHelper.dpad_right)){
+            if (gp2.pressing(ButtonHelper.dpad_right)) {
                 intake.confirmPlacePosition();
             }
 

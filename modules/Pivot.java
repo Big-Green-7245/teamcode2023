@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class Pivot implements Modulable, Tickable {
     private static final double POWER = 0.3;
+    private static final double HOLD_POWER = 0.1;
     public static final boolean INTAKE_ORIENTATION = false;
     public static final boolean PLACE_ORIENTATION = true;
     private DcMotor rotation;
@@ -51,12 +52,18 @@ public class Pivot implements Modulable, Tickable {
      * Ticks the pivot to move towards the target orientation.
      */
     public void tick() {
-        if (!targetOrientation && !intakeButton.isPressed()) {
-            move(POWER);
-        } else if (targetOrientation && !placeButton.isPressed()) {
-            move(-POWER);
+        if (targetOrientation) {
+            if (placeButton.isPressed()) {
+                move(-HOLD_POWER);
+            } else {
+                move(-POWER);
+            }
         } else {
-            move(0);
+            if (intakeButton.isPressed()) {
+                move(HOLD_POWER);
+            } else {
+                move(POWER);
+            }
         }
     }
 }
