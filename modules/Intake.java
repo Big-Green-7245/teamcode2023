@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.modules;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake implements Modulable, Tickable {
-    private static final int[] LEVELS = new int[]{0, 9451, 14916, 21200};
+    private static final int[] LEVELS = new int[]{0, 1824, 2878, 4090};
     public static final int GROUND = 0;
     public static final int LOW = 1;
     public static final int MID = 2;
@@ -23,6 +23,10 @@ public class Intake implements Modulable, Tickable {
         return currentState;
     }
 
+    public void manualOverride() {
+        currentState = State.IDLE;
+    }
+
     @Override
     public void init(HardwareMap map) {
         elevator = new Elevator();
@@ -39,14 +43,14 @@ public class Intake implements Modulable, Tickable {
     public void startPickUp() {
     }
 
-    public void startPlaceCone(int level){
+    public void startPlaceCone(int level) {
         startPlaceCone(level, false);
     }
 
     /**
      * Start to place the cone with the pivot at either position.
      *
-     * @param level the level to place the cone at
+     * @param level        the level to place the cone at
      * @param placeInFront place the cone with the pivot in the front position
      */
     public void startPlaceCone(int level, boolean placeInFront) {
@@ -59,7 +63,7 @@ public class Intake implements Modulable, Tickable {
         pivot.toggleTargetOrientation();
     }
 
-    public void setClawOpen(boolean open){
+    public void setClawOpen(boolean open) {
         claw.setClawOpen(open);
     }
 
@@ -84,12 +88,14 @@ public class Intake implements Modulable, Tickable {
         } else if (currentState == State.PIVOT_MOVING_TO_PLACE_ORIENTATION && pivot.isAtTargetPos()) {
             currentState = State.WAITING_FOR_PLACE_INPUT;
         } else if (currentState == State.OPENING_CLAW && System.currentTimeMillis() > time + 500) {
+            claw.toggleClaw();
             pivot.setTargetOrientation(Pivot.INTAKE_ORIENTATION);
             currentState = State.PIVOT_MOVING_TO_INTAKE_ORIENTATION;
         } else if (currentState == State.PIVOT_MOVING_TO_INTAKE_ORIENTATION && pivot.isAtTargetPos()) {
             elevator.startMoveToGround();
             currentState = State.ELEVATOR_MOVING_TO_GROUND;
         } else if (currentState == State.ELEVATOR_MOVING_TO_GROUND && elevator.isAtTargetPos()) {
+            claw.toggleClaw();
             currentState = State.IDLE;
         }
     }
@@ -109,7 +115,8 @@ public class Intake implements Modulable, Tickable {
     public enum State {
         /**
          * The intake is currently idle. Use this to check whether the intake is moving.
-         * @see #isNotIdle()
+         *
+         * @see #isIdle()
          */
         IDLE,
         ELEVATOR_MOVING_TO_PLACE_ORIENTATION,
@@ -122,8 +129,8 @@ public class Intake implements Modulable, Tickable {
         PIVOT_MOVING_TO_INTAKE_ORIENTATION,
         ELEVATOR_MOVING_TO_GROUND;
 
-        public boolean isNotIdle() {
-            return this != IDLE;
+        public boolean isIdle() {
+            return this == IDLE;
         }
     }
 }

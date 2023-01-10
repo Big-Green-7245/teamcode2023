@@ -5,10 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Elevator implements Modulable, Tickable {
-    private static final double POWER = 1;
+    private static final double POWER = 0.8;
 
     public HardwareMap hwMap;
     private DcMotorEx elevator;
@@ -53,7 +54,7 @@ public class Elevator implements Modulable, Tickable {
         if (elevatorBtn.isPressed()) {
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            elevator.setTargetPosition(Math.max(elevator.getTargetPosition(), 0));
+            elevator.setTargetPosition(10);
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
@@ -70,10 +71,13 @@ public class Elevator implements Modulable, Tickable {
         return elevator.getPower();
     }
 
-    public double getCurrentTarget(){return elevator.getTargetPosition();}
+    public double getCurrentTarget() {
+        return elevator.getTargetPosition();
+    }
 
     /**
      * Encoders may not work when the wire is not compatible with the motor.
+     *
      * @return the current reading of the encoder for this motor
      * @see DcMotor#getCurrentPosition()
      */

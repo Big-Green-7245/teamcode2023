@@ -15,7 +15,11 @@ import java.util.Arrays;
 public class TeleOpTest extends LinearOpMode {
     // Define attributes
     private final String programVer = "1.6";
-    private final double speedMultiplier = 0.55;
+    private final double defaultSpeedMultiplier = 0.55;
+    private double speedMultiplier = 0.55;
+
+    private final double fixedIterInterval = 0.1;
+    private double lastUpdateTime = 0;
 
     // Declare modules
     private ButtonHelper gp1, gp2;
@@ -45,7 +49,7 @@ public class TeleOpTest extends LinearOpMode {
         while (!isStarted()) {
             intake.tickBeforeStart();
         }
-
+        lastUpdateTime = time;
         while (opModeIsActive()) {
             // Update ButtonHelper
             gp1.update();
@@ -57,10 +61,45 @@ public class TeleOpTest extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
-            intake.elevator.moveUsingEncoder(-gamepad2.left_stick_y);
+            // Move the claw
+            if (gp1.pressed(ButtonHelper.dpad_up)) {
+                driveTrain.move(0.0, -0.6, 0.0, speedMultiplier);
+            }
+            if (gp1.pressed(ButtonHelper.dpad_down)) {
+                driveTrain.move(0.0, 0.6, 0.0, speedMultiplier);
+            }
+            if (gp1.pressed(ButtonHelper.dpad_right)) {
+                driveTrain.move(0.6, 0.0, -0.05, speedMultiplier);
+            }
+            if (gp1.pressed(ButtonHelper.dpad_left)) {
+                driveTrain.move(-0.6, 0.0, 0.05, speedMultiplier);
+            }
+
+
+
+            // Manual elevator control
+            if(intake.getCurrentState().isIdle()){
+                intake.elevator.moveUsingEncoder(-gamepad2.left_stick_y);
+            }
+
+            // Fixed iteration block
+            if (time - lastUpdateTime > fixedIterInterval) {
+                lastUpdateTime = time;
+//                // Change drive speed
+//                if (gp1.pressed(ButtonHelper.right_bumper) && speedMultiplier < 1.0 && speedMultiplier > 0.1) {
+//                    speedMultiplier += 0.05;
+//                }else if (gp1.pressed(ButtonHelper.left_bumper) && speedMultiplier < 1.0 && speedMultiplier > 0.1){
+//                    speedMultiplier -= 0.05;
+//                }
+            }
+            // Print current drive speed
+            TelemetryWrapper.setLine(15, "Robot Drive Speed " + speedMultiplier);
+
+
+
 
             // LinearSlide movement
-            if (gp2.pressing(ButtonHelper.x)) intake.startPlaceCone(Intake.GROUND);
+            if (gp2.pressing(ButtonHelper.x)) intake.manualOverride();
             else if (gp2.pressing(ButtonHelper.a)) intake.startPlaceCone(Intake.LOW);
             else if (gp2.pressing(ButtonHelper.b)) intake.startPlaceCone(Intake.MID);
             else if (gp2.pressing(ButtonHelper.y)) intake.startPlaceCone(Intake.HIGH);
