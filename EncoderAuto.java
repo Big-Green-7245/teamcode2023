@@ -2,15 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 // Standard Lib
 
+import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
-import org.firstinspires.ftc.teamcode.modules.Intake;
+import org.firstinspires.ftc.teamcode.modules.IntakeAndOutput;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
 @SuppressWarnings("FieldCanBeLocal")
 public class EncoderAuto extends LinearOpMode {
     // Define attributes
-    private final String programVer = "1.0";
+    private final String programVer = "2.0";
     private static final double SPEED = 0.5;
     protected static final boolean LEFT = false;
     protected static final boolean RIGHT = true;
@@ -28,9 +28,10 @@ public class EncoderAuto extends LinearOpMode {
      */
     private final boolean sideOfField;
     private DriveTrain driveTrain;
-    private Intake intake;
+    private IntakeAndOutput intakeAndOutput;
 
     //Declare model for object detection
+    @SuppressLint("SdCardPath")
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/signal.tflite";
 
     private static final String[] LABELS = {"1 Blue", "2 Green", "3 Red"};
@@ -57,8 +58,8 @@ public class EncoderAuto extends LinearOpMode {
         TelemetryWrapper.setLine(1, "Autonomous v" + programVer + "\t Initializing");
         driveTrain = new DriveTrain();
         driveTrain.init(hardwareMap);
-        intake = new Intake();
-        intake.init(hardwareMap);
+        intakeAndOutput = new IntakeAndOutput();
+        intakeAndOutput.init(hardwareMap);
         initVuforia();
         initTfod();
         if (tfod != null) {
@@ -67,36 +68,26 @@ public class EncoderAuto extends LinearOpMode {
         }
 
         // Wait for start
-        intake.elevator.startMoveToGround();
+        intakeAndOutput.startRetraction();
+        intakeAndOutput.setIntakeClawOpen(true);
+        intakeAndOutput.setOutputClawOpen(false);
         while (!this.isStarted()) {
             int newLabel = detectLabel();
             if (newLabel != 0) {
                 parkSpace = newLabel;
             }
-            intake.tickBeforeStart();
+            intakeAndOutput.tickBeforeStart();
             TelemetryWrapper.setLine(3, "Park Space: " + parkSpace);
-            TelemetryWrapper.setLine(4, "LinearSlide EncoderTarget: " + intake.elevator.getCurrentTarget());
-            TelemetryWrapper.setLine(5, "LinearSlide Encoder: " + intake.elevator.getEncPos());
+            TelemetryWrapper.setLine(4, "Intake LinearSlide EncoderTarget: " + intakeAndOutput.intakeSlide.getTargetPosition());
+            TelemetryWrapper.setLine(5, "Intake LinearSlide Encoder: " + intakeAndOutput.intakeSlide.getCurrentPosition());
+            TelemetryWrapper.setLine(4, "Output LinearSlide EncoderTarget: " + intakeAndOutput.outputSlide.getTargetPosition());
+            TelemetryWrapper.setLine(5, "Output LinearSlide Encoder: " + intakeAndOutput.outputSlide.getCurrentPosition());
         }
-
-        intake.setClawOpen(false);
-        sleep(500);
-        intake.startPlaceCone(Intake.HIGH, true);
         driveTrain.translate(SPEED, 0, 55, 0, 10);
         driveTrain.translate(SPEED, sideOfField ? -16 : 9.5, 0, 0, 10);
-        while (intake.getCurrentState() != Intake.State.WAITING_FOR_PLACE_INPUT) {
-            TelemetryWrapper.setLine(4, "LinearSlide EncoderTarget: " + intake.elevator.getCurrentTarget());
-            TelemetryWrapper.setLine(5, "LinearSlide Encoder: " + intake.elevator.getEncPos());
-            intake.tick();
-        }
-        driveTrain.translate(SPEED, 0, 4.5, 0, 10);
-        intake.confirmPlacePosition();
-        sleep(1000);
-        driveTrain.translate(SPEED, 0, -4.5, 0, 10);
-        while (intake.getCurrentState().isNotIdle()) {
-            TelemetryWrapper.setLine(4, "LinearSlide EncoderTarget: " + intake.elevator.getCurrentTarget());
-            TelemetryWrapper.setLine(5, "LinearSlide Encoder: " + intake.elevator.getEncPos());
-            intake.tick();
+        intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 5);
+        while(intakeAndOutput.isRunning()){
+            intakeAndOutput.tick();
         }
         driveTrain.translate(SPEED, sideOfField ? 16 : -9.5, 0, 0, 10);
         if (parkSpace == 1) {

@@ -4,14 +4,21 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw implements Modulable {
-    private static final double CLOSED_POS = 0.5;
-    private static final double OPENED_POS = 0.7;
+    private final double closedPos;
+    private final double openedPos;
+    private final String name;
     private Servo claw;
     private boolean open;
 
+    protected Claw(String name, double closedPos, double openedPos) {
+        this.name = name;
+        this.closedPos = closedPos;
+        this.openedPos = openedPos;
+    }
+
     @Override
     public void init(HardwareMap map) {
-        claw = map.get(Servo.class, "claw"); // Control Hub 5
+        claw = map.get(Servo.class, name);
     }
 
     /**
@@ -33,7 +40,7 @@ public class Claw implements Modulable {
     }
 
     private void startMoveClaw() {
-        claw.setPosition(open ? OPENED_POS : CLOSED_POS);
+        claw.setPosition(open ? openedPos : closedPos);
     }
 }
 
