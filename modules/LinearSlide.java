@@ -13,10 +13,15 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
     private final double power;
     private DcMotorEx elevator;
     private TouchSensor elevatorBtn;
+    private boolean retracting;
 
     protected LinearSlide(String name, double power) {
         this.name = name;
         this.power = power;
+    }
+
+    public boolean isElevatorBtnPressed() {
+        return elevatorBtn.isPressed();
     }
 
     @Override
@@ -46,6 +51,7 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
      * YOU MUST call {@link #tick()} in a loop to stop the intakeSlide when it reaches the ground.
      */
     public void startRetraction() {
+        retracting = true;
         startMoveToPos(-100000);
     }
 
@@ -54,17 +60,19 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
      */
     @Override
     public void tick() {
-        if (elevatorBtn.isPressed()) {
+        if (retracting && elevatorBtn.isPressed()) {
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             elevator.setTargetPosition(Math.max(elevator.getTargetPosition(), 0));
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            retracting = false;
         }
     }
 
     /**
      * @return true if the elevator is at the target position
      */
+    @Override
     public boolean getAsBoolean() {
         return !elevator.isBusy();
     }
@@ -77,7 +85,7 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
         return elevator.getPower();
     }
 
-    public double getTargetPosition() {
+    public int getTargetPosition() {
         return elevator.getTargetPosition();
     }
 
@@ -87,7 +95,7 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
      * @return the current reading of the encoder for this motor
      * @see DcMotor#getCurrentPosition()
      */
-    public double getCurrentPosition() {
+    public int getCurrentPosition() {
         return elevator.getCurrentPosition();
     }
 }

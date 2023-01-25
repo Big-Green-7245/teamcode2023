@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.IntakeAndOutput;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
@@ -21,7 +20,6 @@ public class TeleOp extends LinearOpMode {
     private DriveTrain driveTrain;
     private IntakeAndOutput intakeAndOutput;
 
-
     @Override
     public void runOpMode() {
         TelemetryWrapper.init(telemetry, 16);
@@ -39,10 +37,16 @@ public class TeleOp extends LinearOpMode {
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOp v" + programVer + "\t Press start to start >");
 
-        // Move intakeSlide and intakePivot to starting position while waiting for start
-        intakeAndOutput.outputSlide.startRetraction();
+        // Move intake and output to starting position while waiting for start
+        intakeAndOutput.startRetraction();
         while (!isStarted()) {
             intakeAndOutput.tickBeforeStart();
+            TelemetryWrapper.setLine(2, "Intake Button: " + intakeAndOutput.intakeSlide.isElevatorBtnPressed());
+            TelemetryWrapper.setLine(3, "Intake Slide Current Position" + intakeAndOutput.intakeSlide.getCurrentPosition());
+            TelemetryWrapper.setLine(4, "Intake Slide Target Position" + intakeAndOutput.intakeSlide.getTargetPosition());
+            TelemetryWrapper.setLine(5, "Output Button: " + intakeAndOutput.outputSlide.isElevatorBtnPressed());
+            TelemetryWrapper.setLine(6, "Output Slide Current Position" + intakeAndOutput.outputSlide.getCurrentPosition());
+            TelemetryWrapper.setLine(7, "Output Slide Target Position" + intakeAndOutput.outputSlide.getTargetPosition());
         }
 
         while (opModeIsActive()) {
@@ -56,7 +60,8 @@ public class TeleOp extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
-            intakeAndOutput.outputSlide.moveUsingEncoder(-gamepad2.left_stick_y);
+            intakeAndOutput.intakeSlide.moveUsingEncoder(-gamepad2.left_stick_y);
+            intakeAndOutput.outputSlide.moveUsingEncoder(gamepad2.right_stick_y);
 
             // LinearSlide movement
             if (gp2.pressing(ButtonHelper.x)) intakeAndOutput.startPlaceCone(IntakeAndOutput.GROUND);
@@ -64,37 +69,36 @@ public class TeleOp extends LinearOpMode {
             else if (gp2.pressing(ButtonHelper.b)) intakeAndOutput.startPlaceCone(IntakeAndOutput.MID);
             else if (gp2.pressing(ButtonHelper.y)) intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH);
 
-
             // Move the pivot and claw
-            if (gp2.pressing(ButtonHelper.dpad_down)) {
+            if (gp2.pressing(ButtonHelper.dpad_up)) {
                 intakeAndOutput.toggleIntakeClaw();
             }
-            if (gp2.pressing(ButtonHelper.dpad_up)) {
+            if (gp2.pressing(ButtonHelper.dpad_down)) {
                 intakeAndOutput.toggleOutputClaw();
             }
             if (gp2.pressing(ButtonHelper.dpad_right)) {
-                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getPosition() + 0.05);
+                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() + 100);
             }
             if (gp2.pressing(ButtonHelper.dpad_left)) {
-                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getPosition() - 0.05);
+                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() - 100);
             }
 
             // Update Telemetry
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
-            TelemetryWrapper.setLine(2, "Other info...");
 
-            TelemetryWrapper.setLine(3, "up" + gp1.pressed(ButtonHelper.dpad_up));
-            TelemetryWrapper.setLine(4, "down" + gp1.pressed(ButtonHelper.dpad_down));
-            TelemetryWrapper.setLine(5, "left" + gp1.pressed(ButtonHelper.dpad_left));
-            TelemetryWrapper.setLine(6, "right" + gp1.pressed(ButtonHelper.dpad_right));
+            TelemetryWrapper.setLine(3, "Current State: " + intakeAndOutput.getCurrentState().getName());
+            TelemetryWrapper.setLine(4, "Intake Button: " + intakeAndOutput.intakeSlide.isElevatorBtnPressed());
+            TelemetryWrapper.setLine(5, "Intake Slide Current Position: " + intakeAndOutput.intakeSlide.getCurrentPosition());
+            TelemetryWrapper.setLine(6, "Intake Slide Target Position: " + intakeAndOutput.intakeSlide.getTargetPosition());
+            TelemetryWrapper.setLine(7, "Intake Pivot Current Position: " + intakeAndOutput.intakePivot.getCurrentPosition());
+            TelemetryWrapper.setLine(8, "Intake Pivot Target Position: " + intakeAndOutput.intakePivot.getTargetPosition());
+            TelemetryWrapper.setLine(9, "Output Button: " + intakeAndOutput.outputSlide.isElevatorBtnPressed());
+            TelemetryWrapper.setLine(10, "Output Slide Current Position: " + intakeAndOutput.outputSlide.getCurrentPosition());
+            TelemetryWrapper.setLine(11, "Output Slide Target Position: " + intakeAndOutput.outputSlide.getTargetPosition());
+            TelemetryWrapper.setLine(12, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
 
-            TelemetryWrapper.setLine(8, "CURRENTS");
-            TelemetryWrapper.setLine(9, "DriveTrain Currents:" + driveTrain.getMotorCurrentsString());
-            TelemetryWrapper.setLine(10, "LinearSlide Current: " + intakeAndOutput.outputSlide.getCurrent());
-            TelemetryWrapper.setLine(11, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
-            TelemetryWrapper.setLine(12, "LinearSlide EncoderTarget: " + intakeAndOutput.outputSlide.getTargetPosition());
-            TelemetryWrapper.setLine(14, "LinearSlide Encoder: " + intakeAndOutput.outputSlide.getCurrentPosition());
-            TelemetryWrapper.setLine(13, "Current State: " + intakeAndOutput.getCurrentState().getName());
+            TelemetryWrapper.setLine(13, "Intake Claw Position: " + intakeAndOutput.intakeClaw.getPosition());
+            TelemetryWrapper.setLine(14, "Output Claw Position: " + intakeAndOutput.outputClaw.getPosition());
         }
     }
 }
