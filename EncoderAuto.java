@@ -67,7 +67,7 @@ public class EncoderAuto extends LinearOpMode {
         }
 
         // Wait for start
-        intake.elevator.startMoveToGround();
+        intake.elevator.startRetraction();
         while (!this.isStarted()) {
             int newLabel = detectLabel();
             if (newLabel != 0) {

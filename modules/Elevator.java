@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Elevator implements Modulable, Tickable {
@@ -14,6 +13,7 @@ public class Elevator implements Modulable, Tickable {
     public HardwareMap hwMap;
     private DcMotorEx elevator;
     private TouchSensor elevatorBtn;
+    private boolean retracting;
 
     @Override
     public void init(HardwareMap hardwareMap) {
@@ -42,7 +42,8 @@ public class Elevator implements Modulable, Tickable {
      * ONLY call this function once for every move to ground!
      * YOU MUST call {@link #tick()} in a loop to stop the elevator when it reaches the ground.
      */
-    public void startMoveToGround() {
+    public void startRetraction() {
+        retracting = true;
         startMoveToPos(-100000);
     }
 
@@ -51,11 +52,12 @@ public class Elevator implements Modulable, Tickable {
      */
     @Override
     public void tick() {
-        if (elevatorBtn.isPressed()) {
+        if (retracting && elevatorBtn.isPressed()) {
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             elevator.setTargetPosition(10);
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            retracting = false;
         }
     }
 
@@ -71,7 +73,7 @@ public class Elevator implements Modulable, Tickable {
         return elevator.getPower();
     }
 
-    public double getCurrentTarget() {
+    public int getCurrentTarget() {
         return elevator.getTargetPosition();
     }
 
@@ -81,7 +83,7 @@ public class Elevator implements Modulable, Tickable {
      * @return the current reading of the encoder for this motor
      * @see DcMotor#getCurrentPosition()
      */
-    public double getEncPos() {
+    public int getEncPos() {
         return elevator.getCurrentPosition();
     }
 }

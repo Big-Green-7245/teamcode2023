@@ -92,7 +92,7 @@ public class Intake implements Modulable, Tickable {
             pivot.setTargetOrientation(Pivot.INTAKE_ORIENTATION);
             currentState = State.PIVOT_MOVING_TO_INTAKE_ORIENTATION;
         } else if (currentState == State.PIVOT_MOVING_TO_INTAKE_ORIENTATION && pivot.isAtTargetPos()) {
-            elevator.startMoveToGround();
+            elevator.startRetraction();
             currentState = State.ELEVATOR_MOVING_TO_GROUND;
         } else if (currentState == State.ELEVATOR_MOVING_TO_GROUND && elevator.isAtTargetPos()) {
             claw.toggleClaw();
@@ -118,16 +118,11 @@ public class Intake implements Modulable, Tickable {
          *
          * @see #isIdle()
          */
-        IDLE,
-        ELEVATOR_MOVING_TO_PLACE_ORIENTATION,
-        PIVOT_MOVING_TO_PLACE_ORIENTATION,
+        IDLE, ELEVATOR_MOVING_TO_PLACE_ORIENTATION, PIVOT_MOVING_TO_PLACE_ORIENTATION,
         /**
          * Waiting for the user to confirm the place position before continuing.
          */
-        WAITING_FOR_PLACE_INPUT,
-        OPENING_CLAW,
-        PIVOT_MOVING_TO_INTAKE_ORIENTATION,
-        ELEVATOR_MOVING_TO_GROUND;
+        WAITING_FOR_PLACE_INPUT, OPENING_CLAW, PIVOT_MOVING_TO_INTAKE_ORIENTATION, ELEVATOR_MOVING_TO_GROUND;
 
         public boolean isIdle() {
             return this == IDLE;
