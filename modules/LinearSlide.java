@@ -56,14 +56,14 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
     }
 
     /**
-     * Checks if the slider is pressing the button. If it is, reset the encoder.
+     * Checks if the slider is retracting and pressing the button. If it is, reset the encoder.
      */
     @Override
     public void tick() {
         if (retracting && elevatorBtn.isPressed()) {
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            elevator.setTargetPosition(Math.max(elevator.getTargetPosition(), 0));
+            elevator.setTargetPosition(10);
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             retracting = false;
         }

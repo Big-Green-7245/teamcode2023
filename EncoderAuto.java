@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.IntakeAndOutput;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -56,40 +57,55 @@ public class EncoderAuto extends LinearOpMode {
     public void runOpMode() {
         TelemetryWrapper.init(telemetry, 16);
         TelemetryWrapper.setLine(1, "Autonomous v" + programVer + "\t Initializing");
-        driveTrain = new DriveTrain();
+        driveTrain = new DriveTrain(this);
         driveTrain.init(hardwareMap);
         intakeAndOutput = new IntakeAndOutput();
         intakeAndOutput.init(hardwareMap);
-        initVuforia();
-        initTfod();
-        if (tfod != null) {
-            tfod.activate();
-            tfod.setZoom(1.0, 16.0 / 9.0);
-        }
+        //        initVuforia();
+        //        initTfod();
+        //        if (tfod != null) {
+        //            tfod.activate();
+        //            tfod.setZoom(1.0, 16.0 / 9.0);
+        //        }
 
         // Wait for start
         intakeAndOutput.startRetraction();
         intakeAndOutput.setIntakeClawOpen(true);
         intakeAndOutput.setOutputClawOpen(false);
         while (!this.isStarted()) {
-            int newLabel = detectLabel();
-            if (newLabel != 0) {
-                parkSpace = newLabel;
-            }
+            //            int newLabel = detectLabel();
+            //            if (newLabel != 0) {
+            //                parkSpace = newLabel;
+            //            }
             intakeAndOutput.tickBeforeStart();
             TelemetryWrapper.setLine(3, "Park Space: " + parkSpace);
             TelemetryWrapper.setLine(4, "Intake LinearSlide EncoderTarget: " + intakeAndOutput.intakeSlide.getTargetPosition());
             TelemetryWrapper.setLine(5, "Intake LinearSlide Encoder: " + intakeAndOutput.intakeSlide.getCurrentPosition());
-            TelemetryWrapper.setLine(4, "Output LinearSlide EncoderTarget: " + intakeAndOutput.outputSlide.getTargetPosition());
-            TelemetryWrapper.setLine(5, "Output LinearSlide Encoder: " + intakeAndOutput.outputSlide.getCurrentPosition());
+            TelemetryWrapper.setLine(6, "Output LinearSlide EncoderTarget: " + intakeAndOutput.outputSlide.getTargetPosition());
+            TelemetryWrapper.setLine(7, "Output LinearSlide Encoder: " + intakeAndOutput.outputSlide.getCurrentPosition());
         }
         driveTrain.translate(SPEED, 0, 55, 0, 10);
-        driveTrain.translate(SPEED, sideOfField ? -16 : 9.5, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? 360 : -360, 10);
         intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 5);
-        while(intakeAndOutput.isRunning()){
+        while (this.opModeIsActive() && intakeAndOutput.isRunning()) {
             intakeAndOutput.tick();
+            TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
+
+            TelemetryWrapper.setLine(3, "Current State: " + intakeAndOutput.getCurrentState().getName());
+            TelemetryWrapper.setLine(4, "Intake Button: " + intakeAndOutput.intakeSlide.isElevatorBtnPressed());
+            TelemetryWrapper.setLine(5, "Intake Slide Current Position: " + intakeAndOutput.intakeSlide.getCurrentPosition());
+            TelemetryWrapper.setLine(6, "Intake Slide Target Position: " + intakeAndOutput.intakeSlide.getTargetPosition());
+            TelemetryWrapper.setLine(7, "Intake Pivot Current Position: " + intakeAndOutput.intakePivot.getCurrentPosition());
+            TelemetryWrapper.setLine(8, "Intake Pivot Target Position: " + intakeAndOutput.intakePivot.getTargetPosition());
+            TelemetryWrapper.setLine(9, "Output Button: " + intakeAndOutput.outputSlide.isElevatorBtnPressed());
+            TelemetryWrapper.setLine(10, "Output Slide Current Position: " + intakeAndOutput.outputSlide.getCurrentPosition());
+            TelemetryWrapper.setLine(11, "Output Slide Target Position: " + intakeAndOutput.outputSlide.getTargetPosition());
+            TelemetryWrapper.setLine(12, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
+
+            TelemetryWrapper.setLine(13, "Intake Claw Position: " + intakeAndOutput.intakeClaw.getPosition());
+            TelemetryWrapper.setLine(14, "Output Claw Position: " + intakeAndOutput.outputClaw.getPosition());
         }
-        driveTrain.translate(SPEED, sideOfField ? 16 : -9.5, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? -360 : 360, 10);
         if (parkSpace == 1) {
             driveTrain.translate(SPEED, -24, 0, 0, 10);
         } else if (parkSpace == 3) {

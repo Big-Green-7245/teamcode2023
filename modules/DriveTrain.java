@@ -1,47 +1,54 @@
 package org.firstinspires.ftc.teamcode.modules;
 
-import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.util.*;
-
+import androidx.annotation.NonNull;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.util.*;
+import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 
-public class DriveTrain implements Modulable
-{
-    private ElapsedTime runtime = new ElapsedTime();
+public class DriveTrain implements Modulable {
+    private final ElapsedTime runtime = new ElapsedTime();
 
-    final double XY_CORRECTION = 3.06/2.85;
-    final double COUNTS_PER_INCH = 50*2.54/ 3.06;
-    final double COUNTS_PER_DEGREE = 1;
+    final double XY_CORRECTION = 3.06 / 2.85;
+    final double COUNTS_PER_INCH = 50 * 2.54 / 3.06;
+    final double COUNTS_PER_DEGREE = 10.75;
+    private final LinearOpMode opMode;
 
     public HardwareMap hwMap;
 
-    public DcMotorEx backLeft;
-    public DcMotorEx frontLeft;
     public DcMotorEx backRight;
     public DcMotorEx frontRight;
+    public DcMotorEx backLeft;
+    public DcMotorEx frontLeft;
+
+    public DriveTrain(@NonNull LinearOpMode opMode) {
+        this.opMode = opMode;
+    }
 
     @Override
-    public void init(HardwareMap map)
-    {
+    public void init(HardwareMap map) {
         hwMap = map;
 
-        backLeft = (DcMotorEx) hwMap.get(DcMotor.class, "backLeft"); // Control Hub 3
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-
-        backRight = (DcMotorEx) hwMap.get(DcMotor.class, "backRight"); // Control Hub 2
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
-
-        frontLeft = (DcMotorEx) hwMap.get(DcMotor.class, "frontLeft"); // Control Hub 1
+        frontLeft = hwMap.get(DcMotorEx.class, "frontLeft"); // Control Hub 1
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
 
-        frontRight = (DcMotorEx) hwMap.get(DcMotor.class, "frontRight"); // Control Hub 0
+        frontRight = hwMap.get(DcMotorEx.class, "frontRight"); // Control Hub 0
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+
+        backLeft = hwMap.get(DcMotorEx.class, "backLeft"); // Control Hub 3
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
+
+        backRight = hwMap.get(DcMotorEx.class, "backRight"); // Control Hub 2
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
 
         setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -52,7 +59,7 @@ public class DriveTrain implements Modulable
      *
      * @param powerx power for horizontal movement, positive right
      * @param powery power for vertical movement, positive up
-     * @param turn power for rotational movement, positive is CCW
+     * @param turn   power for rotational movement, positive is CCW
      * @param factor applied to all power
      */
     public void move(double powerx, double powery, double turn, double factor) {
@@ -60,43 +67,43 @@ public class DriveTrain implements Modulable
         double speedy = factor * powery;
         double offset = factor * turn;
 
-        frontLeft.setPower(Range.clip(speedy+speedx+offset,-1,1));
-        frontRight.setPower(Range.clip(speedy-speedx-offset,-1,1));
-        backLeft.setPower(Range.clip(speedy-speedx+offset,-1,1));
-        backRight.setPower(Range.clip(speedy+speedx-offset,-1,1));
+        frontRight.setPower(Range.clip(speedy + speedx + offset, -1, 1));
+        frontLeft.setPower(Range.clip(speedy - speedx - offset, -1, 1));
+        backRight.setPower(Range.clip(speedy - speedx + offset, -1, 1));
+        backLeft.setPower(Range.clip(speedy + speedx - offset, -1, 1));
     }
 
     /**
      * Translate robot by given displacement
-     * @param power the power when running to target
-     * @param dX horizontal displacement, positive is right
-     * @param dY vertical displacement, positive is up
-     * @param dTheta rotational displacement, positive is CCW
+     *
+     * @param power   the power when running to target
+     * @param dX      horizontal displacement, positive is right
+     * @param dY      vertical displacement, positive is up
+     * @param dTheta  rotational displacement, positive is CW
      * @param timeout time before terminating RUN_TO_POSITION
      */
-    public void translate(double power, double dX, double dY, double dTheta, double timeout)
-    {
+    public void translate(double power, double dX, double dY, double dTheta, double timeout) {
         int newFLTarget, newFRTarget, newBLTarget, newBRTarget;
         int dFL, dFR, dBL, dBR;
 
         // Determine new target position, and pass to motor controller
-        dFL = (int)((-dY +dX * XY_CORRECTION) * COUNTS_PER_INCH - dTheta * COUNTS_PER_DEGREE);
-        dFR = (int)((-dY -dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE);
-        dBL = (int)((-dY -dX * XY_CORRECTION) * COUNTS_PER_INCH - dTheta * COUNTS_PER_DEGREE);
-        dBR = (int)((-dY +dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE);
+        dFL = (int) ((-dY + dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE);
+        dFR = (int) ((-dY - dX * XY_CORRECTION) * COUNTS_PER_INCH - dTheta * COUNTS_PER_DEGREE);
+        dBL = (int) ((-dY - dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE);
+        dBR = (int) ((-dY + dX * XY_CORRECTION) * COUNTS_PER_INCH - dTheta * COUNTS_PER_DEGREE);
 
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);
         setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        newFLTarget = frontLeft.getCurrentPosition() + dFL;
-        newFRTarget = frontRight.getCurrentPosition() + dFR;
-        newBLTarget = backLeft.getCurrentPosition() + dBL;
-        newBRTarget = backRight.getCurrentPosition() + dBR;
+        newFLTarget = frontRight.getCurrentPosition() + dFL;
+        newFRTarget = frontLeft.getCurrentPosition() + dFR;
+        newBLTarget = backRight.getCurrentPosition() + dBL;
+        newBRTarget = backLeft.getCurrentPosition() + dBR;
 
-        frontLeft.setTargetPosition(newFLTarget);
-        frontRight.setTargetPosition(newFRTarget);
-        backLeft.setTargetPosition(newBLTarget);
-        backRight.setTargetPosition(newBRTarget);
+        frontRight.setTargetPosition(newFLTarget);
+        frontLeft.setTargetPosition(newFRTarget);
+        backRight.setTargetPosition(newBLTarget);
+        backLeft.setTargetPosition(newBRTarget);
 
         // Turn On RUN_TO_POSITION
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_TO_POSITION);
@@ -104,17 +111,16 @@ public class DriveTrain implements Modulable
         // reset the timeout time and start motion
         runtime.reset();
 
-        frontLeft.setPower(power);
         frontRight.setPower(power);
-        backLeft.setPower(power);
+        frontLeft.setPower(power);
         backRight.setPower(power);
+        backLeft.setPower(power);
 
-        TelemetryWrapper.setLine(0,  "Running to (x:y:r)=("+dX+":"+dY +":"+dTheta+")");
-        TelemetryWrapper.setLine(1,  "Running delta (dFL:dFR:dBL:dBR)=("+dFL+":"+dFR +":"+dBL +":"+dBR+")");
-        TelemetryWrapper.setLine(2,  "Wheels to (lf:rf:lr:rr)=("+newFLTarget+":"+newFRTarget +":"+newBLTarget+":"+newBRTarget+")");
-        while ((runtime.seconds() < timeout) && (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
-            TelemetryWrapper.setLine(3,  "Running @ ("+frontLeft.getCurrentPosition()+":"+frontRight.getCurrentPosition()
-                    +":"+backLeft.getCurrentPosition()+":"+backRight.getCurrentPosition()+")");
+        TelemetryWrapper.setLine(0, "Running to (x:y:r)=(" + dX + ":" + dY + ":" + dTheta + ")");
+        TelemetryWrapper.setLine(1, "Running delta (dFL:dFR:dBL:dBR)=(" + dFL + ":" + dFR + ":" + dBL + ":" + dBR + ")");
+        TelemetryWrapper.setLine(2, "Wheels to (lf:rf:lr:rr)=(" + newFLTarget + ":" + newFRTarget + ":" + newBLTarget + ":" + newBRTarget + ")");
+        while (opMode.opModeIsActive() && (runtime.seconds() < timeout) && (frontRight.isBusy() && frontLeft.isBusy() && backRight.isBusy() && backLeft.isBusy())) {
+            TelemetryWrapper.setLine(3, "Running @ (" + frontRight.getCurrentPosition() + ":" + frontLeft.getCurrentPosition() + ":" + backRight.getCurrentPosition() + ":" + backLeft.getCurrentPosition() + ")");
         }
 
         // Stop all motion
@@ -128,66 +134,67 @@ public class DriveTrain implements Modulable
 
     /**
      * Returns encoder positions of encoders
+     *
      * @return array containing position of each wheel
      */
     public double[] getEncPos() {
-        return new double[]{frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(),
-                backLeft.getCurrentPosition(), backRight.getCurrentPosition()};
+        return new double[]{frontRight.getCurrentPosition(), frontLeft.getCurrentPosition(), backRight.getCurrentPosition(), backLeft.getCurrentPosition()};
     }
 
     /**
      * Returns string containing current positions of ecoders
+     *
      * @return string containing position of each wheel
      */
     public String getEncPosStr() {
-        return "FL=" + frontLeft.getCurrentPosition() + " FR" + frontRight.getCurrentPosition() +
-                " BL" + backLeft.getCurrentPosition() + " BR" + backRight.getCurrentPosition();
+        return "FL=" + frontRight.getCurrentPosition() + " FR" + frontLeft.getCurrentPosition() + " BL" + backRight.getCurrentPosition() + " BR" + backLeft.getCurrentPosition();
     }
 
     /**
      *
      */
     public double[] getMotorCurrents() {
-        return new double[]{frontLeft.getCurrent(CurrentUnit.AMPS), frontRight.getCurrent(CurrentUnit.AMPS),
-                backLeft.getCurrent(CurrentUnit.AMPS), backRight.getCurrent(CurrentUnit.AMPS)};
+        return new double[]{frontRight.getCurrent(CurrentUnit.AMPS), frontLeft.getCurrent(CurrentUnit.AMPS), backRight.getCurrent(CurrentUnit.AMPS), backLeft.getCurrent(CurrentUnit.AMPS)};
     }
 
     public String getMotorCurrentsString() {
-        return "FL=" + frontLeft.getCurrent(CurrentUnit.AMPS) + " FR" + frontRight.getCurrent(CurrentUnit.AMPS) +
-                " BL" + backLeft.getCurrent(CurrentUnit.AMPS) + " BR" + backRight.getCurrent(CurrentUnit.AMPS);
+        return "FL=" + frontRight.getCurrent(CurrentUnit.AMPS) + " FR" + frontLeft.getCurrent(CurrentUnit.AMPS) + " BL" + backRight.getCurrent(CurrentUnit.AMPS) + " BR" + backLeft.getCurrent(CurrentUnit.AMPS);
     }
 
-        /**
-         * Set power to all motors
-         * @param powerForAll the power for all wheels
-         */
+    /**
+     * Set power to all motors
+     *
+     * @param powerForAll the power for all wheels
+     */
     public void setPowerToAllDriveMotors(double powerForAll) {
-        frontLeft.setPower(powerForAll);
         frontRight.setPower(powerForAll);
-        backLeft.setPower(powerForAll);
+        frontLeft.setPower(powerForAll);
         backRight.setPower(powerForAll);
+        backLeft.setPower(powerForAll);
     }
 
     /**
      * Set mode to all motors
+     *
      * @param runModeForAll desired mode for motors
      */
     public void setModeToAllDriveMotors(DcMotor.RunMode runModeForAll) {
-        frontLeft.setMode(runModeForAll);
         frontRight.setMode(runModeForAll);
-        backLeft.setMode(runModeForAll);
+        frontLeft.setMode(runModeForAll);
         backRight.setMode(runModeForAll);
+        backLeft.setMode(runModeForAll);
     }
 
     /**
      * Set zero power behavior to all motors
+     *
      * @param zeroPowerBehaviorForAll desired zeroPowerBehavior for motors
      */
     public void setZeroPowerBehaviorToAllDriveMotors(DcMotor.ZeroPowerBehavior zeroPowerBehaviorForAll) {
-        frontLeft.setZeroPowerBehavior(zeroPowerBehaviorForAll);
         frontRight.setZeroPowerBehavior(zeroPowerBehaviorForAll);
-        backLeft.setZeroPowerBehavior(zeroPowerBehaviorForAll);
+        frontLeft.setZeroPowerBehavior(zeroPowerBehaviorForAll);
         backRight.setZeroPowerBehavior(zeroPowerBehaviorForAll);
+        backLeft.setZeroPowerBehavior(zeroPowerBehaviorForAll);
     }
 
     /**

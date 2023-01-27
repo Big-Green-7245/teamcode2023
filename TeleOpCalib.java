@@ -29,7 +29,7 @@ public class TeleOpCalib extends LinearOpMode {
         // Robot modules initialization
         gp1 = new ButtonHelper(gamepad1);
         gp2 = new ButtonHelper(gamepad2);
-        driveTrain = new DriveTrain();
+        driveTrain = new DriveTrain(this);
         intakeAndOutput = new IntakeAndOutput();
         intakeAndOutput.init(hardwareMap);
         driveTrain.init(hardwareMap);

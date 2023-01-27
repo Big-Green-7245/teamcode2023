@@ -29,7 +29,7 @@ public class TeleOp extends LinearOpMode {
         // Robot modules initialization
         gp1 = new ButtonHelper(gamepad1);
         gp2 = new ButtonHelper(gamepad2);
-        driveTrain = new DriveTrain();
+        driveTrain = new DriveTrain(this);
         intakeAndOutput = new IntakeAndOutput();
         driveTrain.init(hardwareMap);
         intakeAndOutput.init(hardwareMap);
@@ -60,8 +60,16 @@ public class TeleOp extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
-            intakeAndOutput.intakeSlide.moveUsingEncoder(-gamepad2.left_stick_y);
-            intakeAndOutput.outputSlide.moveUsingEncoder(gamepad2.right_stick_y);
+            if (-gamepad2.left_stick_y > 0.1) {
+                intakeAndOutput.intakeSlide.startMoveToPos(intakeAndOutput.intakeSlide.getTargetPosition() + (int) (-gamepad2.left_stick_y * 50));
+            } else if (-gamepad2.left_stick_y < -0.1) {
+                intakeAndOutput.intakeSlide.startRetraction();
+            }
+            if (-gamepad2.right_stick_y > 0.1) {
+                intakeAndOutput.outputSlide.startMoveToPos(intakeAndOutput.outputSlide.getTargetPosition() + (int) (-gamepad2.right_stick_y * 50));
+            } else if (-gamepad2.right_stick_y < -0.1) {
+                intakeAndOutput.outputSlide.startRetraction();
+            }
 
             // LinearSlide movement
             if (gp2.pressing(ButtonHelper.x)) intakeAndOutput.startPlaceCone(IntakeAndOutput.GROUND);
@@ -77,10 +85,10 @@ public class TeleOp extends LinearOpMode {
                 intakeAndOutput.toggleOutputClaw();
             }
             if (gp2.pressing(ButtonHelper.dpad_right)) {
-                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() + 100);
+                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() + 10);
             }
             if (gp2.pressing(ButtonHelper.dpad_left)) {
-                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() - 100);
+                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() - 10);
             }
 
             // Update Telemetry

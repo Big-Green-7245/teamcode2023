@@ -128,6 +128,8 @@ public class IntakeAndOutput implements Modulable, Tickable {
     @Override
     public void tick() {
         stateManager.tick();
+        intakeSlide.tick();
+        outputSlide.tick();
     }
 }
 
