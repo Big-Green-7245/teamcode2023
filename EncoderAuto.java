@@ -5,7 +5,6 @@ package org.firstinspires.ftc.teamcode;
 import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -84,8 +83,11 @@ public class EncoderAuto extends LinearOpMode {
             TelemetryWrapper.setLine(6, "Output LinearSlide EncoderTarget: " + intakeAndOutput.outputSlide.getTargetPosition());
             TelemetryWrapper.setLine(7, "Output LinearSlide Encoder: " + intakeAndOutput.outputSlide.getCurrentPosition());
         }
-        driveTrain.translate(SPEED, 0, 55, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? 360 : -360, 10);
+        driveTrain.translate(SPEED, 0, 56, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? 90 : -90, 10);
+        driveTrain.translate(SPEED, sideOfField ? -10 : 10, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? 17 : -17, 10);
+        driveTrain.translate(SPEED, 0, 2, 0, 10);
         intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 5);
         while (this.opModeIsActive() && intakeAndOutput.isRunning()) {
             intakeAndOutput.tick();
@@ -105,7 +107,9 @@ public class EncoderAuto extends LinearOpMode {
             TelemetryWrapper.setLine(13, "Intake Claw Position: " + intakeAndOutput.intakeClaw.getPosition());
             TelemetryWrapper.setLine(14, "Output Claw Position: " + intakeAndOutput.outputClaw.getPosition());
         }
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? -360 : 360, 10);
+        driveTrain.translate(SPEED, 0, -2, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? -17 : 17, 10);
+        driveTrain.translate(SPEED, sideOfField ? 10 : -10, 0, 0, 10);
         if (parkSpace == 1) {
             driveTrain.translate(SPEED, -24, 0, 0, 10);
         } else if (parkSpace == 3) {
@@ -123,7 +127,7 @@ public class EncoderAuto extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        //        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.state;
 
 import org.firstinspires.ftc.teamcode.modules.Tickable;
-import org.firstinspires.ftc.teamcode.util.ChainableBooleanSupplier;
 
 import java.util.function.BooleanSupplier;
 
@@ -31,23 +30,6 @@ public class State implements Tickable, Runnable {
         this.tickable = tickable;
         this.finishCondition = finishCondition;
         this.waitForCompletion = waitForCompletion;
-    }
-
-    public static State createTimed(String name, Runnable action, long millis) {
-        return createTimed(name, action, millis, true);
-    }
-
-    public static State createTimed(String name, Runnable action, long millis, boolean waitForCompletion) {
-        return createTimed(name, action, () -> {}, millis, () -> true, waitForCompletion);
-    }
-
-    public static State createTimed(String name, Runnable action, Tickable tickable, long millis, ChainableBooleanSupplier additionalFinishCondition) {
-        return createTimed(name, action, tickable, millis, additionalFinishCondition, true);
-    }
-
-    public static State createTimed(String name, Runnable action, Tickable tickable, long millis, ChainableBooleanSupplier additionalFinishCondition, boolean waitForCompletion) {
-        long startTime = System.currentTimeMillis();
-        return new State(name, action, tickable, additionalFinishCondition.and(() -> startTime + millis > System.currentTimeMillis()), waitForCompletion);
     }
 
     public String getName() {
