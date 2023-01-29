@@ -95,7 +95,7 @@ public class IntakeAndOutput implements Modulable, Tickable {
         if (!stateManager.isRunning()) {
             this.targetLevel = targetLevel;
             stateManager.setLoopCount(loopCount);
-            stateManager.start();
+            stateManager.run();
         }
     }
 

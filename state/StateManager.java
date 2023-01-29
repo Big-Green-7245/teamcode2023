@@ -4,7 +4,11 @@ import org.firstinspires.ftc.teamcode.modules.Tickable;
 
 import java.util.*;
 
-public class StateManager implements Tickable {
+/**
+ * A class providing management and control for running a sequence of states.
+ * @see Builder
+ */
+public class StateManager implements Tickable, Runnable {
     private int loopCount;
     private int currentLoopCount;
     private final List<State> states;
@@ -31,11 +35,18 @@ public class StateManager implements Tickable {
         this.loopCount = loopCount;
     }
 
-    public void start() {
+    /**
+     * Starts running the state manager.
+     */
+    @Override
+    public void run() {
         running = true;
         states.get(currentStateIndex).run();
     }
 
+    /**
+     * Ticks all states that needs ticking, checks if the current state is finished, and starts running the next state.
+     */
     @Override
     public void tick() {
         Iterator<State> iterator = needsTicking.iterator();
@@ -64,16 +75,26 @@ public class StateManager implements Tickable {
         }
     }
 
+    /**
+     * Resets the state manager to the first state. Does not stop running the state manager.
+     */
     public void reset() {
         currentStateIndex = 0;
     }
 
+    /**
+     * Stops running the state manager and resets it to the first state.
+     */
     public void stopAndReset() {
         running = false;
         currentLoopCount = 0;
         reset();
     }
 
+    /**
+     * A class for building a {@link StateManager}. Call {@link #addState(State)} to add states to the state manager.
+     * The state manager will start running at the first state added when {@link StateManager#run()} is called.
+     */
     public static class Builder {
         private final List<State> states = new ArrayList<>();
 

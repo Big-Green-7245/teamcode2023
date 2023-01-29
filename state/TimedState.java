@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.state;
 import org.firstinspires.ftc.teamcode.modules.Tickable;
 import org.firstinspires.ftc.teamcode.util.ChainableBooleanSupplier;
 
+/**
+ * A type of state providing timed functionality. The state completes after {@link #duration} milliseconds have passed since the state was started.
+ * Some constructors have additional finish conditions that also needs to be fulfilled for the state to complete.
+ */
 public class TimedState extends State {
     private final long duration;
     private long startTime;
