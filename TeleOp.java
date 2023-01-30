@@ -60,15 +60,21 @@ public class TeleOp extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
-            if (-gamepad2.left_stick_y > 0.1) {
-                intakeAndOutput.intakeSlide.startMoveToPos(intakeAndOutput.intakeSlide.getTargetPosition() + (int) (-gamepad2.left_stick_y * 50));
-            } else if (-gamepad2.left_stick_y < -0.1) {
-                intakeAndOutput.intakeSlide.startRetraction();
+            if (Math.abs(gamepad2.left_stick_y) > 0.1) {
+                int targetPosition = intakeAndOutput.intakeSlide.getTargetPosition() + (int) (-gamepad2.left_stick_y * 50);
+                if (targetPosition >= 10) {
+                    intakeAndOutput.intakeSlide.startMoveToPos(targetPosition);
+                } else {
+                    intakeAndOutput.intakeSlide.startRetraction();
+                }
             }
-            if (-gamepad2.right_stick_y > 0.1) {
-                intakeAndOutput.outputSlide.startMoveToPos(intakeAndOutput.outputSlide.getTargetPosition() + (int) (-gamepad2.right_stick_y * 50));
-            } else if (-gamepad2.right_stick_y < -0.1) {
-                intakeAndOutput.outputSlide.startRetraction();
+            if (Math.abs(gamepad2.right_stick_y) > 0.1) {
+                int targetPosition = intakeAndOutput.outputSlide.getTargetPosition() + (int) (-gamepad2.right_stick_y * 50);
+                if (targetPosition >= 10) {
+                    intakeAndOutput.outputSlide.startMoveToPos(targetPosition);
+                } else {
+                    intakeAndOutput.outputSlide.startRetraction();
+                }
             }
 
             // LinearSlide movement
