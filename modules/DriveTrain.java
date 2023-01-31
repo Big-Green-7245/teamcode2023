@@ -133,6 +133,17 @@ public class DriveTrain implements Modulable {
     }
 
     /**
+     * Rotate robot around center at given power
+     *
+     * @param radius radius of circle robot rotates around in inches
+     * @param power  speed of rotation
+     */
+    public void rotateAroundCenter(double radius, double power) {
+        double inchPerDegrees = COUNTS_PER_DEGREE / COUNTS_PER_INCH * (radius * Math.PI) / 180;
+        move(power * inchPerDegrees, 0, power, 0);
+    }
+
+    /**
      * Returns encoder positions of encoders
      *
      * @return array containing position of each wheel

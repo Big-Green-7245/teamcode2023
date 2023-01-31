@@ -77,6 +77,13 @@ public class TeleOp extends LinearOpMode {
                 }
             }
 
+            if (gp2.pressing(ButtonHelper.left_bumper)) {
+                intakeAndOutput.intakeSlide.startRetraction();
+            }
+            if (gp2.pressing(ButtonHelper.right_bumper)) {
+                intakeAndOutput.outputSlide.startRetraction();
+            }
+
             // LinearSlide movement
             if (gp2.pressing(ButtonHelper.x)) intakeAndOutput.startPlaceCone(IntakeAndOutput.GROUND);
             else if (gp2.pressing(ButtonHelper.a)) intakeAndOutput.startPlaceCone(IntakeAndOutput.LOW);
@@ -93,6 +100,14 @@ public class TeleOp extends LinearOpMode {
             if (gp2.pressing(ButtonHelper.dpad_up)) {
                 intakeAndOutput.intakeClaw.setClawOpen(false);
                 intakeAndOutput.startPickupCone();
+            }
+
+            // Move the robot around a point
+            if (gp1.pressed(ButtonHelper.dpad_left)) {
+                driveTrain.rotateAroundCenter(5, -0.2);
+            }
+            if (gp1.pressed(ButtonHelper.dpad_right)) {
+                driveTrain.rotateAroundCenter(5, 0.2);
             }
 
             // Update Telemetry

@@ -19,6 +19,7 @@ public class IntakePivot implements Modulable, ChainableBooleanSupplier {
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivot.setTargetPosition(0);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivot.setPower(1);
     }
 
     public void setTargetOrientation(Orientation orientation) {
