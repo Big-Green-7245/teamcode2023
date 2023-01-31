@@ -116,6 +116,13 @@ public class TeleOpTest extends LinearOpMode {
                 intake.confirmPlacePosition();
             }
 
+            // Move the robot around a point
+            if (gp1.pressed(ButtonHelper.dpad_left)) {
+                driveTrain.rotateAroundCenter(5, -0.2);
+            } else if (gp1.pressing(ButtonHelper.dpad_right)) {
+                driveTrain.rotateAroundCenter(5, 0.2);
+            }
+
             // Update Telemetry
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
             TelemetryWrapper.setLine(2, "Other info...");
