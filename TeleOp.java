@@ -30,7 +30,7 @@ public class TeleOp extends LinearOpMode {
         gp1 = new ButtonHelper(gamepad1);
         gp2 = new ButtonHelper(gamepad2);
         driveTrain = new DriveTrain(this);
-        intakeAndOutput = new IntakeAndOutput();
+        intakeAndOutput = new IntakeAndOutput(gp2, ButtonHelper.dpad_right);
         driveTrain.init(hardwareMap);
         intakeAndOutput.init(hardwareMap);
 
@@ -84,17 +84,15 @@ public class TeleOp extends LinearOpMode {
             else if (gp2.pressing(ButtonHelper.y)) intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH);
 
             // Move the pivot and claw
-            if (gp2.pressing(ButtonHelper.dpad_up)) {
+            if (gp2.pressing(ButtonHelper.dpad_left)) {
                 intakeAndOutput.toggleIntakeClaw();
             }
             if (gp2.pressing(ButtonHelper.dpad_down)) {
                 intakeAndOutput.toggleOutputClaw();
             }
-            if (gp2.pressing(ButtonHelper.dpad_right)) {
-                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() + 10);
-            }
-            if (gp2.pressing(ButtonHelper.dpad_left)) {
-                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() - 10);
+            if (gp2.pressing(ButtonHelper.dpad_up)) {
+                intakeAndOutput.intakeClaw.setClawOpen(false);
+                intakeAndOutput.startPickupCone();
             }
 
             // Update Telemetry

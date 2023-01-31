@@ -6,9 +6,11 @@ import org.firstinspires.ftc.teamcode.modules.intake.IntakePivot;
 import org.firstinspires.ftc.teamcode.modules.intake.IntakeSlide;
 import org.firstinspires.ftc.teamcode.modules.output.OutputClaw;
 import org.firstinspires.ftc.teamcode.modules.output.OutputSlide;
+import org.firstinspires.ftc.teamcode.state.ButtonState;
 import org.firstinspires.ftc.teamcode.state.State;
 import org.firstinspires.ftc.teamcode.state.StateManager;
 import org.firstinspires.ftc.teamcode.state.TimedState;
+import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 
 public class IntakeAndOutput implements Modulable, Tickable {
     private static final int AUTO_INTAKE_SLIDE_EXTENDED_POS = 2000;
@@ -24,8 +26,25 @@ public class IntakeAndOutput implements Modulable, Tickable {
     public OutputClaw outputClaw;
     public OutputSlide outputSlide;
     private StateManager stateManager;
+    private final boolean autonomous;
+    private final ButtonHelper gamepad;
+    private final int placeConfirmationButton;
     private int intakeSlideTarget = AUTO_INTAKE_SLIDE_EXTENDED_POS;
     private int targetLevel = HIGH;
+
+    public IntakeAndOutput() {
+        this(true, null, 0);
+    }
+
+    public IntakeAndOutput(ButtonHelper gamepad, int placeConfirmationButton) {
+        this(false, gamepad, placeConfirmationButton);
+    }
+
+    private IntakeAndOutput(boolean autonomous, ButtonHelper gamepad, int placeConfirmationButton) {
+        this.autonomous = autonomous;
+        this.gamepad = gamepad;
+        this.placeConfirmationButton = placeConfirmationButton;
+    }
 
     @Override
     public void init(HardwareMap map) {
@@ -44,16 +63,16 @@ public class IntakeAndOutput implements Modulable, Tickable {
 
     private StateManager initStates() {
         StateManager.Builder builder = new StateManager.Builder();
-        //TODO Wait for driver confirmation to start placing
         builder.addState(new State("Intake slide extending", () -> intakeSlide.startMoveToPos(intakeSlideTarget), intakeSlide, intakeSlide, false));
         builder.addState(new State("Output slide extending", () -> outputSlide.startMoveToPos(OUTPUT_LEVELS[targetLevel]), outputSlide, outputSlide.and(intakePivot)));
         builder.addState(new State("Intake pivot lowering to cone stack", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.INTAKE), intakePivot, false));
-        //TODO Wait for driver confirmation to place cone
+        if (!autonomous) {
+            builder.addState(new ButtonState("Waiting for place cone confirmation", gamepad, placeConfirmationButton));
+        }
         builder.addState(new TimedState("Output claw opening", () -> outputClaw.setClawOpen(true), 500, false));
-        //TODO Wait for driver confirmation to pickup cone
         builder.addState(new TimedState("Intake claw closing", () -> intakeClaw.setClawOpen(false), 500));
         builder.addState(new State("Output slide retracting", () -> outputSlide.startRetraction(), outputSlide, outputSlide, false));
-        builder.addState(new TimedState("Intake pivot raising from cone stack", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), 250));
+        builder.addState(new TimedState("Intake pivot raising from cone stack", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), 250, autonomous));
         builder.addState(new TimedState("Intake slide retracting", () -> intakeSlide.startRetraction(), intakeSlide, 1000, intakeSlide.and(outputSlide)));
         builder.addState(new State("Intake pivot lowering to holder", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.HOLDER), intakePivot));
         builder.addState(new TimedState("Intake claw opening at holder", () -> intakeClaw.setClawOpen(true), 500));
@@ -74,6 +93,14 @@ public class IntakeAndOutput implements Modulable, Tickable {
         intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
         intakeSlide.startRetraction();
         outputSlide.startRetraction();
+    }
+
+    public void startPickupCone() {
+        if (!stateManager.isRunning()) {
+            intakeSlideTarget = intakeSlide.getCurrentPosition();
+            stateManager.setCurrentStateIndex(4);
+            stateManager.run();
+        }
     }
 
     /**
@@ -97,11 +124,6 @@ public class IntakeAndOutput implements Modulable, Tickable {
             stateManager.setLoopCount(loopCount);
             stateManager.run();
         }
-    }
-
-    public void startPlaceCone(int targetLevel, int intakeSlideTarget, int loopCount) {
-        this.intakeSlideTarget = intakeSlideTarget;
-        startPlaceCone(targetLevel, loopCount);
     }
 
     public void setIntakeClawOpen(boolean open) {

@@ -111,10 +111,11 @@ public class EncoderAuto extends LinearOpMode {
         driveTrain.translate(SPEED, 0, 0, sideOfField ? -17 : 17, 10);
         driveTrain.translate(SPEED, sideOfField ? 10 : -10, 0, 0, 10);
         if (parkSpace == 1) {
-            driveTrain.translate(SPEED, -24, 0, 0, 10);
+            driveTrain.translate(SPEED, 0, sideOfField ? -24 : 24, 0, 10);
         } else if (parkSpace == 3) {
-            driveTrain.translate(SPEED, 24, 0, 0, 10);
+            driveTrain.translate(SPEED, 0, sideOfField ? 24 : -24, 0, 10);
         }
+        //TODO face robot in direction favorable for teleop
     }
 
     /**

@@ -30,7 +30,7 @@ public class TeleOpCalib extends LinearOpMode {
         gp1 = new ButtonHelper(gamepad1);
         gp2 = new ButtonHelper(gamepad2);
         driveTrain = new DriveTrain(this);
-        intakeAndOutput = new IntakeAndOutput();
+        intakeAndOutput = new IntakeAndOutput(gp2, ButtonHelper.dpad_right);
         intakeAndOutput.init(hardwareMap);
         driveTrain.init(hardwareMap);
 
@@ -78,10 +78,10 @@ public class TeleOpCalib extends LinearOpMode {
                 intakeAndOutput.toggleOutputClaw();
             }
             if (gp2.pressing(ButtonHelper.dpad_right)) {
-                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() + 100);
+                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() + 10);
             }
             if (gp2.pressing(ButtonHelper.dpad_left)) {
-                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() - 100);
+                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() - 10);
             }
 
             // Update Telemetry
