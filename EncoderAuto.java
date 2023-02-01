@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.IntakeAndOutput;
+import org.firstinspires.ftc.teamcode.modules.intake.IntakePivot;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import java.util.Arrays;
@@ -71,6 +72,7 @@ public class EncoderAuto extends LinearOpMode {
         intakeAndOutput.startRetraction();
         intakeAndOutput.setIntakeClawOpen(true);
         intakeAndOutput.setOutputClawOpen(false);
+        intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
         while (!this.isStarted()) {
             //            int newLabel = detectLabel();
             //            if (newLabel != 0) {
@@ -88,7 +90,7 @@ public class EncoderAuto extends LinearOpMode {
         driveTrain.translate(SPEED, sideOfField ? -10 : 10, 0, 0, 10);
         driveTrain.translate(SPEED, 0, 0, sideOfField ? 17 : -17, 10);
         driveTrain.translate(SPEED, 0, 2, 0, 10);
-        intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 5);
+        intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 6);
         while (this.opModeIsActive() && intakeAndOutput.isRunning()) {
             intakeAndOutput.tick();
             TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);

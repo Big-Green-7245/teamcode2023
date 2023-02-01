@@ -61,7 +61,7 @@ public class IntakePivot implements Modulable, ChainableBooleanSupplier {
     }
 
     public enum Orientation {
-        HOLDER(0), VERTICAL(60), INTAKE(210);
+        HOLDER(0), VERTICAL(311), INTAKE(1088);
 
         private final int position;
 

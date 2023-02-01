@@ -71,9 +71,11 @@ public class IntakeAndOutput implements Modulable, Tickable {
         }
         builder.addState(new TimedState("Output claw opening", () -> outputClaw.setClawOpen(true), 500, false));
         builder.addState(new TimedState("Intake claw closing", () -> intakeClaw.setClawOpen(false), 500));
+        builder.addState(new TimedState("Output claw closing", () -> outputClaw.setClawOpen(false), 500, false));
         builder.addState(new State("Output slide retracting", () -> outputSlide.startRetraction(), outputSlide, outputSlide, false));
         builder.addState(new TimedState("Intake pivot raising from cone stack", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), 250, autonomous));
         builder.addState(new TimedState("Intake slide retracting", () -> intakeSlide.startRetraction(), intakeSlide, 1000, intakeSlide.and(outputSlide)));
+        builder.addState(new TimedState("Output claw opening", () -> outputClaw.setClawOpen(true), 250));
         builder.addState(new State("Intake pivot lowering to holder", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.HOLDER), intakePivot));
         builder.addState(new TimedState("Intake claw opening at holder", () -> intakeClaw.setClawOpen(true), 500));
         builder.addState(new State("Intake pivot raising from holder", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), intakePivot, false));

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.IntakeAndOutput;
+import org.firstinspires.ftc.teamcode.modules.intake.IntakePivot;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
@@ -82,6 +83,23 @@ public class TeleOp extends LinearOpMode {
             }
             if (gp2.pressing(ButtonHelper.right_bumper)) {
                 intakeAndOutput.outputSlide.startRetraction();
+            }
+
+            // Move intake pivot
+            if (gp1.pressed(ButtonHelper.dpad_left)) {
+                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() + 10);
+            }
+            if (gp1.pressed(ButtonHelper.dpad_right)) {
+                intakeAndOutput.intakePivot.setTargetPosition(intakeAndOutput.intakePivot.getTargetPosition() - 10);
+            }
+            if (gp1.pressing(ButtonHelper.x)) {
+                intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.INTAKE);
+            }
+            if (gp1.pressing(ButtonHelper.y)) {
+                intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
+            }
+            if (gp1.pressing(ButtonHelper.b)) {
+                intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.HOLDER);
             }
 
             // LinearSlide movement
