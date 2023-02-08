@@ -119,6 +119,9 @@ public class TeleOp extends LinearOpMode {
                 intakeAndOutput.intakeClaw.setClawOpen(false);
                 intakeAndOutput.startPickupCone();
             }
+            if (gp2.pressing(ButtonHelper.dpad_right)) {
+                intakeAndOutput.setCurrentAsIntakeSlideTarget();
+            }
 
             // Move the robot around a point
             if (gp1.pressed(ButtonHelper.dpad_left)) {

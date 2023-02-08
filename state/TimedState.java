@@ -19,6 +19,10 @@ public class TimedState extends State {
         this(name, action, () -> {}, millis, () -> true, waitForCompletion);
     }
 
+    public TimedState(String name, Runnable action, long millis, ChainableBooleanSupplier additionalFinishCondition) {
+        this(name, action, () -> {}, millis, additionalFinishCondition, true);
+    }
+
     public TimedState(String name, Runnable action, Tickable tickable, long millis, ChainableBooleanSupplier additionalFinishCondition) {
         this(name, action, tickable, millis, additionalFinishCondition, true);
     }

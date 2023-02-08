@@ -19,7 +19,7 @@ public class IntakePivot implements Modulable, ChainableBooleanSupplier {
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivot.setTargetPosition(0);
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        pivot.setPower(1);
+        pivot.setPower(0.5);
     }
 
     public void setTargetOrientation(Orientation orientation) {
@@ -61,12 +61,16 @@ public class IntakePivot implements Modulable, ChainableBooleanSupplier {
     }
 
     public enum Orientation {
-        HOLDER(0), VERTICAL(311), INTAKE(1088);
+        HOLDER(0), VERTICAL(350), INTAKE(1050);
 
         private final int position;
 
         Orientation(int position) {
             this.position = position;
+        }
+
+        public int getPosition() {
+            return position;
         }
     }
 }
