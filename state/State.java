@@ -29,6 +29,10 @@ public class State implements Tickable, Runnable {
      */
     private final boolean waitForCompletion;
 
+    public State(String name, BooleanSupplier finishCondition) {
+        this(name, () -> {}, finishCondition, true);
+    }
+
     public State(String name, Runnable action, BooleanSupplier finishCondition) {
         this(name, action, finishCondition, true);
     }

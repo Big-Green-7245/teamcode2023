@@ -88,7 +88,7 @@ public class EncoderAuto extends LinearOpMode {
         driveTrain.translate(SPEED, 0, 56, 0, 10);
         driveTrain.translate(SPEED, 0, 0, sideOfField ? 90 : -90, 10);
         driveTrain.translate(SPEED, sideOfField ? -10 : 10, 0, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? 17 : -17, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? 18 : -18, 10);
         driveTrain.translate(SPEED, 0, 3, 0, 10);
         intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 6);
         while (this.opModeIsActive() && intakeAndOutput.isRunning()) {
@@ -110,7 +110,7 @@ public class EncoderAuto extends LinearOpMode {
             TelemetryWrapper.setLine(14, "Output Claw Position: " + intakeAndOutput.outputClaw.getPosition());
         }
         driveTrain.translate(SPEED, 0, -3, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? -17 : 17, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? -18 : 18, 10);
         driveTrain.translate(SPEED, sideOfField ? 10 : -10, 0, 0, 10);
         if (parkSpace == 1) {
             driveTrain.translate(SPEED, 0, sideOfField ? -24 : 24, 0, 10);

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw implements Modulable {
-    private static final double CLOSED_POS = 0;
+    public static final double CLOSED_POS = 0;
     private static final double OPENED_POS = 0.15;
     private final String name;
     protected Servo claw;

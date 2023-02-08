@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 
 public class IntakeAndOutput implements Modulable, Tickable {
     private static final int AUTO_INTAKE_SLIDE_EXTENDED_POS = 2000;
-    private static final int[] OUTPUT_LEVELS = new int[]{0, 1500, 2250, 3450};
+    private static final int[] OUTPUT_LEVELS = new int[]{0, 700, 2125, 3550};
     private static final int[][] CONE_STACK_LEVELS = new int[][]{{2066, 840}, {1974, 900}, {1974, 940}, {2000, 1000}, {2000, 1050}, {2000, 1050}}; // Last value is dummy value; it is not actually picking up a cone.
     public static final int GROUND = 0;
     public static final int LOW = 1;
@@ -75,17 +75,18 @@ public class IntakeAndOutput implements Modulable, Tickable {
         if (!autonomous) {
             builder.addState(new ButtonState("Waiting for place cone confirmation", gamepad, placeConfirmationButton));
         }
-        builder.addState(new TimedState("Output claw opening", () -> outputClaw.setClawOpen(true), 0, intakePivot));
+        builder.addState(new State("Waiting for intake pivot to lower to position", intakePivot));
         builder.addState(new State("Output slide retracting", () -> outputSlide.startRetraction(), outputSlide, outputSlide, false));
-        builder.addState(new TimedState("Intake claw closing", () -> intakeClaw.setClawOpen(false), 500));
-        builder.addState(new TimedState("Output claw closing", () -> outputClaw.setPosition(0.05), 500, false));
-        builder.addState(new TimedState("Intake pivot raising from cone stack", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), 250, autonomous));
-        builder.addState(new TimedState("Intake slide retracting", () -> intakeSlide.startRetraction(), intakeSlide, 500, intakeSlide.and(outputSlide)));
-        builder.addState(new TimedState("Output claw opening", () -> outputClaw.setClawOpen(true), 250));
+        builder.addState(new TimedState("Output claw opening", () -> outputClaw.setClawOpen(true), 160, false));
+        builder.addState(new TimedState("Intake claw closing", () -> intakeClaw.setClawOpen(false), 300));
+        builder.addState(new TimedState("Output claw closing", () -> outputClaw.setPosition(0.05), 160, false));
+        builder.addState(new TimedState("Intake pivot raising from cone stack", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), 300, autonomous));
+        builder.addState(new State("Intake slide retracting", () -> intakeSlide.startRetraction(), intakeSlide, intakeSlide.and(outputSlide)));
+        builder.addState(new TimedState("Output claw opening", () -> outputClaw.setClawOpen(true), 160));
         builder.addState(new State("Intake pivot lowering to holder", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.HOLDER), intakePivot));
-        builder.addState(new TimedState("Intake claw opening at holder", () -> intakeClaw.setClawOpen(true), 500));
-        builder.addState(new State("Intake pivot raising from holder", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), intakePivot, false));
-        builder.addState(new TimedState("Output claw closing", () -> outputClaw.setClawOpen(false), 500));
+        builder.addState(new TimedState("Output claw closing", () -> outputClaw.setClawOpen(false), 160, false));
+        builder.addState(new TimedState("Intake claw opening at holder", () -> intakeClaw.setClawOpen(true), 300));
+        builder.addState(new State("Intake pivot raising from holder", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), intakePivot));
         if (autonomous) {
             builder.addState(new State("Decrementing encoder targets to account for decremented cone stack", () -> intakeConeStackIndex++, () -> true));
         }
