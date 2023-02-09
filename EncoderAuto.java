@@ -91,7 +91,7 @@ public class EncoderAuto extends LinearOpMode {
         driveTrain.translate(SPEED, 0, 0, sideOfField ? 19 : -19, 10);
         driveTrain.translate(SPEED, 0, 3, 0, 10);
         intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 6);
-        while (this.opModeIsActive() && intakeAndOutput.isRunning()) {
+        while (!this.isStopRequested() && this.isStarted() && intakeAndOutput.isRunning()) {
             intakeAndOutput.tick();
             TelemetryWrapper.setLineNoRender(1, "TeleOpT1 v" + programVer);
 
