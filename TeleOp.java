@@ -104,7 +104,7 @@ public class TeleOp extends LinearOpMode {
             }
 
             // LinearSlide movement
-            if (intakeAndOutput.intakePivot.getTargetPosition() == IntakePivot.Orientation.VERTICAL.getPosition() && intakeAndOutput.outputClaw.getPosition() == Claw.CLOSED_POS) {
+            if (intakeAndOutput.intakePivot.getTargetPosition() >= IntakePivot.Orientation.VERTICAL.getPosition() && intakeAndOutput.outputClaw.getPosition() == Claw.CLOSED_POS) {
                 if (gp2.pressing(ButtonHelper.x)) intakeAndOutput.startPlaceCone(IntakeAndOutput.GROUND);
                 else if (gp2.pressing(ButtonHelper.a)) intakeAndOutput.startPlaceCone(IntakeAndOutput.LOW);
                 else if (gp2.pressing(ButtonHelper.b)) intakeAndOutput.startPlaceCone(IntakeAndOutput.MID);
