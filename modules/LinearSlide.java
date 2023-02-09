@@ -74,7 +74,7 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
      */
     @Override
     public boolean getAsBoolean() {
-        return !elevator.isBusy();
+        return elevator.getTargetPosition() <= 10 ? elevatorBtn.isPressed() : !elevator.isBusy();
     }
 
     public double getCurrent() {

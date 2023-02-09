@@ -23,7 +23,6 @@ public class IntakeAndOutput implements Modulable, Tickable {
     public IntakeClaw intakeClaw;
     public IntakePivot intakePivot;
     public IntakeSlide intakeSlide;
-
     public OutputClaw outputClaw;
     public OutputSlide outputSlide;
     private StateManager stateManager;
@@ -85,8 +84,9 @@ public class IntakeAndOutput implements Modulable, Tickable {
         builder.addState(new TimedState("Output claw opening", () -> outputClaw.setClawOpen(true), 160));
         builder.addState(new State("Intake pivot lowering to holder", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.HOLDER), intakePivot));
         builder.addState(new TimedState("Output claw closing", () -> outputClaw.setClawOpen(false), 160, false));
-        builder.addState(new TimedState("Intake claw opening at holder", () -> intakeClaw.setClawOpen(true), 300));
+        builder.addState(new TimedState("Intake claw opening at holder", () -> intakeClaw.setPosition(0.1), 250));
         builder.addState(new State("Intake pivot raising from holder", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), intakePivot));
+        builder.addState(new TimedState("Intake claw opening at vertical", () -> intakeClaw.setClawOpen(true), 0, false));
         if (autonomous) {
             builder.addState(new State("Decrementing encoder targets to account for decremented cone stack", () -> intakeConeStackIndex++, () -> true));
         }

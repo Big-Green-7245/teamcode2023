@@ -87,31 +87,32 @@ public class EncoderAuto extends LinearOpMode {
         }
         driveTrain.translate(SPEED, 0, 56, 0, 10);
         driveTrain.translate(SPEED, 0, 0, sideOfField ? 90 : -90, 10);
-        driveTrain.translate(SPEED, sideOfField ? -10 : 10, 0, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? 18 : -18, 10);
+        driveTrain.translate(SPEED, sideOfField ? -9 : 9, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? 19 : -19, 10);
         driveTrain.translate(SPEED, 0, 3, 0, 10);
         intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 6);
         while (this.opModeIsActive() && intakeAndOutput.isRunning()) {
             intakeAndOutput.tick();
-            TelemetryWrapper.setLine(1, "TeleOpT1 v" + programVer);
+            TelemetryWrapper.setLineNoRender(1, "TeleOpT1 v" + programVer);
 
-            TelemetryWrapper.setLine(3, "Current State: " + intakeAndOutput.getCurrentState().getName());
-            TelemetryWrapper.setLine(4, "Intake Button: " + intakeAndOutput.intakeSlide.isElevatorBtnPressed());
-            TelemetryWrapper.setLine(5, "Intake Slide Current Position: " + intakeAndOutput.intakeSlide.getCurrentPosition());
-            TelemetryWrapper.setLine(6, "Intake Slide Target Position: " + intakeAndOutput.intakeSlide.getTargetPosition());
-            TelemetryWrapper.setLine(7, "Intake Pivot Current Position: " + intakeAndOutput.intakePivot.getCurrentPosition());
-            TelemetryWrapper.setLine(8, "Intake Pivot Target Position: " + intakeAndOutput.intakePivot.getTargetPosition());
-            TelemetryWrapper.setLine(9, "Output Button: " + intakeAndOutput.outputSlide.isElevatorBtnPressed());
-            TelemetryWrapper.setLine(10, "Output Slide Current Position: " + intakeAndOutput.outputSlide.getCurrentPosition());
-            TelemetryWrapper.setLine(11, "Output Slide Target Position: " + intakeAndOutput.outputSlide.getTargetPosition());
-            TelemetryWrapper.setLine(12, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
+            TelemetryWrapper.setLineNoRender(3, "Current State: " + intakeAndOutput.getCurrentState().getName());
+            TelemetryWrapper.setLineNoRender(4, "Intake Button: " + intakeAndOutput.intakeSlide.isElevatorBtnPressed());
+            TelemetryWrapper.setLineNoRender(5, "Intake Slide Current Position: " + intakeAndOutput.intakeSlide.getCurrentPosition());
+            TelemetryWrapper.setLineNoRender(6, "Intake Slide Target Position: " + intakeAndOutput.intakeSlide.getTargetPosition());
+            TelemetryWrapper.setLineNoRender(7, "Intake Pivot Current Position: " + intakeAndOutput.intakePivot.getCurrentPosition());
+            TelemetryWrapper.setLineNoRender(8, "Intake Pivot Target Position: " + intakeAndOutput.intakePivot.getTargetPosition());
+            TelemetryWrapper.setLineNoRender(9, "Output Button: " + intakeAndOutput.outputSlide.isElevatorBtnPressed());
+            TelemetryWrapper.setLineNoRender(10, "Output Slide Current Position: " + intakeAndOutput.outputSlide.getCurrentPosition());
+            TelemetryWrapper.setLineNoRender(11, "Output Slide Target Position: " + intakeAndOutput.outputSlide.getTargetPosition());
+            TelemetryWrapper.setLineNoRender(12, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
 
-            TelemetryWrapper.setLine(13, "Intake Claw Position: " + intakeAndOutput.intakeClaw.getPosition());
-            TelemetryWrapper.setLine(14, "Output Claw Position: " + intakeAndOutput.outputClaw.getPosition());
+            TelemetryWrapper.setLineNoRender(13, "Intake Claw Position: " + intakeAndOutput.intakeClaw.getPosition());
+            TelemetryWrapper.setLineNoRender(14, "Output Claw Position: " + intakeAndOutput.outputClaw.getPosition());
+            TelemetryWrapper.render();
         }
         driveTrain.translate(SPEED, 0, -3, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? -18 : 18, 10);
-        driveTrain.translate(SPEED, sideOfField ? 10 : -10, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? -19 : 19, 10);
+        driveTrain.translate(SPEED, sideOfField ? 9 : -9, 0, 0, 10);
         if (parkSpace == 1) {
             driveTrain.translate(SPEED, 0, sideOfField ? -24 : 24, 0, 10);
         } else if (parkSpace == 3) {
