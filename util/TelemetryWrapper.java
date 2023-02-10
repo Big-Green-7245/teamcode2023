@@ -9,7 +9,7 @@ import java.util.Arrays;
  */
 
 public class TelemetryWrapper {
-    private static Telemetry t;
+    public static Telemetry t;
     private static String[] lines;
 
 
