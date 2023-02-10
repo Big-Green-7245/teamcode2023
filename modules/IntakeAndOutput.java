@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.modules.Webcams.PoleAlignWebcam;
 import org.firstinspires.ftc.teamcode.modules.intake.IntakeClaw;
 import org.firstinspires.ftc.teamcode.modules.intake.IntakePivot;
 import org.firstinspires.ftc.teamcode.modules.intake.IntakeSlide;
@@ -33,6 +34,8 @@ public class IntakeAndOutput implements Modulable, Tickable {
     private int intakeSlideTarget = AUTO_INTAKE_SLIDE_EXTENDED_POS;
     private int targetLevel = HIGH;
 
+    private PoleAlignWebcam poleAlignCam;
+
     public IntakeAndOutput() {
         this(true, null, 0);
     }
@@ -63,10 +66,11 @@ public class IntakeAndOutput implements Modulable, Tickable {
         intakeSlide.init(map);
         outputClaw.init(map);
         outputSlide.init(map);
-        stateManager = initStates();
+        poleAlignCam.init(map);
+        stateManager = initConeStates();
     }
 
-    private StateManager initStates() {
+    private StateManager initConeStates() {
         StateManager.Builder builder = new StateManager.Builder();
         builder.addState(new State("Intake slide extending", () -> intakeSlide.startMoveToPos(autonomous ? CONE_STACK_LEVELS[intakeConeStackIndex][0] : intakeSlideTarget), intakeSlide, intakeSlide, false));
         builder.addState(new State("Output slide extending", () -> outputSlide.startMoveToPos(OUTPUT_LEVELS[targetLevel]), outputSlide, outputSlide.and(intakePivot)));
@@ -90,6 +94,14 @@ public class IntakeAndOutput implements Modulable, Tickable {
         if (autonomous) {
             builder.addState(new State("Decrementing encoder targets to account for decremented cone stack", () -> intakeConeStackIndex++, () -> true));
         }
+        return builder.build();
+    }
+
+    private StateManager initPoleAlignStates(){
+
+        StateManager.Builder builder = new StateManager.Builder();
+        builder.addState(new TimedState("Waiting for pole detection", ()->{}, poleAlignCam, 3000, poleAlignCam));
+        builder.addState(new TimedState("Aligning robot to pole", () -> {}, poleAlignCam, 5000, poleAlignCam));
         return builder.build();
     }
 
