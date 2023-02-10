@@ -46,7 +46,7 @@ public class TeleOpCalib extends LinearOpMode {
             gp2.update();
 
             // DriveTrain wheels
-            driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
+            driveTrain.move(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
             // DriveEnc Calib
             if (gp1.pressing(ButtonHelper.left_stick_button)) {
