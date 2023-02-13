@@ -41,6 +41,7 @@ public class EncoderAuto extends LinearOpMode {
         driveTrain.init(hardwareMap);
         intakeAndOutput = new IntakeAndOutput();
         intakeAndOutput.init(hardwareMap);
+        parkCam = new ParkDetectionWebcam();
         parkCam.init(hardwareMap);
 
         // Wait for start
