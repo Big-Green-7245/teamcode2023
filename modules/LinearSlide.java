@@ -71,10 +71,11 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
 
     /**
      * @return true if the elevator is at the target position
+     * @implNote manually check the elevator position and the button because {@link DcMotor#isBusy()} has a lot of delay.
      */
     @Override
     public boolean getAsBoolean() {
-        return elevator.getTargetPosition() <= 10 ? elevatorBtn.isPressed() : !elevator.isBusy();
+        return elevator.getTargetPosition() <= 10 ? elevatorBtn.isPressed() : Math.abs(elevator.getTargetPosition() - elevator.getCurrentPosition()) <= 10;
     }
 
     public double getCurrent() {
