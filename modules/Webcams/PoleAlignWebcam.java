@@ -5,7 +5,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import java.util.List;
 
-public class PoleAlignWebcam extends Webcam{
+public class PoleAlignWebcam extends Webcam {
 
     public double[] x_pos;
     public int poleWidth;
@@ -13,23 +13,17 @@ public class PoleAlignWebcam extends Webcam{
 
     /**
      * Initialize the model
+     *
      * @param map
      */
     @Override
-    public void init(HardwareMap map){
-        super.initTfod(map);
-        //Change the tfod model file to the correct one
+    public void init(HardwareMap map) {
+        //TODO Change the tfod model file to the correct one
         super.initVuforia(map, "/sdcard/FIRST/tflitemodels/signal.tflite", new String[]{"junction"});
+        super.initTfod(map);
     }
 
-    /**
-     * Detect every iteration
-     */
     @Override
-    public void tick(){
-        detect();
-    }
-
     public void detect() {
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since

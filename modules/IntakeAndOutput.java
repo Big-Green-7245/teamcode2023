@@ -66,7 +66,8 @@ public class IntakeAndOutput implements Modulable, Tickable {
         intakeSlide.init(map);
         outputClaw.init(map);
         outputSlide.init(map);
-        poleAlignCam.init(map);
+//        poleAlignCam = new PoleAlignWebcam();
+//        poleAlignCam.init(map);
         stateManager = initConeStates();
     }
 
@@ -97,13 +98,14 @@ public class IntakeAndOutput implements Modulable, Tickable {
         return builder.build();
     }
 
-    private StateManager initPoleAlignStates(){
-
-        StateManager.Builder builder = new StateManager.Builder();
-        builder.addState(new TimedState("Waiting for pole detection", ()->{}, poleAlignCam, 3000, poleAlignCam));
-        builder.addState(new TimedState("Aligning robot to pole", () -> {}, poleAlignCam, 5000, poleAlignCam));
-        return builder.build();
-    }
+    //Not Ready
+//    private StateManager initPoleAlignStates(){
+//
+//        StateManager.Builder builder = new StateManager.Builder();
+//        builder.addState(new TimedState("Waiting for pole detection", ()->{}, poleAlignCam, 3000, poleAlignCam));
+//        builder.addState(new TimedState("Aligning robot to pole", () -> {}, poleAlignCam, 5000, poleAlignCam));
+//        return builder.build();
+//    }
 
     public boolean isRunning() {
         return stateManager.isRunning();

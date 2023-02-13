@@ -10,11 +10,11 @@ import org.firstinspires.ftc.teamcode.modules.Modulable;
 import org.firstinspires.ftc.teamcode.modules.Tickable;
 import org.firstinspires.ftc.teamcode.util.ChainableBooleanSupplier;
 
-public class Webcam implements Modulable, Tickable, ChainableBooleanSupplier {
+public abstract class Webcam implements Modulable, Tickable, ChainableBooleanSupplier {
 
     //Declare model for object detection
     @SuppressLint("SdCardPath")
-    protected String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/signal.tflite";
+    protected String TFOD_MODEL = "/sdcard/FIRST/tflitemodels/signal.tflite";
 
     protected String[] LABELS = {};
 
@@ -32,6 +32,8 @@ public class Webcam implements Modulable, Tickable, ChainableBooleanSupplier {
 
     public boolean detectionComplete;
 
+    protected boolean getModelFromAsset = false;
+
     /**
      * Initialize the Vuforia localization engine.
      */
@@ -47,13 +49,13 @@ public class Webcam implements Modulable, Tickable, ChainableBooleanSupplier {
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
         LABELS = labels;
-        TFOD_MODEL_FILE = tfodModelFile;
+        TFOD_MODEL = tfodModelFile;
     }
 
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
-    protected void initTfod(HardwareMap hardwareMap){
+    protected void initTfod(HardwareMap hardwareMap) {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.75f;
@@ -63,8 +65,11 @@ public class Webcam implements Modulable, Tickable, ChainableBooleanSupplier {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        if (getModelFromAsset){
+            tfod.loadModelFromAsset(TFOD_MODEL, LABELS);
+        }else{
+            tfod.loadModelFromFile(TFOD_MODEL, LABELS);
+        }
     }
 
     public void activateTfod() {
@@ -74,19 +79,14 @@ public class Webcam implements Modulable, Tickable, ChainableBooleanSupplier {
     }
 
     @Override
-    public void init(HardwareMap hardwareMap) {
-
-    }
-
-    @Override
     public void tick() {
-
+        detect();
     }
+
+    public abstract void detect();
 
     @Override
     public boolean getAsBoolean() {
         return detectionComplete;
     }
-
-
 }
