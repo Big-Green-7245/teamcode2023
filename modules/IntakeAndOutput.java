@@ -114,7 +114,6 @@ public class IntakeAndOutput implements Modulable, Tickable {
     }
 
     public void startRetraction() {
-        intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
         intakeSlide.startRetraction();
         outputSlide.startRetraction();
     }

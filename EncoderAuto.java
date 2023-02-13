@@ -48,7 +48,6 @@ public class EncoderAuto extends LinearOpMode {
         intakeAndOutput.startRetraction();
         intakeAndOutput.setIntakeClawOpen(true);
         intakeAndOutput.setOutputClawOpen(false);
-        intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
         while (!this.isStarted()) {
             parkSpace = parkCam.parkSpace;
             intakeAndOutput.tickBeforeStart();
@@ -58,6 +57,7 @@ public class EncoderAuto extends LinearOpMode {
             TelemetryWrapper.setLine(6, "Output LinearSlide EncoderTarget: " + intakeAndOutput.outputSlide.getTargetPosition());
             TelemetryWrapper.setLine(7, "Output LinearSlide Encoder: " + intakeAndOutput.outputSlide.getCurrentPosition());
         }
+        intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
         driveTrain.translate(SPEED, 0, 56, 0, 10);
         driveTrain.translate(SPEED, 0, 0, sideOfField ? 90 : -90, 10);
         driveTrain.translate(SPEED, sideOfField ? -9 : 9, 0, 0, 10);

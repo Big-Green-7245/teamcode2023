@@ -51,6 +51,8 @@ public class TeleOp extends LinearOpMode {
             TelemetryWrapper.setLine(7, "Output Slide Target Position" + intakeAndOutput.outputSlide.getTargetPosition());
         }
 
+        intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
+
         while (opModeIsActive()) {
             // Update ButtonHelper
             gp1.update();
