@@ -24,7 +24,7 @@ public class TeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        TelemetryWrapper.init(telemetry, 16);
+        TelemetryWrapper.init(telemetry, 20);
 
         TelemetryWrapper.setLine(1, "TeleOp v" + programVer + "\t Initializing");
 
@@ -144,15 +144,17 @@ public class TeleOp extends LinearOpMode {
             TelemetryWrapper.setLineNoRender(4, "Intake Button: " + intakeAndOutput.intakeSlide.isElevatorBtnPressed());
             TelemetryWrapper.setLineNoRender(5, "Intake Slide Current Position: " + intakeAndOutput.intakeSlide.getCurrentPosition());
             TelemetryWrapper.setLineNoRender(6, "Intake Slide Target Position: " + intakeAndOutput.intakeSlide.getTargetPosition());
-            TelemetryWrapper.setLineNoRender(7, "Intake Pivot Current Position: " + intakeAndOutput.intakePivot.getCurrentPosition());
-            TelemetryWrapper.setLineNoRender(8, "Intake Pivot Target Position: " + intakeAndOutput.intakePivot.getTargetPosition());
-            TelemetryWrapper.setLineNoRender(9, "Output Button: " + intakeAndOutput.outputSlide.isElevatorBtnPressed());
-            TelemetryWrapper.setLineNoRender(10, "Output Slide Current Position: " + intakeAndOutput.outputSlide.getCurrentPosition());
-            TelemetryWrapper.setLineNoRender(11, "Output Slide Target Position: " + intakeAndOutput.outputSlide.getTargetPosition());
-            TelemetryWrapper.setLineNoRender(12, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
+            TelemetryWrapper.setLineNoRender(7, "Intake Slide Current: " + intakeAndOutput.intakeSlide.getCurrent());
+            TelemetryWrapper.setLineNoRender(8, "Intake Pivot Current Position: " + intakeAndOutput.intakePivot.getCurrentPosition());
+            TelemetryWrapper.setLineNoRender(9, "Intake Pivot Target Position: " + intakeAndOutput.intakePivot.getTargetPosition());
+            TelemetryWrapper.setLineNoRender(10, "Output Button: " + intakeAndOutput.outputSlide.isElevatorBtnPressed());
+            TelemetryWrapper.setLineNoRender(11, "Output Slide Current Position: " + intakeAndOutput.outputSlide.getCurrentPosition());
+            TelemetryWrapper.setLineNoRender(12, "Output Slide Target Position: " + intakeAndOutput.outputSlide.getTargetPosition());
+            TelemetryWrapper.setLineNoRender(13, "Output Slide Current: " + intakeAndOutput.outputSlide.getCurrent());
+            TelemetryWrapper.setLineNoRender(14, "DriveTrain Encoders: " + Arrays.toString(driveTrain.getEncPos()));
 
-            TelemetryWrapper.setLineNoRender(13, "Intake Claw Position: " + intakeAndOutput.intakeClaw.getPosition());
-            TelemetryWrapper.setLineNoRender(14, "Output Claw Position: " + intakeAndOutput.outputClaw.getPosition());
+            TelemetryWrapper.setLineNoRender(15, "Intake Claw Position: " + intakeAndOutput.intakeClaw.getPosition());
+            TelemetryWrapper.setLineNoRender(16, "Output Claw Position: " + intakeAndOutput.outputClaw.getPosition());
             TelemetryWrapper.render();
         }
     }

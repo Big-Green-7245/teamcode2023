@@ -66,8 +66,8 @@ public class IntakeAndOutput implements Modulable, Tickable {
         intakeSlide.init(map);
         outputClaw.init(map);
         outputSlide.init(map);
-//        poleAlignCam = new PoleAlignWebcam();
-//        poleAlignCam.init(map);
+        //        poleAlignCam = new PoleAlignWebcam();
+        //        poleAlignCam.init(map);
         stateManager = initConeStates();
     }
 
@@ -99,13 +99,13 @@ public class IntakeAndOutput implements Modulable, Tickable {
     }
 
     //Not Ready
-//    private StateManager initPoleAlignStates(){
-//
-//        StateManager.Builder builder = new StateManager.Builder();
-//        builder.addState(new TimedState("Waiting for pole detection", ()->{}, poleAlignCam, 3000, poleAlignCam));
-//        builder.addState(new TimedState("Aligning robot to pole", () -> {}, poleAlignCam, 5000, poleAlignCam));
-//        return builder.build();
-//    }
+    //    private StateManager initPoleAlignStates(){
+    //
+    //        StateManager.Builder builder = new StateManager.Builder();
+    //        builder.addState(new TimedState("Waiting for pole detection", ()->{}, poleAlignCam, 3000, poleAlignCam));
+    //        builder.addState(new TimedState("Aligning robot to pole", () -> {}, poleAlignCam, 5000, poleAlignCam));
+    //        return builder.build();
+    //    }
 
     public boolean isRunning() {
         return stateManager.isRunning();
@@ -178,6 +178,18 @@ public class IntakeAndOutput implements Modulable, Tickable {
         stateManager.tick();
         intakeSlide.tick();
         outputSlide.tick();
+        if (intakePivot.getCurrent() > 50) {
+            intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
+            stateManager.stopAndReset();
+        }
+        if (intakeSlide.getCurrent() > 50) {
+            intakeSlide.startMoveToPos(intakeSlide.getCurrentPosition());
+            stateManager.stopAndReset();
+        }
+        if (outputSlide.getCurrent() > 50) {
+            outputSlide.startMoveToPos(outputSlide.getCurrentPosition());
+            stateManager.stopAndReset();
+        }
     }
 }
 
