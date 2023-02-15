@@ -46,7 +46,6 @@ public class EncoderAuto extends LinearOpMode {
 
         // Wait for start
         intakeAndOutput.startRetraction();
-        intakeAndOutput.setIntakeClawOpen(true);
         intakeAndOutput.setOutputClawOpen(false);
         while (!this.isStarted()) {
             parkSpace = parkCam.parkSpace;
@@ -58,10 +57,11 @@ public class EncoderAuto extends LinearOpMode {
             TelemetryWrapper.setLine(7, "Output LinearSlide Encoder: " + intakeAndOutput.outputSlide.getCurrentPosition());
         }
         intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
+        intakeAndOutput.setIntakeClawOpen(true);
         driveTrain.translate(SPEED, 0, 56, 0, 10);
         driveTrain.translate(SPEED, 0, 0, sideOfField ? 90 : -90, 10);
-        driveTrain.translate(SPEED, sideOfField ? -9 : 9, 0, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? 19 : -19, 10);
+        driveTrain.translate(SPEED, sideOfField ? -8.5 : 8, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? 18 : -18, 10);
         driveTrain.translate(SPEED, 0, 3, 0, 10);
         intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 6);
         while (!this.isStopRequested() && this.isStarted() && intakeAndOutput.isRunning()) {
@@ -85,8 +85,8 @@ public class EncoderAuto extends LinearOpMode {
             TelemetryWrapper.render();
         }
         driveTrain.translate(SPEED, 0, -3, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? -19 : 19, 10);
-        driveTrain.translate(SPEED, sideOfField ? 9 : -9, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? -18 : 18, 10);
+        driveTrain.translate(SPEED, sideOfField ? 8.5 : -8, 0, 0, 10);
         if (parkSpace == 1) {
             driveTrain.translate(SPEED, 0, sideOfField ? -24 : 24, 0, 10);
         } else if (parkSpace == 3) {

@@ -52,6 +52,7 @@ public class TeleOp extends LinearOpMode {
         }
 
         intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
+        intakeAndOutput.setIntakeClawOpen(true);
 
         while (opModeIsActive()) {
             // Update ButtonHelper

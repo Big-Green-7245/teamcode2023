@@ -35,7 +35,7 @@ public class IntakePivot implements Modulable, ChainableBooleanSupplier {
      */
     @Override
     public boolean getAsBoolean() {
-        return !pivot.isBusy();
+        return Math.abs(pivot.getTargetPosition() - pivot.getCurrentPosition()) <= 10;
     }
 
     public double getCurrent() {
