@@ -12,11 +12,13 @@ import org.firstinspires.ftc.teamcode.state.State;
 import org.firstinspires.ftc.teamcode.state.StateManager;
 import org.firstinspires.ftc.teamcode.state.TimedState;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
+import org.firstinspires.ftc.teamcode.util.EncoderConstants;
 
 public class IntakeAndOutput implements Modulable, Tickable {
-    private static final int AUTO_INTAKE_SLIDE_EXTENDED_POS = 2000;
-    private static final int[] OUTPUT_LEVELS = new int[]{0, 700, 2125, 3550};
-    private static final int[][] CONE_STACK_LEVELS = new int[][]{{2066, 840}, {1974, 900}, {1974, 940}, {2000, 1000}, {2000, 1050}, {2000, 1050}}; // Last value is dummy value; it is not actually picking up a cone.
+    private static final double SLIDE_ENCODER = EncoderConstants.YELLOW_JACKET_312.getPulsesPerRevolution();
+    private static final int AUTO_INTAKE_SLIDE_EXTENDED_POS = (int) (3.7195462154 * SLIDE_ENCODER);
+    private static final int[] OUTPUT_LEVELS = new int[]{0, (int) (1.3018411754 * SLIDE_ENCODER), (int) (3.9520178538 * SLIDE_ENCODER), (int) (6.6021945323 * SLIDE_ENCODER)};
+    private static final int[][] CONE_STACK_LEVELS = new int[][]{{(int) (3.8422912405 * SLIDE_ENCODER), 840}, {(int) (3.6711921146 * SLIDE_ENCODER), 900}, {(int) (3.6711921146 * SLIDE_ENCODER), 940}, {(int) (3.7195462154 * SLIDE_ENCODER), 1000}, {(int) (3.7195462154 * SLIDE_ENCODER), 1050}, {(int) (3.7195462154 * SLIDE_ENCODER), 1050}}; // Last value is dummy value; it is not actually picking up a cone.
     public static final int GROUND = 0;
     public static final int LOW = 1;
     public static final int MID = 2;
