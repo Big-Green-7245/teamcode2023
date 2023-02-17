@@ -27,6 +27,7 @@ public class EncoderAuto extends LinearOpMode {
     private IntakeAndOutput intakeAndOutput;
 
     private ParkDetectionWebcam parkCam;
+    private int counter = 0;
 
 
     public EncoderAuto(boolean sideOfField) {
@@ -48,8 +49,9 @@ public class EncoderAuto extends LinearOpMode {
         intakeAndOutput.startRetraction();
         intakeAndOutput.setOutputClawOpen(false);
         while (!this.isStarted()) {
-            parkSpace = parkCam.parkSpace;
             intakeAndOutput.tickBeforeStart();
+            parkCam.tick();
+            parkSpace = parkCam.parkSpace;
             TelemetryWrapper.setLine(3, "Park Space: " + parkSpace);
             TelemetryWrapper.setLine(4, "Intake LinearSlide EncoderTarget: " + intakeAndOutput.intakeSlide.getTargetPosition());
             TelemetryWrapper.setLine(5, "Intake LinearSlide Encoder: " + intakeAndOutput.intakeSlide.getCurrentPosition());
@@ -66,7 +68,6 @@ public class EncoderAuto extends LinearOpMode {
         intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 6);
         while (!this.isStopRequested() && this.isStarted() && intakeAndOutput.isRunning()) {
             intakeAndOutput.tick();
-            parkCam.tick();
             TelemetryWrapper.setLineNoRender(1, "TeleOpT1 v" + programVer);
 
             TelemetryWrapper.setLineNoRender(3, "Current State: " + intakeAndOutput.getCurrentState().getName());
@@ -84,6 +85,7 @@ public class EncoderAuto extends LinearOpMode {
 
             TelemetryWrapper.setLineNoRender(15, "Intake Claw Position: " + intakeAndOutput.intakeClaw.getPosition());
             TelemetryWrapper.setLineNoRender(16, "Output Claw Position: " + intakeAndOutput.outputClaw.getPosition());
+            TelemetryWrapper.setLineNoRender(17, "Counter: " + counter++);
             TelemetryWrapper.render();
         }
         driveTrain.translate(SPEED, 0, sideOfField ? -3 : -1, 0, 10);

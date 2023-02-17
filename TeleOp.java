@@ -66,7 +66,7 @@ public class TeleOp extends LinearOpMode {
             driveTrain.move(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
             if (Math.abs(gamepad2.left_stick_y) > 0.1) {
-                int targetPosition = intakeAndOutput.intakeSlide.getTargetPosition() + (int) (-gamepad2.left_stick_y * 50);
+                int targetPosition = intakeAndOutput.intakeSlide.getTargetPosition() + (int) (-gamepad2.left_stick_y * 10);
                 if (targetPosition >= 10) {
                     intakeAndOutput.intakeSlide.startMoveToPos(targetPosition);
                 } else {
@@ -74,7 +74,7 @@ public class TeleOp extends LinearOpMode {
                 }
             }
             if (Math.abs(gamepad2.right_stick_y) > 0.1) {
-                int targetPosition = intakeAndOutput.outputSlide.getTargetPosition() + (int) (-gamepad2.right_stick_y * 50);
+                int targetPosition = intakeAndOutput.outputSlide.getTargetPosition() + (int) (-gamepad2.right_stick_y * 10);
                 if (targetPosition >= 10) {
                     intakeAndOutput.outputSlide.startMoveToPos(targetPosition);
                 } else {

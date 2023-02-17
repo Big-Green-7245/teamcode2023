@@ -63,7 +63,7 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
         if (retracting && elevatorBtn.isPressed()) {
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            elevator.setTargetPosition(10);
+            elevator.setTargetPosition(2);
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             retracting = false;
         }
@@ -75,7 +75,7 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
      */
     @Override
     public boolean getAsBoolean() {
-        return elevator.getTargetPosition() <= 10 ? elevatorBtn.isPressed() : Math.abs(elevator.getTargetPosition() - elevator.getCurrentPosition()) <= 10;
+        return Math.abs(elevator.getTargetPosition() - elevator.getCurrentPosition()) <= 20;
     }
 
     public double getCurrent() {
