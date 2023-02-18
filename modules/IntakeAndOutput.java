@@ -35,19 +35,21 @@ public class IntakeAndOutput implements Modulable, Tickable {
     private int intakeConeStackIndex;
     private int intakeSlideTarget = AUTO_INTAKE_SLIDE_EXTENDED_POS;
     private int targetLevel = HIGH;
+    private final boolean sideOfField;
 
     private PoleAlignWebcam poleAlignCam;
 
-    public IntakeAndOutput() {
-        this(true, null, 0);
+    public IntakeAndOutput(boolean sideOfField) {
+        this(true, sideOfField, null, 0);
     }
 
     public IntakeAndOutput(ButtonHelper gamepad, int placeConfirmationButton) {
-        this(false, gamepad, placeConfirmationButton);
+        this(false, false, gamepad, placeConfirmationButton);
     }
 
-    private IntakeAndOutput(boolean autonomous, ButtonHelper gamepad, int placeConfirmationButton) {
+    private IntakeAndOutput(boolean autonomous, boolean sideOfField, ButtonHelper gamepad, int placeConfirmationButton) {
         this.autonomous = autonomous;
+        this.sideOfField = sideOfField;
         this.gamepad = gamepad;
         this.placeConfirmationButton = placeConfirmationButton;
     }
@@ -76,8 +78,8 @@ public class IntakeAndOutput implements Modulable, Tickable {
     private StateManager initConeStates() {
         StateManager.Builder builder = new StateManager.Builder();
         builder.addState(new State("Output slide extending", () -> outputSlide.startMoveToPos(OUTPUT_LEVELS[targetLevel]))); // Intake slide, output slide, and intake pivot start at the same time. Do not wait for any to finish.
-        builder.addState(new State("Intake slide extending", () -> intakeSlide.startMoveToPos(autonomous ? CONE_STACK_LEVELS[intakeConeStackIndex][0] : intakeSlideTarget)));
-        builder.addState(new State("Intake pivot lowering", () -> intakePivot.setTargetPosition(autonomous ? CONE_STACK_LEVELS[intakeConeStackIndex][1] - 200 : IntakePivot.Orientation.INTAKE.getPosition() - 200), intakeSlide)); // Wait for intake slide to finish so the pivot can be lowered further.
+        builder.addState(new State("Intake slide extending", () -> intakeSlide.startMoveToPos(autonomous ? CONE_STACK_LEVELS[intakeConeStackIndex][0] + (sideOfField ? 0 : (int) (0.1 * SLIDE_ENCODER)) : intakeSlideTarget)));
+        builder.addState(new State("Intake pivot lowering", () -> intakePivot.setTargetPosition(autonomous ? CONE_STACK_LEVELS[intakeConeStackIndex][1] - 400 : IntakePivot.Orientation.INTAKE.getPosition() - 400), intakeSlide)); // Wait for intake slide to finish so the pivot can be lowered further.
         builder.addState(new State("Intake pivot lowering to cone stack", () -> intakePivot.setTargetPosition(autonomous ? CONE_STACK_LEVELS[intakeConeStackIndex][1] : IntakePivot.Orientation.INTAKE.getPosition())));
         if (!autonomous) {
             builder.addState(new ButtonState("Waiting for place cone confirmation", gamepad, placeConfirmationButton));
@@ -88,7 +90,7 @@ public class IntakeAndOutput implements Modulable, Tickable {
         builder.addState(new TimedState("Intake claw closing part 1", () -> intakeClaw.setClawOpen(false), 160));
         builder.addState(new TimedState("Output claw closing", () -> outputClaw.setPosition(0.05), 110, false));
         builder.addState(new TimedState("Intake claw closing part 2", () -> intakeClaw.setClawOpen(false), 140));
-        builder.addState(new TimedState("Intake pivot raising from cone stack", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), 200, autonomous));
+        builder.addState(new TimedState("Intake pivot raising from cone stack", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL), 300, autonomous));
         builder.addState(new State("Intake slide retracting", () -> intakeSlide.startRetraction(), intakeSlide, outputSlide));
         builder.addState(new TimedState("Output claw opening", () -> outputClaw.setClawOpen(true), 110, intakeSlide));
         builder.addState(new State("Intake pivot lowering to holder", () -> intakePivot.setTargetOrientation(IntakePivot.Orientation.HOLDER), intakePivot));

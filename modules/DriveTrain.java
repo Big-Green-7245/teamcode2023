@@ -132,6 +132,16 @@ public class DriveTrain implements Modulable {
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public void stayInPlace(){
+        setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);
+        setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setTargetPosition(frontRight.getCurrentPosition());
+        frontLeft.setTargetPosition(frontLeft.getCurrentPosition());
+        backRight.setTargetPosition(backRight.getCurrentPosition());
+        backLeft.setTargetPosition(backLeft.getCurrentPosition());
+        setModeToAllDriveMotors(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     /**
      * Rotate robot around center at given power
      *

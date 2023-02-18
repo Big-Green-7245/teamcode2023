@@ -40,7 +40,7 @@ public class EncoderAuto extends LinearOpMode {
         TelemetryWrapper.setLine(1, "Autonomous v" + programVer + "\t Initializing");
         driveTrain = new DriveTrain(this);
         driveTrain.init(hardwareMap);
-        intakeAndOutput = new IntakeAndOutput();
+        intakeAndOutput = new IntakeAndOutput(sideOfField);
         intakeAndOutput.init(hardwareMap);
         parkCam = new ParkDetectionWebcam();
         parkCam.init(hardwareMap);
@@ -62,10 +62,11 @@ public class EncoderAuto extends LinearOpMode {
         intakeAndOutput.setIntakeClawOpen(true);
         driveTrain.translate(SPEED, 0, 56, 0, 10);
         driveTrain.translate(SPEED, 0, 0, sideOfField ? 90 : -90, 10);
-        driveTrain.translate(SPEED, sideOfField ? -8.5 : 8, 0, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? 18 : -16, 10);
+        driveTrain.translate(SPEED, sideOfField ? -8.5 : 7.5, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? 15.5 : -15, 10);
         driveTrain.translate(SPEED, 0, sideOfField ? 3 : 1, 0, 10);
-        intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 6);
+        driveTrain.stayInPlace();
+        intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 4);
         while (!this.isStopRequested() && this.isStarted() && intakeAndOutput.isRunning()) {
             intakeAndOutput.tick();
             TelemetryWrapper.setLineNoRender(1, "TeleOpT1 v" + programVer);
@@ -88,14 +89,16 @@ public class EncoderAuto extends LinearOpMode {
             TelemetryWrapper.setLineNoRender(17, "Counter: " + counter++);
             TelemetryWrapper.render();
         }
+        intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.HOLDER);
         driveTrain.translate(SPEED, 0, sideOfField ? -3 : -1, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? -18 : 16, 10);
-        driveTrain.translate(SPEED, sideOfField ? 8.5 : -8, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? -16.5 : 16, 10);
+        driveTrain.translate(SPEED, sideOfField ? 9.5 : -8.5, 0, 0, 10);
         if (parkSpace == 1) {
             driveTrain.translate(SPEED, 0, sideOfField ? -24 : 24, 0, 10);
         } else if (parkSpace == 3) {
             driveTrain.translate(SPEED, 0, sideOfField ? 24 : -24, 0, 10);
         }
+        driveTrain.translate(SPEED, sideOfField ? 10 : -10, 0, 0, 10);
         //TODO face robot in direction favorable for teleop
     }
 
