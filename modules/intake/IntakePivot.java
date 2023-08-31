@@ -60,6 +60,13 @@ public class IntakePivot implements Modulable, ChainableBooleanSupplier {
         return pivot.getCurrentPosition();
     }
 
+    public void stopAndReset() {
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivot.setTargetPosition(0);
+        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     public enum Orientation {
         HOLDER(0), VERTICAL(350), INTAKE(1050);
 

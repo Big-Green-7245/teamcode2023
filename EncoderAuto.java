@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 // Standard Lib
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.IntakeAndOutput;
 import org.firstinspires.ftc.teamcode.modules.Webcams.ParkDetectionWebcam;
@@ -58,16 +59,18 @@ public class EncoderAuto extends LinearOpMode {
             TelemetryWrapper.setLine(6, "Output LinearSlide EncoderTarget: " + intakeAndOutput.outputSlide.getTargetPosition());
             TelemetryWrapper.setLine(7, "Output LinearSlide Encoder: " + intakeAndOutput.outputSlide.getCurrentPosition());
         }
+        ElapsedTime timer = new ElapsedTime();
+        timer.startTime();
         intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.VERTICAL);
         intakeAndOutput.setIntakeClawOpen(true);
         driveTrain.translate(SPEED, 0, 56, 0, 10);
         driveTrain.translate(SPEED, 0, 0, sideOfField ? 90 : -90, 10);
-        driveTrain.translate(SPEED, sideOfField ? -8.5 : 7.5, 0, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? 15.5 : -15, 10);
-        driveTrain.translate(SPEED, 0, sideOfField ? 3 : 1, 0, 10);
-        driveTrain.stayInPlace();
+        driveTrain.translate(SPEED, sideOfField ? -8.5 : 8, 0, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? 15.5 : -14.5, 10);
+        driveTrain.translate(SPEED, 0, sideOfField ? 1 : 1, 0, 10);
+        driveTrain.stayInPlace(SPEED);
         intakeAndOutput.startPlaceCone(IntakeAndOutput.HIGH, 4);
-        while (!this.isStopRequested() && this.isStarted() && intakeAndOutput.isRunning()) {
+        while (!this.isStopRequested() && this.isStarted() && intakeAndOutput.isRunning() && timer.seconds() < 25) {
             intakeAndOutput.tick();
             TelemetryWrapper.setLineNoRender(1, "TeleOpT1 v" + programVer);
 
@@ -89,10 +92,12 @@ public class EncoderAuto extends LinearOpMode {
             TelemetryWrapper.setLineNoRender(17, "Counter: " + counter++);
             TelemetryWrapper.render();
         }
+        intakeAndOutput.stopAndReset();
         intakeAndOutput.intakePivot.setTargetOrientation(IntakePivot.Orientation.HOLDER);
-        driveTrain.translate(SPEED, 0, sideOfField ? -3 : -1, 0, 10);
-        driveTrain.translate(SPEED, 0, 0, sideOfField ? -16.5 : 16, 10);
-        driveTrain.translate(SPEED, sideOfField ? 9.5 : -8.5, 0, 0, 10);
+        driveTrain.stopStayInPlace();
+        driveTrain.translate(SPEED, 0, sideOfField ? -1 : -1, 0, 10);
+        driveTrain.translate(SPEED, 0, 0, sideOfField ? -16 : 15.5, 10);
+        driveTrain.translate(SPEED, sideOfField ? 9.5 : -9, 0, 0, 10);
         if (parkSpace == 1) {
             driveTrain.translate(SPEED, 0, sideOfField ? -24 : 24, 0, 10);
         } else if (parkSpace == 3) {
