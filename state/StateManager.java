@@ -6,13 +6,14 @@ import java.util.*;
 
 /**
  * A class providing management and control for running a sequence of states.
+ *
  * @see Builder
  */
 public class StateManager implements Tickable, Runnable {
     private int loopCount;
     private int currentLoopCount;
     private final List<State> states;
-    private final List<State> needsTicking = new ArrayList<>();
+    private final Set<State> needsTicking = new HashSet<>();
     private int currentStateIndex;
     private boolean running;
 
@@ -25,6 +26,15 @@ public class StateManager implements Tickable, Runnable {
 
     public State getCurrentState() {
         return states.get(currentStateIndex);
+    }
+
+    /**
+     * Call this when {@link #isRunning() not running} to start running at a custom state index.
+     *
+     * @param currentStateIndex the current state and the index to start running at
+     */
+    public void setCurrentStateIndex(int currentStateIndex) {
+        this.currentStateIndex = currentStateIndex;
     }
 
     public boolean isRunning() {
@@ -59,9 +69,13 @@ public class StateManager implements Tickable, Runnable {
         }
         State currentState = states.get(currentStateIndex);
         currentState.tick();
-        if (running && (currentState.isFinished() || !currentState.isWaitForCompletion())) {
-            if (!currentState.isWaitForCompletion()) {
-                needsTicking.add(currentState);
+        if (running) {
+            if (!currentState.isFinished()) {
+                if (!currentState.isWaitForCompletion()) {
+                    needsTicking.add(currentState);
+                } else {
+                    return;
+                }
             }
             if (++currentStateIndex >= states.size()) {
                 if (++currentLoopCount < loopCount) {

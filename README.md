@@ -1,51 +1,47 @@
-<h1 align="center">teamcode 2022-2023</h1>
-<p align="center">Codebase for FTC game season 2022-23, POWERPLAY</p>
+<h1 style="text-align: center">Teamcode 2023</h1>
+<p style="text-align: center">Codebase for FTC game season 2023-24, CENTERSTAGE</p>
 
-## Working with Android Studio
+## Setting up the Development Environment
 
-### Setting up Android Studio
+### Downloading FtcRobotController and Team Code
 
-Simply run the following command in the terminal on macOS/linux to setup Git and the FtcRobotController Android Studio
-Project
+Run the following command in the terminal at the location you wish to store the project.  
+This will download [FtcRobotController](https://github.com/FIRST-Tech-Challenge/FtcRobotController), the library for
+FTC, and [our team code](https://github.com/Big-Green-7245/teamcode2023).
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Big-Green-7245/teamcode2022_23/main/.assets/setupRepo.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Big-Green-7245/teamcode2023/main/.assets/setupRepo.sh)"
 ```
+
+Then, open the project you just downloaded (called FtcRobotController) in Android Studio or Intellij.  
+These two IDEs (Android Studio & Intellij) are essentially the same, and you should use Android Studio unless you know
+what you're doing.
+
+Now, you are ready to edit the Team Code will be located in `/TeamCode/src/main/java/org/firstinspires/ftc/teamcode`!
 
 ---
 
-**Alternatively, follow the follow guide**
+## Introduction to the Code
 
-To work with the repository in Android Studio, first clone the newest (currently 7.2) version of FtcRobotController App.
-Then, replace the teamcode folder with this repository.
+The main programs which the robot can execute are stored in the base `teamcode` folder.  
+Each feature/component on the robot is implemented in its own class in the `modules` folder.  
+The `state` folder offers a library to create a state machine, which is very useful in automating robots.  
+The `util` folder contains miscellaneous classes that help us interact with the robot and things like telemetry.
 
-This can be easily done through git. In the terminal, move to a folder where you keep your robotics stuff, and run the
-following commands.
+## Uploading the code to the robot
 
-```bash
-git clone https://github.com/FIRST-Tech-Challenge/FtcRobotController.git
-cd FtcRobotController/
-sudo rm -r .git
-cd TeamCode/src/main/java/org/firstinspires/ftc/teamcode/
-rm *
-git clone https://github.com/Big-Green-7245/teamcode2022_23.git .
-```
+To upload code to the robot, connect to the Control Hub via USB or WiFi-Direct.
 
-### Uploading the code
-
-To upload code to the device, connect to the Control Hub via USB or WiFi-Direct. Select the device and upload.
-
-*Note if connected wirelessly, Android Studio might require cli adb connection first with the following command*
+*If connected wirelessly, you need to run this command after connecting.*
 
 ```bash
 adb connect 192.168.43.1:5555
 ```
 
----
-
+Once connected, it should look like this:
 ![Connected](.assets/connectedDevice.png)
 
-Once connected, it should look like the above.
+Click the run (or rerun) button to upload the code.
 
 ### Making sure the code updates
 
@@ -55,6 +51,8 @@ Studio does not update the code right away.
 ```java
 final String programVer="1.0";
 ```
+
+---
 
 ## Trouble Shooting / Misc
 
@@ -69,10 +67,10 @@ sdk.dir=/Users/yourusernamehere/Library/Android/sdk
 
 or pointing to wherever your Android Sdk is located.
 
-### Using Java 17 😎
-#### Or other newer versions
+### Using Java 17+ 😎
 
-To use Java 17, two files need to be edited: `build.common.gradle` and `/FtcRobotController/build.gradle`.  
+To use Java 17, two files need to be edited: `build.common.gradle` and `/FtcRobotController/build.gradle`.
+
 Locate
 
 ```groovy
@@ -85,3 +83,14 @@ compileOptions {
 in both files and replace `VERSION_1_7` or `VERSON_1_8` with `VERSION_17`. Then resync gradle through a button that
 should appear towards the top right or through the gradle menu on the right (Gradle -> Reload All Gradle Projects).
 
+---
+
+## For Maintainers
+
+Greetings, future captains, here are the steps you need to do to get ready for a new season.
+
+1. Create a new Repo and Team in the GitHub Organization
+2. Add the Repo to the Team and give everyone Maintainer access
+3. Update the season and repo names in this `README.md`
+4. Edit the repository links in this `README.md` to the new Repo
+5. Edit the repository links in `/.assets/setupRepo.sh` to the new Repo

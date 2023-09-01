@@ -132,6 +132,33 @@ public class DriveTrain implements Modulable {
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public void stayInPlace(double power) {
+        setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);
+        setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setTargetPosition(frontRight.getCurrentPosition());
+        frontLeft.setTargetPosition(frontLeft.getCurrentPosition());
+        backRight.setTargetPosition(backRight.getCurrentPosition());
+        backLeft.setTargetPosition(backLeft.getCurrentPosition());
+        setModeToAllDriveMotors(DcMotor.RunMode.RUN_TO_POSITION);
+        setPowerToAllDriveMotors(power);
+    }
+
+    public void stopStayInPlace() {
+        setPowerToAllDriveMotors(0);
+        setModeToAllDriveMotors(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    /**
+     * Rotate robot around center at given power
+     *
+     * @param radius radius of circle robot rotates around in inches
+     * @param power  speed of rotation
+     */
+    public void rotateAroundCenter(double radius, double power) {
+        double inchPerDegrees = COUNTS_PER_DEGREE / COUNTS_PER_INCH * (radius * Math.PI) / 180;
+        move(power * inchPerDegrees, 0, power, 0);
+    }
+
     /**
      * Returns encoder positions of encoders
      *

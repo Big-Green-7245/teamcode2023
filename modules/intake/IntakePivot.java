@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
-import org.firstinspires.ftc.teamcode.util.ChainableBooleanSupplier;
+import org.firstinspires.ftc.teamcode.util.FinishCondition;
 
-public class IntakePivot implements Modulable, ChainableBooleanSupplier {
+public class IntakePivot implements Modulable, FinishCondition {
     private DcMotorEx pivot;
 
     @Override
@@ -17,6 +17,9 @@ public class IntakePivot implements Modulable, ChainableBooleanSupplier {
         pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivot.setTargetPosition(0);
+        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivot.setPower(0.5);
     }
 
     public void setTargetOrientation(Orientation orientation) {
@@ -31,8 +34,8 @@ public class IntakePivot implements Modulable, ChainableBooleanSupplier {
      * @return true if the elevator is at the target position
      */
     @Override
-    public boolean getAsBoolean() {
-        return !pivot.isBusy();
+    public boolean isFinished() {
+        return Math.abs(pivot.getTargetPosition() - pivot.getCurrentPosition()) <= 10;
     }
 
     public double getCurrent() {
@@ -57,13 +60,24 @@ public class IntakePivot implements Modulable, ChainableBooleanSupplier {
         return pivot.getCurrentPosition();
     }
 
+    public void stopAndReset() {
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivot.setTargetPosition(0);
+        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     public enum Orientation {
-        HOLDER(0), VERTICAL(100), INTAKE(1000);
+        HOLDER(0), VERTICAL(350), INTAKE(1050);
 
         private final int position;
 
         Orientation(int position) {
             this.position = position;
+        }
+
+        public int getPosition() {
+            return position;
         }
     }
 }

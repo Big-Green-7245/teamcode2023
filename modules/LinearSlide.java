@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.util.ChainableBooleanSupplier;
+import org.firstinspires.ftc.teamcode.util.FinishCondition;
 
-public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplier {
+public class LinearSlide implements Modulable, Tickable, FinishCondition {
     private final String name;
     private final double power;
     private DcMotorEx elevator;
@@ -63,7 +63,7 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
         if (retracting && elevatorBtn.isPressed()) {
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            elevator.setTargetPosition(10);
+            elevator.setTargetPosition(2);
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             retracting = false;
         }
@@ -71,10 +71,11 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
 
     /**
      * @return true if the elevator is at the target position
+     * @implNote manually check the elevator position and the button because {@link DcMotor#isBusy()} has a lot of delay.
      */
     @Override
-    public boolean getAsBoolean() {
-        return !elevator.isBusy();
+    public boolean isFinished() {
+        return Math.abs(elevator.getTargetPosition() - elevator.getCurrentPosition()) <= 20;
     }
 
     public double getCurrent() {
