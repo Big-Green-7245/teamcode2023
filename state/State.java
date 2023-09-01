@@ -2,15 +2,14 @@ package org.firstinspires.ftc.teamcode.state;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.modules.Tickable;
-
-import java.util.function.BooleanSupplier;
+import org.firstinspires.ftc.teamcode.util.FinishCondition;
 
 /**
  * A state representing an action which can be blocking or non-blocking, specified by {@link #waitForCompletion}.
  * {@link #action} is run at the start of the state, and {@link #tickable} should be run as many times as possibly before the state completes.
  * The state completes when {@link #finishCondition} returns true.
  */
-public class State implements Tickable, Runnable {
+public class State implements Runnable, Tickable, FinishCondition {
     private final String name;
     /**
      * The action to run at the start of the state. This should not block and should call methods such as {@link DcMotor#setTargetPosition(int)} to start moving a motor.
@@ -23,7 +22,7 @@ public class State implements Tickable, Runnable {
     /**
      * The condition that needs to be fulfilled for the state to complete. Should not block.
      */
-    private final BooleanSupplier finishCondition;
+    private final FinishCondition finishCondition;
     /**
      * Whether to wait for this state to complete before starting the next state.
      */
@@ -35,23 +34,25 @@ public class State implements Tickable, Runnable {
     }
 
 
-    public State(String name, BooleanSupplier finishCondition) {
-        this(name, () -> {}, finishCondition);
+    public State(String name, FinishCondition finishCondition) {
+        this(name, () -> {
+        }, finishCondition);
     }
 
-    public State(String name, Runnable action, BooleanSupplier finishCondition) {
+    public State(String name, Runnable action, FinishCondition finishCondition) {
         this(name, action, finishCondition, true);
     }
 
-    public State(String name, Runnable action, BooleanSupplier finishCondition, boolean waitForCompletion) {
-        this(name, action, () -> {}, finishCondition, waitForCompletion);
+    public State(String name, Runnable action, FinishCondition finishCondition, boolean waitForCompletion) {
+        this(name, action, () -> {
+        }, finishCondition, waitForCompletion);
     }
 
-    public State(String name, Runnable action, Tickable tickable, BooleanSupplier finishCondition) {
+    public State(String name, Runnable action, Tickable tickable, FinishCondition finishCondition) {
         this(name, action, tickable, finishCondition, true);
     }
 
-    public State(String name, Runnable action, Tickable tickable, BooleanSupplier finishCondition, boolean waitForCompletion) {
+    public State(String name, Runnable action, Tickable tickable, FinishCondition finishCondition, boolean waitForCompletion) {
         this.name = name;
         this.action = action;
         this.tickable = tickable;
@@ -69,16 +70,16 @@ public class State implements Tickable, Runnable {
     }
 
     @Override
+    public void run() {
+        action.run();
+    }
+
+    @Override
     public void tick() {
         tickable.tick();
     }
 
     public boolean isFinished() {
-        return finishCondition.getAsBoolean();
-    }
-
-    @Override
-    public void run() {
-        action.run();
+        return finishCondition.isFinished();
     }
 }

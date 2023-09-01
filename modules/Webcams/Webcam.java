@@ -8,9 +8,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
 import org.firstinspires.ftc.teamcode.modules.Tickable;
-import org.firstinspires.ftc.teamcode.util.ChainableBooleanSupplier;
+import org.firstinspires.ftc.teamcode.util.FinishCondition;
 
-public abstract class Webcam implements Modulable, Tickable, ChainableBooleanSupplier {
+public abstract class Webcam implements Modulable, Tickable, FinishCondition {
 
     //Declare model for object detection
     @SuppressLint("SdCardPath")
@@ -86,7 +86,7 @@ public abstract class Webcam implements Modulable, Tickable, ChainableBooleanSup
     public abstract void detect();
 
     @Override
-    public boolean getAsBoolean() {
+    public boolean isFinished() {
         return detectionComplete;
     }
 }

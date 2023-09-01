@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules;
 
 /**
+ * Implement this interface if a module/component needs to be updated every cycle in the main loop.
  * See <a href="https://minecraft.fandom.com/wiki/Tick">Tick</a>
  */
 @FunctionalInterface

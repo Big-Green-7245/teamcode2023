@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
-import org.firstinspires.ftc.teamcode.util.ChainableBooleanSupplier;
+import org.firstinspires.ftc.teamcode.util.FinishCondition;
 
-public class IntakePivot implements Modulable, ChainableBooleanSupplier {
+public class IntakePivot implements Modulable, FinishCondition {
     private DcMotorEx pivot;
 
     @Override
@@ -34,7 +34,7 @@ public class IntakePivot implements Modulable, ChainableBooleanSupplier {
      * @return true if the elevator is at the target position
      */
     @Override
-    public boolean getAsBoolean() {
+    public boolean isFinished() {
         return Math.abs(pivot.getTargetPosition() - pivot.getCurrentPosition()) <= 10;
     }
 

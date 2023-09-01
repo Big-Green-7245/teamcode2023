@@ -21,6 +21,13 @@ Now, you are ready to edit the Team Code will be located in `/TeamCode/src/main/
 
 ---
 
+## Introduction to the Code
+
+The main programs which the robot can execute are stored in the base `teamcode` folder.  
+Each feature/component on the robot is implemented in its own class in the `modules` folder.  
+The `state` folder offers a library to create a state machine, which is very useful in automating robots.  
+The `util` folder contains miscellaneous classes that help us interact with the robot and things like telemetry.
+
 ## Uploading the code to the robot
 
 To upload code to the robot, connect to the Control Hub via USB or WiFi-Direct.

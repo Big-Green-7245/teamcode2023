@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.state;
 
 import org.firstinspires.ftc.teamcode.modules.Tickable;
-import org.firstinspires.ftc.teamcode.util.ChainableBooleanSupplier;
+import org.firstinspires.ftc.teamcode.util.FinishCondition;
 
 /**
  * A type of state providing timed functionality. The state completes after {@link #duration} milliseconds have passed since the state was started.
@@ -19,15 +19,15 @@ public class TimedState extends State {
         this(name, action, () -> {}, millis, () -> true, waitForCompletion);
     }
 
-    public TimedState(String name, Runnable action, long millis, ChainableBooleanSupplier additionalFinishCondition) {
-        this(name, action, () -> {}, millis, additionalFinishCondition, true);
+    public TimedState(String name, Runnable action, long millis, FinishCondition additionalFinishCondition) {
+        this(name, action, () -> {}, millis, additionalFinishCondition);
     }
 
-    public TimedState(String name, Runnable action, Tickable tickable, long millis, ChainableBooleanSupplier additionalFinishCondition) {
+    public TimedState(String name, Runnable action, Tickable tickable, long millis, FinishCondition additionalFinishCondition) {
         this(name, action, tickable, millis, additionalFinishCondition, true);
     }
 
-    public TimedState(String name, Runnable action, Tickable tickable, long millis, ChainableBooleanSupplier additionalFinishCondition, boolean waitForCompletion) {
+    public TimedState(String name, Runnable action, Tickable tickable, long millis, FinishCondition additionalFinishCondition, boolean waitForCompletion) {
         super(name, action, tickable, additionalFinishCondition, waitForCompletion);
         this.duration = millis;
     }

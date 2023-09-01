@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.util.ChainableBooleanSupplier;
+import org.firstinspires.ftc.teamcode.util.FinishCondition;
 
-public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplier {
+public class LinearSlide implements Modulable, Tickable, FinishCondition {
     private final String name;
     private final double power;
     private DcMotorEx elevator;
@@ -74,7 +74,7 @@ public class LinearSlide implements Modulable, Tickable, ChainableBooleanSupplie
      * @implNote manually check the elevator position and the button because {@link DcMotor#isBusy()} has a lot of delay.
      */
     @Override
-    public boolean getAsBoolean() {
+    public boolean isFinished() {
         return Math.abs(elevator.getTargetPosition() - elevator.getCurrentPosition()) <= 20;
     }
 
