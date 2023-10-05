@@ -16,7 +16,7 @@ public class ParkDetectionWebcam extends Webcam {
         super.initVuforia(map, "/sdcard/FIRST/tflitemodels/signal.tflite", new String[]{"1 Blue", "2 Green", "3 Red"});
         super.initTfod(map);
         super.activateTfod();
-        tfod.setZoom(1.0, 16.0 / 9.0);
+//        tfod.setZoom(1.0, 16.0 / 9.0);
     }
 
     @Override

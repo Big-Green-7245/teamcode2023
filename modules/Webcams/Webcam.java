@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+//import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
 import org.firstinspires.ftc.teamcode.modules.Tickable;
@@ -23,7 +23,7 @@ public abstract class Webcam implements Modulable, Tickable, FinishCondition {
     /**
      * The instance of the Vuforia localization engine.
      */
-    protected VuforiaLocalizer vuforia;
+//    protected VuforiaLocalizer vuforia;
 
     /**
      * The instance of the TensorFlow Object Detection engine.
@@ -41,13 +41,13 @@ public abstract class Webcam implements Modulable, Tickable, FinishCondition {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+//        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = map.get(WebcamName.class, "Webcam 1");
+//        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+//        parameters.cameraName = map.get(WebcamName.class, "Webcam 1");
 
         //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+//        vuforia = ClassFactory.getInstance().createVuforia(parameters);
         LABELS = labels;
         TFOD_MODEL = tfodModelFile;
     }
@@ -57,19 +57,19 @@ public abstract class Webcam implements Modulable, Tickable, FinishCondition {
      */
     protected void initTfod(HardwareMap hardwareMap) {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 300;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+//        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+//        tfodParameters.minResultConfidence = 0.75f;
+//        tfodParameters.isModelTensorFlow2 = true;
+//        tfodParameters.inputSize = 300;
+//        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        if (getModelFromAsset){
-            tfod.loadModelFromAsset(TFOD_MODEL, LABELS);
-        }else{
-            tfod.loadModelFromFile(TFOD_MODEL, LABELS);
-        }
+//        if (getModelFromAsset){
+//            tfod.loadModelFromAsset(TFOD_MODEL, LABELS);
+//        }else{
+//            tfod.loadModelFromFile(TFOD_MODEL, LABELS);
+//        }
     }
 
     public void activateTfod() {
