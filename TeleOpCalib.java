@@ -31,7 +31,7 @@ public class TeleOpCalib extends LinearOpMode {
         gp2 = new ButtonHelper(gamepad2);
         driveTrain = new DriveTrain(this);
         intakeAndOutput = new IntakeAndOutput(gp2, ButtonHelper.dpad_right);
-        intakeAndOutput.init(hardwareMap);
+//        intakeAndOutput.init(hardwareMap);
         driveTrain.init(hardwareMap);
 
         TelemetryWrapper.init(telemetry, 16);

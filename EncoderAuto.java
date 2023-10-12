@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.IntakeAndOutput;
-import org.firstinspires.ftc.teamcode.modules.Webcams.ParkDetectionWebcam;
 import org.firstinspires.ftc.teamcode.modules.intake.IntakePivot;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
@@ -27,7 +26,6 @@ public class EncoderAuto extends LinearOpMode {
     private DriveTrain driveTrain;
     private IntakeAndOutput intakeAndOutput;
 
-    private ParkDetectionWebcam parkCam;
     private int counter = 0;
 
 
@@ -42,17 +40,15 @@ public class EncoderAuto extends LinearOpMode {
         driveTrain = new DriveTrain(this);
         driveTrain.init(hardwareMap);
         intakeAndOutput = new IntakeAndOutput(sideOfField);
-        intakeAndOutput.init(hardwareMap);
-        parkCam = new ParkDetectionWebcam();
-        parkCam.init(hardwareMap);
+//        intakeAndOutput.init(hardwareMap);
+//        parkCam = new ParkDetectionWebcam();
+//        parkCam.init(hardwareMap);
 
         // Wait for start
         intakeAndOutput.startRetraction();
         intakeAndOutput.setOutputClawOpen(false);
         while (!this.isStarted()) {
             intakeAndOutput.tickBeforeStart();
-            parkCam.tick();
-            parkSpace = parkCam.parkSpace;
             TelemetryWrapper.setLine(3, "Park Space: " + parkSpace);
             TelemetryWrapper.setLine(4, "Intake LinearSlide EncoderTarget: " + intakeAndOutput.intakeSlide.getTargetPosition());
             TelemetryWrapper.setLine(5, "Intake LinearSlide Encoder: " + intakeAndOutput.intakeSlide.getCurrentPosition());

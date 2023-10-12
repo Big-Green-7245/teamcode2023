@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.modules.Webcams.PoleAlignWebcam;
 import org.firstinspires.ftc.teamcode.modules.intake.IntakeClaw;
 import org.firstinspires.ftc.teamcode.modules.intake.IntakePivot;
 import org.firstinspires.ftc.teamcode.modules.intake.IntakeSlide;
@@ -37,7 +36,6 @@ public class IntakeAndOutput implements Modulable, Tickable {
     private int targetLevel = HIGH;
     private final boolean sideOfField;
 
-    private PoleAlignWebcam poleAlignCam;
 
     public IntakeAndOutput(boolean sideOfField) {
         this(true, sideOfField, null, 0);

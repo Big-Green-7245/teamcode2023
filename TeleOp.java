@@ -34,7 +34,7 @@ public class TeleOp extends LinearOpMode {
         driveTrain = new DriveTrain(this);
         intakeAndOutput = new IntakeAndOutput(gp2, ButtonHelper.dpad_right);
         driveTrain.init(hardwareMap);
-        intakeAndOutput.init(hardwareMap);
+//        intakeAndOutput.init(hardwareMap);
 
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOp v" + programVer + "\t Press start to start >");
