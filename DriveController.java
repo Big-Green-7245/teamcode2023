@@ -14,7 +14,7 @@ import java.util.Arrays;
 @TeleOp(name = "DriveController", group = "opmode")
     public class DriveController extends LinearOpMode {
         private final String programVer = "1.2";
-        private final double speedMuliplier = 1.0;
+        private final double speedMuliplier = 0.5d;
 
         private ButtonHelper gp1;
         private DriveTrain driveTrain;
@@ -31,7 +31,7 @@ import java.util.Arrays;
         waitForStart();
         while(opModeIsActive()){
             gp1.update();
-            driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMuliplier);
+            driveTrain.move(-gamepad1.left_stick_x, -gamepad1.left_stick_y, -gamepad1.right_stick_x, speedMuliplier);
             if (gp1.pressed(gp1.a)){
                 driveTrain.setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 driveTrain.setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);

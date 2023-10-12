@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -36,7 +37,7 @@ public class DriveTrain implements Modulable {
 
         frontLeft = hwMap.get(DcMotorEx.class, "frontLeft"); // Control Hub 1
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
 
         frontRight = hwMap.get(DcMotorEx.class, "frontRight"); // Control Hub 0
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -44,11 +45,11 @@ public class DriveTrain implements Modulable {
 
         backLeft = hwMap.get(DcMotorEx.class, "backLeft"); // Control Hub 3
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
 
         backRight = hwMap.get(DcMotorEx.class, "backRight"); // Control Hub 2
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
 
         setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
