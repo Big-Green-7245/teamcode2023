@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 @TeleOp(name = "DriveController", group = "opmode")
     public class DriveController extends LinearOpMode {
         private final String programVer = "1.2";
-        private final double speedMuliplier = 0.5d;
+        private final double speedMultiplier = 0.9d;
 
         private ButtonHelper gp1;
         private DriveTrain driveTrain;
@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
         waitForStart();
         while(opModeIsActive()){
             gp1.update();
-            driveTrain.move(Math.pow(-gamepad1.left_stick_x, 3), Math.pow(-gamepad1.left_stick_y, 3), Math.pow(-gamepad1.right_stick_x, 3), speedMuliplier);
+            driveTrain.move(Math.pow(-gamepad1.left_stick_x, 3), Math.pow(-gamepad1.left_stick_y, 3), Math.pow(-gamepad1.right_stick_x, 3), speedMultiplier);
             if (gp1.pressed(ButtonHelper.a)){
                 driveTrain.setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 driveTrain.setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);
