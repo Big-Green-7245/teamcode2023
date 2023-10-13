@@ -3,12 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
-
-import java.util.Arrays;
 
 
 @TeleOp(name = "DriveController", group = "opmode")
@@ -31,15 +28,15 @@ import java.util.Arrays;
         waitForStart();
         while(opModeIsActive()){
             gp1.update();
-            driveTrain.move(-gamepad1.left_stick_x, -gamepad1.left_stick_y, -gamepad1.right_stick_x, speedMuliplier);
-            if (gp1.pressed(gp1.a)){
+            driveTrain.move(Math.pow(-gamepad1.left_stick_x, 3), Math.pow(-gamepad1.left_stick_y, 3), Math.pow(-gamepad1.right_stick_x, 3), speedMuliplier);
+            if (gp1.pressed(ButtonHelper.a)){
                 driveTrain.setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 driveTrain.setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
-            if (gp1.pressed(gp1.dpad_up)){
+            if (gp1.pressed(ButtonHelper.dpad_up)){
                 driveTrain.move(0, -1.0, 0, 0.2);
-            } else if (gp1.pressed(gp1.dpad_down)){
+            } else if (gp1.pressed(ButtonHelper.dpad_down)){
                 driveTrain.move(0, 1.0, 0, 0.2);
             }
             TelemetryWrapper .setLine(2, "Encoder Pos: " + driveTrain.getEncPos()[0]);
