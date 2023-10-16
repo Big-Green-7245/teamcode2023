@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.modules;
+package org.firstinspires.ftc.teamcode.modules.output;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.modules.Modulable;
+import org.firstinspires.ftc.teamcode.modules.Tickable;
 import org.firstinspires.ftc.teamcode.util.FinishCondition;
 
 public class LinearSlide implements Modulable, Tickable, FinishCondition {
@@ -15,7 +17,7 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
     private TouchSensor elevatorBtn;
     private boolean retracting;
 
-    protected LinearSlide(String name, double power) {
+    public LinearSlide(String name, double power) {
         this.name = name;
         this.power = power;
     }

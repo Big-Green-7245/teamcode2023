@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.modules;
+package org.firstinspires.ftc.teamcode.modules.output;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.modules.Modulable;
 
 public class Claw implements Modulable {
     public static final double CLOSED_POS = 0;
@@ -10,7 +12,7 @@ public class Claw implements Modulable {
     protected Servo claw;
     private boolean open;
 
-    protected Claw(String name) {
+    public Claw(String name) {
         this.name = name;
     }
 
