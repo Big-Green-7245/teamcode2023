@@ -28,6 +28,7 @@ public class Claw implements Modulable {
     @Override
     public void init(HardwareMap map) {
         claw = map.get(Servo.class, name);
+        claw.setDirection(Servo.Direction.REVERSE);
     }
 
     /**
