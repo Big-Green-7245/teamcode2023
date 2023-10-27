@@ -34,19 +34,19 @@ public class DriveTrain implements Modulable {
     public void init(HardwareMap map) {
         hwMap = map;
 
-        frontLeft = hwMap.get(DcMotorEx.class, "frontLeft"); // Control Hub 1
+        frontLeft = hwMap.get(DcMotorEx.class, "frontLeft"); // Control Hub 0
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
 
-        frontRight = hwMap.get(DcMotorEx.class, "frontRight"); // Control Hub 0
+        frontRight = hwMap.get(DcMotorEx.class, "frontRight"); // Control Hub 1
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
 
-        backLeft = hwMap.get(DcMotorEx.class, "backLeft"); // Control Hub 3
+        backLeft = hwMap.get(DcMotorEx.class, "backLeft"); // Control Hub 2
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
 
-        backRight = hwMap.get(DcMotorEx.class, "backRight"); // Control Hub 2
+        backRight = hwMap.get(DcMotorEx.class, "backRight"); // Control Hub 3
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
 

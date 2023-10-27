@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.output.Claw;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
@@ -20,14 +19,10 @@ public class TeleOp extends LinearOpMode {
     // Declare modules
     private ButtonHelper gp1, gp2;
     private DriveTrain driveTrain;
-
+    private DcMotor intakeWheel;
     private LinearSlide outputSlide;
-
     private OutputPivot pivot;
-
     private Claw outputClaw;
-
-    private DcMotor flyWheelIntake;
 
     @Override
     public void runOpMode() {
@@ -39,10 +34,10 @@ public class TeleOp extends LinearOpMode {
         gp1 = new ButtonHelper(gamepad1);
         gp2 = new ButtonHelper(gamepad2);
         driveTrain = new DriveTrain(this);
-        outputSlide = new LinearSlide("LinearSlide", 0.5);
-        pivot = new OutputPivot("OutputPivot");
-        outputClaw = new Claw("OutputClaw");
-        flyWheelIntake = hardwareMap.get(DcMotor.class,"FlyWheelIntake");
+        intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
+        outputSlide = new LinearSlide("outputSlide", 0.5);
+        pivot = new OutputPivot("outputPivot");
+        outputClaw = new Claw("outputClaw");
         driveTrain.init(hardwareMap);
         outputSlide.init(hardwareMap);
         pivot.init(hardwareMap);
@@ -61,11 +56,11 @@ public class TeleOp extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
-            outputSlide.moveUsingEncoder(0.5 * gamepad2.left_stick_y);
-            flyWheelIntake.setPower((gamepad2.right_trigger-gamepad2.left_trigger) * 0.8);
-            pivot.moveUsingEncoder(0.5 * gamepad2.right_stick_x);
+            outputSlide.moveUsingEncoder(gamepad2.left_stick_y * 0.5);
+            intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
+            pivot.moveUsingEncoder(gamepad2.right_stick_x * 0.5);
 
-            if (gp2.pressing(ButtonHelper.dpad_up)){
+            if (gp2.pressing(ButtonHelper.dpad_up)) {
                 outputClaw.toggleClaw();
             }
         }
