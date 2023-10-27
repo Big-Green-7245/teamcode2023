@@ -35,18 +35,18 @@ public class TeleOp extends LinearOpMode {
         gp2 = new ButtonHelper(gamepad2);
         driveTrain = new DriveTrain(this);
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
-        outputSlide = new LinearSlide("outputSlide", 0.5);
+//        outputSlide = new LinearSlide("outputSlide", 0.5);
         pivot = new OutputPivot("outputPivot");
         outputClaw = new Claw("outputClaw");
         driveTrain.init(hardwareMap);
-        outputSlide.init(hardwareMap);
+//        outputSlide.init(hardwareMap);
         pivot.init(hardwareMap);
         outputClaw.init(hardwareMap);
 
 
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOp v" + programVer + "\t Press start to start >");
-
+        waitForStart();
 
         while (opModeIsActive()) {
             // Update ButtonHelper
@@ -56,7 +56,7 @@ public class TeleOp extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
-            outputSlide.moveUsingEncoder(gamepad2.left_stick_y * 0.5);
+//            outputSlide.moveUsingEncoder(gamepad2.left_stick_y * 0.5);
             intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
             pivot.moveUsingEncoder(gamepad2.right_stick_x * 0.5);
 

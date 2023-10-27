@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.modules.Modulable;
 
 public class Claw implements Modulable {
     public static final double CLOSED_POS = 0;
-    private static final double OPENED_POS = 0.15;
+    private static final double OPENED_POS = 0.1;
     private final String name;
     protected Servo claw;
     private boolean open;
