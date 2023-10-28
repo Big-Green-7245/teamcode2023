@@ -88,6 +88,11 @@ should appear towards the top right or through the gradle menu on the right (Gra
 
 ---
 
+## Continuous Integration
+
+This repository uses GitHub Actions to automatically build the code with the official [FTC Robot Controller](https://github.com/FIRST-Tech-Challenge/FtcRobotController) on every push and pull request to the main branch.  
+This allows you to see if your code compiles successfully on every change.
+
 ## For Maintainers
 
 Greetings, future captains, here are the steps you need to do to get ready for a new season.
