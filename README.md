@@ -69,18 +69,21 @@ or pointing to wherever your Android Sdk is located.
 
 ### Using Java 17+ 😎
 
-To use Java 17, two files need to be edited: `build.common.gradle` and `/FtcRobotController/build.gradle`.
+To use Java 17, two files need to be edited: `build.common.gradle` and `/FtcRobotController/build.gradle`.  
+*Note that everyone running this code would need to do this.*
 
 Locate
-
 ```groovy
 compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
 }
 ```
-
-in both files and replace `VERSION_1_7` or `VERSON_1_8` with `VERSION_17`. Then resync gradle through a button that
+and
+```groovy
+compileSdkVersion 29
+```
+in both files and replace `VERSON_1_8` with `VERSION_17` and `compileSdkVersion 29` with `compileSdkVersion 30`. Then reload gradle through a button that
 should appear towards the top right or through the gradle menu on the right (Gradle -> Reload All Gradle Projects).
 
 ---
