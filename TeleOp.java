@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 public class TeleOp extends LinearOpMode {
     // Define attributes
     private final String programVer = "2.0";
-    private final double speedMultiplier = 0.55;
+    private final double speedMultiplier = 0.95;
 
     // Declare modules
     private ButtonHelper gp1, gp2;
@@ -58,7 +58,7 @@ public class TeleOp extends LinearOpMode {
 
 //            outputSlide.moveUsingEncoder(gamepad2.left_stick_y * 0.5);
             intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
-            pivot.moveUsingEncoder(gamepad2.right_stick_x * 0.5);
+            pivot.moveUsingEncoder(-gamepad2.right_stick_y * 0.5);
 
             if (gp2.pressing(ButtonHelper.dpad_up)) {
                 outputClaw.toggleClaw();
