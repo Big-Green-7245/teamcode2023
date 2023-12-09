@@ -35,12 +35,12 @@ public class TeleOp extends LinearOpMode {
         gp2 = new ButtonHelper(gamepad2);
         driveTrain = new DriveTrain(this);
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
-//        outputSlide = new LinearSlide("outputSlide", 0.5);
-        pivot = new OutputPivot("outputPivot");
+        outputSlide = new LinearSlide("linearSlide", 0.5);
+//        pivot = new OutputPivot("outputPivot");
         outputClaw = new Claw("outputClaw");
         driveTrain.init(hardwareMap);
-//        outputSlide.init(hardwareMap);
-        pivot.init(hardwareMap);
+        outputSlide.init(hardwareMap);
+//        pivot.init(hardwareMap);
         outputClaw.init(hardwareMap);
 
 
@@ -49,6 +49,9 @@ public class TeleOp extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            TelemetryWrapper.setLine(2, "LeftSlidePos" + outputSlide.getCurrentPosition()[0]);
+            TelemetryWrapper.setLine(3, "RightSlidePos" + outputSlide.getCurrentPosition()[1]);
+            TelemetryWrapper.setLine(4, "PivotServoPos" + outputClaw.getPosition());
             // Update ButtonHelper
             gp1.update();
             gp2.update();
@@ -56,13 +59,21 @@ public class TeleOp extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
-//            outputSlide.moveUsingEncoder(gamepad2.left_stick_y * 0.5);
+            outputSlide.moveUsingEncoder(gamepad2.left_stick_y * 0.5);
             intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
-            pivot.moveUsingEncoder(-gamepad2.right_stick_y * 0.5);
+//            pivot.moveUsingEncoder(-gamepad2.right_stick_y * 0.5);
 
             if (gp2.pressing(ButtonHelper.dpad_up)) {
                 outputClaw.toggleClaw();
             }
+
+//            if (gp2.pressed(ButtonHelper.dpad_up)) {
+//                outputClaw.moveClaw(0.3);
+//            }else if (gp2.pressed(ButtonHelper.dpad_down)){
+//                outputClaw.moveClaw(-0.3);
+//            }else{
+//                outputClaw.moveClaw(0);
+//            }
         }
     }
 }
