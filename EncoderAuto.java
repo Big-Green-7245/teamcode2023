@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.OutputPivot;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
+@Autonomous(name = "EncoderAuto", group = "opmode")
 public class EncoderAuto extends LinearOpMode {
     protected static final boolean LEFT = false;
     protected static final boolean RIGHT = true;
@@ -46,10 +48,10 @@ public class EncoderAuto extends LinearOpMode {
         driveTrain = new DriveTrain(this);
         driveTrain.init(hardwareMap);
         linearSlide = new LinearSlide("OutputSlide", 0.5);
-        pivot = new OutputPivot("OutputPivot");
+//        pivot = new OutputPivot("OutputPivot");
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
-        firstPixel = hardwareMap.get(Servo.class, "FirstPixel");
-        firstPixel = hardwareMap.get(Servo.class, "SecondPixel");
+//        firstPixel = hardwareMap.get(Servo.class, "FirstPixel");
+//        secondPixel = hardwareMap.get(Servo.class, "SecondPixel");
         aprilTagWebcam = new AprilTagWebcam();
         aprilTagWebcam.init(hardwareMap);
 

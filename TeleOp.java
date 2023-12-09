@@ -57,23 +57,23 @@ public class TeleOp extends LinearOpMode {
             gp2.update();
 
             // DriveTrain wheels
-            driveTrain.move(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
+            driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
             outputSlide.moveUsingEncoder(gamepad2.left_stick_y * 0.5);
             intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
 //            pivot.moveUsingEncoder(-gamepad2.right_stick_y * 0.5);
 
-            if (gp2.pressing(ButtonHelper.dpad_up)) {
-                outputClaw.toggleClaw();
-            }
-
-//            if (gp2.pressed(ButtonHelper.dpad_up)) {
-//                outputClaw.moveClaw(0.3);
-//            }else if (gp2.pressed(ButtonHelper.dpad_down)){
-//                outputClaw.moveClaw(-0.3);
-//            }else{
-//                outputClaw.moveClaw(0);
+//            if (gp2.pressing(ButtonHelper.dpad_up)) {
+//                outputClaw.toggleClaw();
 //            }
+
+            if (gp2.pressed(ButtonHelper.dpad_up)) {
+                outputClaw.moveClaw(0.3);
+            }else if (gp2.pressed(ButtonHelper.dpad_down)){
+                outputClaw.moveClaw(-0.3);
+            }else{
+                outputClaw.moveClaw(0);
+            }
         }
     }
 }

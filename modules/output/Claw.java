@@ -33,7 +33,7 @@ public class Claw implements Modulable {
     @Override
     public void init(HardwareMap map) {
         claw = map.get(CRServo.class, name);
-        claw.setDirection(CRServo.Direction.FORWARD);
+        claw.setDirection(CRServo.Direction.REVERSE);
         controller = claw.getController();
     }
 
