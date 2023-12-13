@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
-@Autonomous(name = "LeftAuto", group = "opmode")
-public class LeftAuto extends EncoderAuto {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "LeftAuto", group = "opmode")
+public class LeftAuto extends Autonomous {
     public LeftAuto() {
-        super(EncoderAuto.LEFT);
+        super(Autonomous.LEFT);
     }
 }

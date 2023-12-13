@@ -4,13 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
+import org.firstinspires.ftc.teamcode.modules.ServoPixel;
 import org.firstinspires.ftc.teamcode.modules.output.ServoOutputPivot;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -28,8 +28,8 @@ public class TeleOp extends LinearOpMode {
     private MotorOutputPivot pivot;
     private ServoOutputPivot servoOutputPivot;
 
-    private Servo firstPixel;
-    private Servo secondPixel;
+    private ServoPixel firstPixel;
+    private ServoPixel secondPixel;
 
     private double openPos = 0.3;
 
@@ -50,15 +50,17 @@ public class TeleOp extends LinearOpMode {
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         outputSlide = new LinearSlide("linearSlide", 0.5);
 //        pivot = new OutputPivot("outputPivot");
-        servoOutputPivot = new ServoOutputPivot("outputClaw", runtime);
+        servoOutputPivot = new ServoOutputPivot("outputClaw");
         driveTrain.init(hardwareMap);
         outputSlide.init(hardwareMap);
 //        pivot.init(hardwareMap);
         servoOutputPivot.init(hardwareMap);
-        firstPixel = hardwareMap.get(Servo.class, "firstPixel");
-        secondPixel = hardwareMap.get(Servo.class, "secondPixel");
-        firstPixel.setPosition(openPos);
-        secondPixel.setPosition(openPos);
+        firstPixel = new ServoPixel("firstPixel");
+        secondPixel = new ServoPixel("secondPixel");
+        firstPixel.init(hardwareMap);
+        secondPixel.init(hardwareMap);
+        firstPixel.setOpen(true);
+        secondPixel.setOpen(true);
 
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOp v" + programVer + "\t Press start to start >");
@@ -75,50 +77,36 @@ public class TeleOp extends LinearOpMode {
             // DriveTrain wheels
             driveTrain.move(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, speedMultiplier);
 
-            if (gp2.pressing(ButtonHelper.a)) {
-                outputSlide.startRetraction();
-            }
+            intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
 
-            if (gp2.pressing(ButtonHelper.left_bumper)) {
-                if (firstPixel.getPosition() - closedPos < 0.05)
-                    firstPixel.setPosition(openPos);
-            } else {
-                firstPixel.setPosition(openPos);
+            if (Math.abs(gamepad2.left_stick_y) > 0.001) {
+                outputSlide.startMoveToRelativePos((int) (-gamepad2.left_stick_y * 100));
             }
-
-            if (gp2.pressing(ButtonHelper.right_bumper)) {
-                if (secondPixel.getPosition() - closedPos < 0.05) {
-                    secondPixel.setPosition(openPos);
-                } else {
-                    secondPixel.setPosition(openPos);
-                }
-            }
-
             if (gp2.pressing(ButtonHelper.b)) {
                 outputSlide.startMoveToPos(1430);
             }
-
-
-            if (Math.abs(gamepad2.left_stick_y) > 0.001) {
-                outputSlide.startMoveToRelativePos((int) (gamepad2.left_stick_y * 100));
+            if (gp2.pressing(ButtonHelper.a)) {
+                outputSlide.startRetraction();
             }
             outputSlide.tick();
 
-            intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
-//            pivot.moveUsingEncoder(-gamepad2.right_stick_y * 0.5);
-
             if (gp2.pressing(ButtonHelper.dpad_left)) {
                 servoOutputPivot.togglePivot();
+            } else if (gp2.pressed(ButtonHelper.dpad_up)) {
+                servoOutputPivot.movePivot(1);
+            } else if (gp2.pressed(ButtonHelper.dpad_down)) {
+                servoOutputPivot.movePivot(-1);
+            } else if (servoOutputPivot.isFinished()) {
+                servoOutputPivot.movePivot(0);
             }
             servoOutputPivot.tick();
 
-//            if (gp2.pressed(ButtonHelper.dpad_up)) {
-//                servoOutputPivot.movePivot(1);
-//            } else if (gp2.pressed(ButtonHelper.dpad_down)) {
-//                servoOutputPivot.movePivot(-1);
-//            } else if (servoOutputPivot.isFinished()) {
-//                servoOutputPivot.movePivot(0);
-//            }
+            if (gp2.pressing(ButtonHelper.left_bumper)) {
+                firstPixel.toggle();
+            }
+            if (gp2.pressing(ButtonHelper.right_bumper)) {
+                secondPixel.toggle();
+            }
         }
     }
 }

@@ -86,7 +86,7 @@ public class ButtonHelper {
 
     /**
      * Return whether button is being pressed on
-     * Determined through transition from upressed to
+     * Determined through transition from unpressed to
      * pressed button
      * @param idx Gamepad button value
      */

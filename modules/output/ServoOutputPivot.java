@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules.output;
 
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoController;
 
@@ -13,21 +12,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class ServoOutputPivot implements Modulable, Tickable {
     public static final double CLOSED_POS = 0;
     private static final double OPENED_POS = 0.5;
+    private static final double TARGET_TIME = 1.4;
     private final String name;
-    protected CRServo pivot;
-
+    private CRServo pivot;
     private ServoController controller;
+    private final ElapsedTime runtime;
     private boolean output = false;
-
     private boolean isRunning;
 
-    private double targetTime = 1.5;
-
-    private ElapsedTime runtime;
-
-    public ServoOutputPivot(String name, ElapsedTime runtime) {
+    public ServoOutputPivot(String name) {
         this.name = name;
-        this.runtime = runtime;
+        this.runtime = new ElapsedTime();
     }
 
     public double getPosition() {
@@ -37,7 +32,6 @@ public class ServoOutputPivot implements Modulable, Tickable {
     public void setPosition(double position) {
         controller.setServoPosition(0, position);
     }
-
 
     @Override
     public void init(HardwareMap map) {
@@ -66,11 +60,7 @@ public class ServoOutputPivot implements Modulable, Tickable {
 
     private void startMovePivot() {
         runtime.reset();
-        if (output) {
-            pivot.setPower(1.0);
-        } else {
-            pivot.setPower(-1.0);
-        }
+        movePivot(output ? 1.0 : -1.0);
         isRunning = true;
     }
 
@@ -84,9 +74,9 @@ public class ServoOutputPivot implements Modulable, Tickable {
 
     @Override
     public void tick() {
-        if (isRunning && runtime.seconds() >= targetTime) {
+        if (isRunning && runtime.seconds() >= TARGET_TIME) {
             isRunning = false;
-            controller.setServoPosition(0, 0.5);
+            movePivot(0);
         }
     }
 }

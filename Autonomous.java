@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,8 +11,8 @@ import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
-@Autonomous(name = "EncoderAuto", group = "opmode")
-public class EncoderAuto extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Autonomous", group = "opmode")
+public class Autonomous extends LinearOpMode {
     protected static final boolean LEFT = false;
     protected static final boolean RIGHT = true;
     /**
@@ -35,7 +34,7 @@ public class EncoderAuto extends LinearOpMode {
     private AprilTagWebcam aprilTagWebcam;
 
 
-    public EncoderAuto(boolean sideOfField) {
+    public Autonomous(boolean sideOfField) {
         this.sideOfField = sideOfField;
     }
 
