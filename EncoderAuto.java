@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.Webcams.AprilTagWebcam;
 import org.firstinspires.ftc.teamcode.modules.Webcams.Webcam;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
-import org.firstinspires.ftc.teamcode.modules.output.OutputPivot;
+import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 @Autonomous(name = "EncoderAuto", group = "opmode")
@@ -23,7 +23,7 @@ public class EncoderAuto extends LinearOpMode {
 
     private DriveTrain driveTrain;
     private LinearSlide linearSlide;
-    private OutputPivot pivot;
+    private MotorOutputPivot pivot;
     private DcMotor intakeWheel;
     private Servo firstPixel;
     private Servo secondPixel;

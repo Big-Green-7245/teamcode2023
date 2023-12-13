@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.Modulable;
 
-public class OutputPivot implements Modulable {
+public class MotorOutputPivot implements Modulable {
     public static final int OUTPUT_POS = 0;
     private static final int RELOAD_POS = 0;
     private final String name;
     protected DcMotor pivot;
     private boolean atOutput;
 
-    public OutputPivot(String name) {
+    public MotorOutputPivot(String name) {
         this.name = name;
     }
 
