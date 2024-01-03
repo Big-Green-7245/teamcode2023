@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.modules.ServoPixel;
 import org.firstinspires.ftc.teamcode.modules.output.ServoOutputPivot;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
+import org.firstinspires.ftc.teamcode.modules.output.ServoToggle;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
@@ -26,14 +28,15 @@ public class TeleOp extends LinearOpMode {
     private DcMotor intakeWheel;
     private LinearSlide outputSlide;
     private MotorOutputPivot pivot;
-    private ServoOutputPivot servoOutputPivot;
+    private CRServo servoToggle;
 
-    private ServoPixel firstPixel;
-    private ServoPixel secondPixel;
+    private ServoToggle firstPixel;
+    private ServoToggle secondPixel;
 
-    private double openPos = 0.3;
 
-    private double closedPos = 0;
+    private boolean[][] lockStates = new boolean[4][];
+
+    private int currentLockState = 0;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -50,17 +53,20 @@ public class TeleOp extends LinearOpMode {
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         outputSlide = new LinearSlide("linearSlide", 0.5);
 //        pivot = new OutputPivot("outputPivot");
-        servoOutputPivot = new ServoOutputPivot("outputClaw");
+        servoOutputPivot = new ServoOutputPivot("outputClaw", runtime);
         driveTrain.init(hardwareMap);
         outputSlide.init(hardwareMap);
 //        pivot.init(hardwareMap);
-        servoOutputPivot.init(hardwareMap);
-        firstPixel = new ServoPixel("firstPixel");
-        secondPixel = new ServoPixel("secondPixel");
-        firstPixel.init(hardwareMap);
-        secondPixel.init(hardwareMap);
-        firstPixel.setOpen(true);
-        secondPixel.setOpen(true);
+        servoToggle = hardwareMap.get(CRServo.class, "outputClaw");
+        lockStates[0] = new boolean[]{false, false};
+        lockStates[1] = new boolean[]{true, true};
+        lockStates[2] = new boolean[]{true, false};
+        firstPixel = new ServoToggle();
+        secondPixel = new ServoToggle();
+        firstPixel.init(hardwareMap, "firstPixel", 0, 0.3);
+        secondPixel.init(hardwareMap, "secondPixel", 0, 0.3);
+        firstPixel.setAction(false);
+        secondPixel.setAction(false);
 
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOp v" + programVer + "\t Press start to start >");
@@ -69,7 +75,6 @@ public class TeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             TelemetryWrapper.setLine(2, "LeftSlidePos" + outputSlide.getCurrentPosition()[0]);
             TelemetryWrapper.setLine(3, "RightSlidePos" + outputSlide.getCurrentPosition()[1]);
-            TelemetryWrapper.setLine(4, "PivotServoPos" + servoOutputPivot.getPosition());
             // Update ButtonHelper
             gp1.update();
             gp2.update();
@@ -91,21 +96,27 @@ public class TeleOp extends LinearOpMode {
             outputSlide.tick();
 
             if (gp2.pressing(ButtonHelper.dpad_left)) {
-                servoOutputPivot.togglePivot();
+                servoToggle.togglePivot();
             } else if (gp2.pressed(ButtonHelper.dpad_up)) {
-                servoOutputPivot.movePivot(1);
+                servoToggle.setPower(1);
             } else if (gp2.pressed(ButtonHelper.dpad_down)) {
-                servoOutputPivot.movePivot(-1);
-            } else if (servoOutputPivot.isFinished()) {
-                servoOutputPivot.movePivot(0);
+                servoToggle.setPower(-1);
+            } else{
+                servoToggle.setPower(0);
             }
-            servoOutputPivot.tick();
 
             if (gp2.pressing(ButtonHelper.left_bumper)) {
-                firstPixel.toggle();
+                firstPixel.toggleAction();
             }
+
             if (gp2.pressing(ButtonHelper.right_bumper)) {
-                secondPixel.toggle();
+                secondPixel.toggleAction();
+            }
+
+            if (gp2.pressing(ButtonHelper.dpad_up)){
+                currentLockState = (currentLockState+1)%3;
+                firstPixel.setAction(lockStates[currentLockState][0]);
+                secondPixel.setAction(lockStates[currentLockState][1]);
             }
         }
     }
