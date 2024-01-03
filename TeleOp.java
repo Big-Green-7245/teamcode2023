@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
-import org.firstinspires.ftc.teamcode.modules.ServoPixel;
-import org.firstinspires.ftc.teamcode.modules.output.ServoOutputPivot;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
+import org.firstinspires.ftc.teamcode.modules.output.ServoOutputPivot;
 import org.firstinspires.ftc.teamcode.modules.output.ServoToggle;
 import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
-
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 @SuppressWarnings("FieldCanBeLocal")
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "opmode")
@@ -28,7 +24,7 @@ public class TeleOp extends LinearOpMode {
     private DcMotor intakeWheel;
     private LinearSlide outputSlide;
     private MotorOutputPivot pivot;
-    private CRServo servoToggle;
+    private ServoOutputPivot servoOutputPivot;
 
     private ServoToggle firstPixel;
     private ServoToggle secondPixel;
@@ -52,12 +48,10 @@ public class TeleOp extends LinearOpMode {
         driveTrain = new DriveTrain(this);
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         outputSlide = new LinearSlide("linearSlide", 0.5);
-//        pivot = new OutputPivot("outputPivot");
-        servoOutputPivot = new ServoOutputPivot("outputClaw", runtime);
+        servoOutputPivot = new ServoOutputPivot("outputClaw");
         driveTrain.init(hardwareMap);
         outputSlide.init(hardwareMap);
-//        pivot.init(hardwareMap);
-        servoToggle = hardwareMap.get(CRServo.class, "outputClaw");
+        servoOutputPivot.init(hardwareMap);
         lockStates[0] = new boolean[]{false, false};
         lockStates[1] = new boolean[]{true, true};
         lockStates[2] = new boolean[]{true, false};
@@ -96,25 +90,23 @@ public class TeleOp extends LinearOpMode {
             outputSlide.tick();
 
             if (gp2.pressing(ButtonHelper.dpad_left)) {
-                servoToggle.togglePivot();
+                servoOutputPivot.togglePivot();
             } else if (gp2.pressed(ButtonHelper.dpad_up)) {
-                servoToggle.setPower(1);
+                servoOutputPivot.setPower(1);
             } else if (gp2.pressed(ButtonHelper.dpad_down)) {
-                servoToggle.setPower(-1);
-            } else{
-                servoToggle.setPower(0);
+                servoOutputPivot.setPower(-1);
+            } else {
+                servoOutputPivot.setPower(0);
             }
 
             if (gp2.pressing(ButtonHelper.left_bumper)) {
                 firstPixel.toggleAction();
             }
-
             if (gp2.pressing(ButtonHelper.right_bumper)) {
                 secondPixel.toggleAction();
             }
-
-            if (gp2.pressing(ButtonHelper.dpad_up)){
-                currentLockState = (currentLockState+1)%3;
+            if (gp2.pressing(ButtonHelper.dpad_up)) {
+                currentLockState = (currentLockState + 1) % 3;
                 firstPixel.setAction(lockStates[currentLockState][0]);
                 secondPixel.setAction(lockStates[currentLockState][1]);
             }
