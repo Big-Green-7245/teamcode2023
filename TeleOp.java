@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 public class TeleOp extends LinearOpMode {
     // Define attributes
     private final String programVer = "2.0";
-    private final double speedMultiplier = 0.95;
+    private final double speedMultiplier = 0.99;
 
     // Declare modules
     private ButtonHelper gp1, gp2;
@@ -73,8 +74,9 @@ public class TeleOp extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            TelemetryWrapper.setLine(2, "LeftSlidePos" + outputSlide.getCurrentPosition()[0]);
-            TelemetryWrapper.setLine(3, "RightSlidePos" + outputSlide.getCurrentPosition()[1]);
+            TelemetryWrapper.setLine(2, "Output Box Lock State " + currentLockState);
+            TelemetryWrapper.setLine(3, "LeftSlidePos" + outputSlide.getCurrentPosition()[0]);
+            TelemetryWrapper.setLine(4, "RightSlidePos" + outputSlide.getCurrentPosition()[1]);
             // Update ButtonHelper
             gp1.update();
             gp2.update();
@@ -85,7 +87,7 @@ public class TeleOp extends LinearOpMode {
             intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
 
             if (Math.abs(gamepad2.left_stick_y) > 0.001) {
-                outputSlide.startMoveToRelativePos((int) (-gamepad2.left_stick_y * 100));
+                outputSlide.startMoveToRelativePos((int) -gamepad2.left_stick_y * 100);
             }
             if (gp2.pressing(ButtonHelper.b)) {
                 outputSlide.startMoveToPos(1430);
@@ -105,7 +107,7 @@ public class TeleOp extends LinearOpMode {
             } else if (servoOutputPivot.isFinished()) {
                 servoOutputPivot.setPower(0);
             }
-            if (gp2.pressed(ButtonHelper.dpad_up)){
+            if (gp2.pressed(ButtonHelper.dpad_up)) {
                 servoOutputPivot.togglePivot();
             }
             servoOutputPivot.tick();
@@ -126,7 +128,7 @@ public class TeleOp extends LinearOpMode {
                 secondPixel.setAction(lockStates[currentLockState][1]);
             }
 
-            if (gp2.pressing(ButtonHelper.x)){
+            if (gp2.pressing(ButtonHelper.x)) {
                 planeLaunch.toggleAction();
             }
         }

@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.modules.output;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.Statistics;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
@@ -56,7 +54,7 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
     }
 
     public void startMoveToRelativePos(int relativePosition) {
-        startMoveToPos((elevatorLeft.getCurrentPosition() + elevatorRight.getCurrentPosition()) / 2 + relativePosition);
+        startMoveToPos(Math.max((elevatorLeft.getCurrentPosition() + elevatorRight.getCurrentPosition()) / 2 + relativePosition, 10));
     }
 
     public void startMoveToPos(int position) {
@@ -75,7 +73,7 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
      * YOU MUST call {@link #tick()} in a loop to stop the intakeSlide when it reaches the ground.
      */
     public void startRetraction() {
-        startMoveToPos(0);
+        startMoveToPos(10);
     }
 
     /**
