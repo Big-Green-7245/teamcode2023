@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.ServoController;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
 import org.firstinspires.ftc.teamcode.modules.Tickable;
 
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class ServoOutputPivot implements Modulable, Tickable {
@@ -19,6 +20,8 @@ public class ServoOutputPivot implements Modulable, Tickable {
     private final ElapsedTime runtime;
     private boolean output = false;
     private boolean isRunning;
+
+    public TouchSensor intakeButton;
 
     public ServoOutputPivot(String name) {
         this.name = name;
@@ -38,6 +41,7 @@ public class ServoOutputPivot implements Modulable, Tickable {
         pivot = map.get(CRServo.class, name);
         pivot.setDirection(CRServo.Direction.REVERSE);
         controller = pivot.getController();
+        intakeButton = map.get(TouchSensor.class, "intakeButton");
     }
 
     /**
@@ -54,17 +58,22 @@ public class ServoOutputPivot implements Modulable, Tickable {
      * Start to move the claw opposite to the current state.
      */
     public void togglePivot() {
-        output = !output;
-        startMovePivot();
+        if (!isRunning) {
+            output = !output;
+            startMovePivot();
+        }
     }
 
     private void startMovePivot() {
-        runtime.reset();
-        setPower(output ? 1.0 : -1.0);
-        isRunning = true;
+        if (!isRunning) {
+            runtime.reset();
+            setPower(output ? 1.0 : -1.0);
+            isRunning = true;
+        }
     }
 
     public void setPower(double power) {
+        isRunning = false;
         pivot.setPower(power);
     }
 
@@ -74,9 +83,15 @@ public class ServoOutputPivot implements Modulable, Tickable {
 
     @Override
     public void tick() {
-        if (isRunning && runtime.seconds() >= TARGET_TIME) {
-            isRunning = false;
-            setPower(0);
+        if (isRunning) {
+            if (intakeButton.isPressed() && !output) {
+                isRunning = false;
+                setPower(0);
+            }
+            if (runtime.seconds() >= TARGET_TIME) {
+                isRunning = false;
+                setPower(0);
+            }
         }
     }
 }

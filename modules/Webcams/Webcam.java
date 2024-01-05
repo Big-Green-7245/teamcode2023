@@ -3,78 +3,103 @@ package org.firstinspires.ftc.teamcode.modules.Webcams;
 import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-//import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
 import org.firstinspires.ftc.teamcode.modules.Tickable;
 import org.firstinspires.ftc.teamcode.util.FinishCondition;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import android.util.Size;
 
 public abstract class Webcam implements Modulable, Tickable, FinishCondition {
 
     //Declare model for object detection
     @SuppressLint("SdCardPath")
-    protected String TFOD_MODEL = "/sdcard/FIRST/tflitemodels/signal.tflite";
+    protected String TFOD_MODEL = "MyModelStoredAsAsset.tflite";
 
-    protected String[] LABELS = {};
-
-    protected String VUFORIA_KEY = "AQIK9eP/////AAABmSfuIJd+0UVOt6G7lBD1wM8kaTvNDhfhZpIcg4Pa/wr6OIq8nARnVDLguWK5ae82T2dSvfb8NkfNPauXPlSmvwsWWq7zq+BfO5BfhaOsn3SNZKpBGKm8i3KMBnp48rD6oz/nQ8FATjUNv7j0W/CdhgWbete4GpVS7FC0Cr+6/iJGF1mqCEsCgiWx02sLd5NFkYqp+uKh5uiEtA/CC3T86hR/khTaX3BsnnXG9hUGh0t+lwxzL9ontudjc1ldRIhylOGnPUB0v6ht4R/X9iprB9yc1Je0D0e/Ra8ysLGROAxf8SAbuotjU2J7qmam6en3b9X0A0FrVMX1zI7W2vAzmJgrEaXZ+NmjgvsKGjI16/Qe";
-
-    /**
-     * The instance of the Vuforia localization engine.
-     */
-//    protected VuforiaLocalizer vuforia;
+    protected String[] LABELS = {"Red"};
 
     /**
      * The instance of the TensorFlow Object Detection engine.
      */
-    protected TFObjectDetector tfod;
+    protected TfodProcessor tfod;
+
+    /**
+     * The variable to store our instance of the vision portal.
+     */
+    private VisionPortal visionPortal;
+
+    protected boolean isEnabled = false;
 
     public boolean detectionComplete;
 
     protected boolean getModelFromAsset = false;
 
     /**
-     * Initialize the Vuforia localization engine.
-     */
-    protected void initVuforia(HardwareMap map, String tfodModelFile, String[] labels) {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-//        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-//        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-//        parameters.cameraName = map.get(WebcamName.class, "Webcam 1");
-
-        //  Instantiate the Vuforia engine
-//        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-        LABELS = labels;
-        TFOD_MODEL = tfodModelFile;
-    }
-
-    /**
      * Initialize the TensorFlow Object Detection engine.
      */
     protected void initTfod(HardwareMap hardwareMap) {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-//        tfodParameters.minResultConfidence = 0.75f;
-//        tfodParameters.isModelTensorFlow2 = true;
-//        tfodParameters.inputSize = 300;
-//        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        // Create the TensorFlow processor by using a builder.
+        tfod = new TfodProcessor.Builder()
 
-        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
-        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-//        if (getModelFromAsset){
-//            tfod.loadModelFromAsset(TFOD_MODEL, LABELS);
-//        }else{
-//            tfod.loadModelFromFile(TFOD_MODEL, LABELS);
-//        }
+//                 With the following lines commented out, the default TfodProcessor Builder
+//                 will load the default model for the season. To define a custom model to load,
+//                 choose one of the following:
+//                   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
+//                   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
+                .setModelAssetName(TFOD_MODEL)
+//                .setModelFileName(TFOD_MODEL)
+
+//                 The following default settings are available to un-comment and edit as needed to
+//                 set parameters for custom models.
+                .setModelLabels(LABELS)
+                .setIsModelTensorFlow2(true)
+                .setIsModelQuantized(true)
+                .setModelInputSize(300)
+                .setModelAspectRatio(16.0 / 9.0)
+
+                .build();
+
+        // Create the vision portal by using a builder.
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        // Set the camera (webcam vs. built-in RC phone camera).
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+
+        // Choose a camera resolution. Not all cameras support all resolutions.
+        builder.setCameraResolution(new Size(1920, 1080));
+
+        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
+        builder.enableLiveView(true);
+
+        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
+        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+
+        // Choose whether or not LiveView stops if no processors are enabled.
+        // If set "true", monitor shows solid orange screen if no processors enabled.
+        // If set "false", monitor shows camera view without annotations.
+        builder.setAutoStopLiveView(false);
+
+        // Set and enable the processor.
+        builder.addProcessor(tfod);
+
+        // Build the Vision Portal, using the above settings.
+        visionPortal = builder.build();
+
+        // Set confidence threshold for TFOD recognitions, at any time.
+        tfod.setMinResultConfidence(0.3f);
+
+        // Disable or re-enable the TFOD processor at any time.
+        visionPortal.setProcessorEnabled(tfod, true);
+
     }
 
-    public void activateTfod() {
+    public void toggleTfod() {
         if (tfod != null) {
-            tfod.activate();
+            isEnabled = !isEnabled;
+            visionPortal.setProcessorEnabled(tfod, isEnabled);
         }
     }
 

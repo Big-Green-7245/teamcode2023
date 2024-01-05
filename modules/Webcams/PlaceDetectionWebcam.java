@@ -7,34 +7,47 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 import java.util.List;
 
 
-public class ParkDetectionWebcam extends Webcam {
+public class PlaceDetectionWebcam extends Webcam {
 
-    public int parkSpace = 2;
+    public int placeSpace = 2;
 
+    public final int CENTER = 0;
+    public final int LEFT = -1;
+    public final int RIGHT = 1;
+
+    private double leftThreshhold = 300;
+    private double rightThreshhold = 800;
+
+    public void init(HardwareMap map, String modelName) {
+        TFOD_MODEL = modelName;
+        super.getModelFromAsset = true;
+        super.initTfod(map);
+        super.toggleTfod();
+    }
     @Override
     public void init(HardwareMap map) {
-        super.initVuforia(map, "/sdcard/FIRST/tflitemodels/signal.tflite", new String[]{"1 Blue", "2 Green", "3 Red"});
+        TFOD_MODEL = "DEFAULT MODEL NAME HERE";
+        super.getModelFromAsset = false;
         super.initTfod(map);
-        super.activateTfod();
-//        tfod.setZoom(1.0, 16.0 / 9.0);
+        super.toggleTfod();
     }
 
     @Override
     public void detect() {
         if (super.tfod != null) {
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            List<Recognition> updatedRecognitions = tfod.getRecognitions();
             if (updatedRecognitions != null) {
                 TelemetryWrapper.t.addData("# Object Detected", updatedRecognitions.size());
                 if (updatedRecognitions.size() == 1) {
                     super.detectionComplete = true;
                     Recognition recognition = updatedRecognitions.get(0);
                     TelemetryWrapper.setLine(2, "Detected: " + recognition.getLabel());
-                    if (recognition.getLabel().equals("2 Green")) {
-                        parkSpace = 1;
-                    } else if (recognition.getLabel().equals("1 Blue")) {
-                        parkSpace = 2;
-                    } else if (recognition.getLabel().equals("3 Red")) {
-                        parkSpace = 3;
+                    if (recognition.getLeft() < leftThreshhold) {
+                        placeSpace = LEFT;
+                    } else if (recognition.getLeft() > rightThreshhold) {
+                        placeSpace = RIGHT;
+                    } else {
+                        placeSpace = CENTER;
                     }
                 } else {
                     TelemetryWrapper.setLine(2, "Detected: None");

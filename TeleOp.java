@@ -29,6 +29,8 @@ public class TeleOp extends LinearOpMode {
     private ServoToggle firstPixel;
     private ServoToggle secondPixel;
 
+    private ServoToggle planeLaunch;
+
 
     private boolean[][] lockStates = new boolean[4][];
 
@@ -54,13 +56,17 @@ public class TeleOp extends LinearOpMode {
         servoOutputPivot.init(hardwareMap);
         lockStates[0] = new boolean[]{false, false};
         lockStates[1] = new boolean[]{true, true};
-        lockStates[2] = new boolean[]{true, false};
+        lockStates[2] = new boolean[]{false, true};
         firstPixel = new ServoToggle();
         secondPixel = new ServoToggle();
-        firstPixel.init(hardwareMap, "firstPixel", 0, 0.3);
-        secondPixel.init(hardwareMap, "secondPixel", 0, 0.3);
+        firstPixel.init(hardwareMap, "firstPixel", 0, 0.3, false);
+        secondPixel.init(hardwareMap, "secondPixel", 0, 0.3, false);
         firstPixel.setAction(false);
         secondPixel.setAction(false);
+
+        planeLaunch = new ServoToggle();
+        planeLaunch.init(hardwareMap, "launcher", 0.3, 0, true);
+
 
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOp v" + programVer + "\t Press start to start >");
@@ -89,26 +95,39 @@ public class TeleOp extends LinearOpMode {
             }
             outputSlide.tick();
 
-            if (gp2.pressing(ButtonHelper.dpad_left)) {
-                servoOutputPivot.togglePivot();
-            } else if (gp2.pressed(ButtonHelper.dpad_up)) {
+//            if (gp2.pressing(ButtonHelper.dpad_left)) {
+//                servoOutputPivot.togglePivot();
+//            } else
+            if (gp1.pressed(ButtonHelper.right_bumper)) {
                 servoOutputPivot.setPower(1);
-            } else if (gp2.pressed(ButtonHelper.dpad_down)) {
+            } else if (gp1.pressed(ButtonHelper.left_bumper) && !servoOutputPivot.intakeButton.isPressed()) {
                 servoOutputPivot.setPower(-1);
-            } else {
+            } else if (servoOutputPivot.isFinished()) {
                 servoOutputPivot.setPower(0);
             }
+            if (gp2.pressed(ButtonHelper.dpad_up)){
+                servoOutputPivot.togglePivot();
+            }
+            servoOutputPivot.tick();
 
             if (gp2.pressing(ButtonHelper.left_bumper)) {
                 firstPixel.toggleAction();
+                currentLockState = 0;
             }
+
             if (gp2.pressing(ButtonHelper.right_bumper)) {
                 secondPixel.toggleAction();
+                currentLockState = 0;
             }
-            if (gp2.pressing(ButtonHelper.dpad_up)) {
+
+            if (gp2.pressing(ButtonHelper.dpad_right)) {
                 currentLockState = (currentLockState + 1) % 3;
                 firstPixel.setAction(lockStates[currentLockState][0]);
                 secondPixel.setAction(lockStates[currentLockState][1]);
+            }
+
+            if (gp2.pressing(ButtonHelper.x)){
+                planeLaunch.toggleAction();
             }
         }
     }

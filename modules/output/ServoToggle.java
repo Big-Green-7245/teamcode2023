@@ -9,13 +9,14 @@ public class ServoToggle implements Modulable  {
     private double IDLE_POS = 0;
     private double ACTION_POS = 0.3;
     private String name;
-    protected Servo pivot;
+    protected Servo servo;
     private boolean action = false;
 
 
 
+
     public double getPosition() {
-        return pivot.getPosition();
+        return servo.getPosition();
     }
 
     public void setActionPos(double pos){
@@ -27,22 +28,28 @@ public class ServoToggle implements Modulable  {
     }
 
     public void setPosition(double position) {
-        pivot.setPosition(position);
+        servo.setPosition(position);
     }
 
-    public void init(HardwareMap map, String servoName, double actionPos, double idlePos) {
+    public void init(HardwareMap map, String servoName, double actionPos, double idlePos, boolean isReversed) {
         name = servoName;
-        pivot = map.get(Servo.class, name);
-        pivot.setDirection(Servo.Direction.REVERSE);
+        servo = map.get(Servo.class, name);
+        if (isReversed) {
+            servo.setDirection(Servo.Direction.REVERSE);
+        }else{
+            servo.setDirection(Servo.Direction.FORWARD);
+        }
         ACTION_POS = actionPos;
         IDLE_POS = idlePos;
+        setAction(action);
+
     }
 
     @Override
     public void init(HardwareMap map) {
         name = "outputClaw";
-        pivot = map.get(Servo.class, name);
-        pivot.setDirection(Servo.Direction.REVERSE);
+        servo = map.get(Servo.class, name);
+        servo.setDirection(Servo.Direction.REVERSE);
     }
 
     /**
@@ -53,9 +60,9 @@ public class ServoToggle implements Modulable  {
     public void setAction(boolean isAction) {
         this.action = isAction;
         if (action){
-            pivot.setPosition(ACTION_POS);
+            servo.setPosition(ACTION_POS);
         }else{
-            pivot.setPosition(IDLE_POS);
+            servo.setPosition(IDLE_POS);
         }
     }
 

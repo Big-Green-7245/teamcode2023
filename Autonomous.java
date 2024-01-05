@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.Webcams.AprilTagWebcam;
+import org.firstinspires.ftc.teamcode.modules.Webcams.PlaceDetectionWebcam;
 import org.firstinspires.ftc.teamcode.modules.Webcams.Webcam;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
@@ -29,7 +30,7 @@ public class Autonomous extends LinearOpMode {
 
 
 
-    private Webcam randomizationWebcam;
+    private PlaceDetectionWebcam randomizationWebcam;
 
     private AprilTagWebcam aprilTagWebcam;
 
@@ -53,10 +54,16 @@ public class Autonomous extends LinearOpMode {
 //        secondPixel = hardwareMap.get(Servo.class, "SecondPixel");
         aprilTagWebcam = new AprilTagWebcam();
         aprilTagWebcam.init(hardwareMap);
+        randomizationWebcam = new PlaceDetectionWebcam();
+        randomizationWebcam.init(hardwareMap, "Red.tflite");
+
+        int loc = 0;
+        while (opModeInInit()){
+            loc = detectTape(randomizationWebcam);
+        }
 
         waitForStart();
 
-        int loc = detectTape(randomizationWebcam);
         // Move one tile
         driveTrain.translate(0.8, 0, 24, 0, 10);
 
@@ -100,7 +107,8 @@ public class Autonomous extends LinearOpMode {
 
     }
 
-    public int detectTape(Webcam webcam){
-        return 0;
+    public int detectTape(PlaceDetectionWebcam webcam){
+        webcam.detect();
+        return webcam.placeSpace;
     }
 }
