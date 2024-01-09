@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
+import org.firstinspires.ftc.teamcode.modules.Navigation;
 import org.firstinspires.ftc.teamcode.modules.Webcams.AprilTagWebcam;
 import org.firstinspires.ftc.teamcode.modules.Webcams.PlaceDetectionWebcam;
-import org.firstinspires.ftc.teamcode.modules.Webcams.Webcam;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
@@ -32,7 +32,7 @@ public class Autonomous extends LinearOpMode {
 
     private PlaceDetectionWebcam randomizationWebcam;
 
-    private AprilTagWebcam aprilTagWebcam;
+    private Navigation navigation;
 
 
     public Autonomous(boolean sideOfField) {
@@ -52,55 +52,105 @@ public class Autonomous extends LinearOpMode {
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
 //        firstPixel = hardwareMap.get(Servo.class, "FirstPixel");
 //        secondPixel = hardwareMap.get(Servo.class, "SecondPixel");
-        aprilTagWebcam = new AprilTagWebcam();
-        aprilTagWebcam.init(hardwareMap);
         randomizationWebcam = new PlaceDetectionWebcam();
-        randomizationWebcam.init(hardwareMap, "Red.tflite");
-
+        randomizationWebcam.init(hardwareMap, "Blue.tflite");
         int loc = 0;
-        while (opModeInInit()){
+        while (!opModeIsActive()){
+            if (isStopRequested()){
+                break;
+            }
             loc = detectTape(randomizationWebcam);
         }
+        randomizationWebcam.stop();
+        navigation = new Navigation(new double[]{12, 50}, 270, this, hardwareMap);
 
-        waitForStart();
+        navigation.MoveToPosDirect(new double[]{12, 36});
+        navigation.MoveToPosDirect(new double[]{12, 12});
 
-        // Move one tile
-        driveTrain.translate(0.8, 0, 24, 0, 10);
 
-        // Turn to place position
-        driveTrain.translate(0.8, 0, 0, 45*loc, 10);
+//        // Turn around
+//        driveTrain.translate(0.8, 0, -32, 0, 10);
+//
+//        if (loc == PlaceDetectionWebcam.LEFT){
+//            driveTrain.translate(0.8, 0, 0, -90, 10);
+//            double[] currentPos = aprilTagWebcam.detectIter();
+//            TelemetryWrapper.setLine(8, "Is detecting :" + aprilTagWebcam.isDetecting);
+//            TelemetryWrapper.setLine(9, "x: " + currentPos[0] + ", " + "y: " + currentPos[1] + ", "+ "z: " + currentPos[2]);
+//            while(!aprilTagWebcam.isDetecting) {
+//                currentPos = aprilTagWebcam.detectIter();
+//                TelemetryWrapper.setLine(9, "x: " + currentPos[0] + ", " + "y: " + currentPos[1] + ", "+ "z: " + currentPos[2]);
+//                if (isStopRequested()){
+//                    break;
+//                }
+//            }
+//            while (currentPos[0] < 50.25){
+//                currentPos = aprilTagWebcam.detectIter();
+//                TelemetryWrapper.setLine(2, "x: " + currentPos[0] + ", " + "y: " + currentPos[1] + ", "+ "z: " + currentPos[2]);
+//                driveTrain.move(0, 0.5, 0, 1.0);
+//                if (isStopRequested()){
+//                    break;
+//                }
+//            }
+//            intakeWheel.setPower(-0.8);
+//            sleep(1000);
+//            intakeWheel.setPower(0);
+//
+//            while (Math.abs(currentPos[1] - (35.41-6*loc))< 0.5){
+//                currentPos = aprilTagWebcam.detectIter();
+//                TelemetryWrapper.setLine(9, "x: " + currentPos[0] + ", " + "y: " + currentPos[1] + ", "+ "z: " + currentPos[2]);
+//                driveTrain.move(-0.5*loc, 0, 0, 1.0);
+//                if (isStopRequested()){
+//                    break;
+//                }
+//            }
+//            sleep(5000);
+//
+////            driveTrain.translate(0.8, 0, -16, 0, 10);
+//        }
 
-        // Spit out pixel
-        intakeWheel.setPower(-0.5);
-        wait(1);
-        intakeWheel.setPower(0);
+//        // Turn around
+//        driveTrain.translate(0.8, 0, 0, 180, 10);
+////
+////
+//        // Move one tile
+//        driveTrain.translate(0.8, 0, 17, 0, 10);
+////
+//        // Turn to place position
+//        driveTrain.translate(0.8, 0, 0, 55*loc, 10);
+//
+//        // Spit out pixel
+//        driveTrain.translate(0.8, 0, 10, 0, 10);
+//        driveTrain.translate(0.8, 0, -5, 0, 10);
+//        intakeWheel.setPower(-0.8);
+//        sleep(1000);
+//        intakeWheel.setPower(0);
+//
+//        // Turn to neutral position
+//        driveTrain.translate(0.8, 0, 0, -45*loc, 10);
+//
+//        // Turn to backdrop
+//        driveTrain.translate(0.8, 0, 0, 90, 10);
+//
+//        // Drive halfway to the backdrop
+//        driveTrain.translate(0.8, 0, 40, 0, 10);
+//
+//        // Use april tag to navigate the rest of the way
+//        driveTrain.move(0, 0.8, 0, 1);
 
-        // Turn to neutral position
-        driveTrain.translate(0.8, 0, 0, -45*loc, 10);
-
-        // Turn to backdrop
-        driveTrain.translate(0.8, 0, 0, 90, 10);
-
-        // Drive halfway to the backdrop
-        driveTrain.translate(0.8, 0, 40, 0, 10);
-
-        // Use april tag to navigate the rest of the way
-        driveTrain.move(0, 0.8, 0, 1);
-
-        double[] currentPos = aprilTagWebcam.detectIter();
-        while (currentPos[0] < 120){
-            currentPos = aprilTagWebcam.detectIter();
-        }
-
-        driveTrain.stop();
-
-        driveTrain.move(0.8 * loc, 0, 0, 1);
-
-        while(Math.abs(currentPos[1] - 36+loc*10) < 0.3){
-            currentPos = aprilTagWebcam.detectIter();
-        }
-
-        driveTrain.stopStayInPlace();
+//        double[] currentPos = aprilTagWebcam.detectIter();
+//        while (currentPos[0] < 120){
+//            currentPos = aprilTagWebcam.detectIter();
+//        }
+//
+//        driveTrain.stop();
+//
+//        driveTrain.move(0.8 * loc, 0, 0, 1);
+//
+//        while(Math.abs(currentPos[1] - 36+loc*10) < 0.3){
+//            currentPos = aprilTagWebcam.detectIter();
+//        }
+//
+//        driveTrain.stopStayInPlace();
 
 
 

@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.modules.Webcams;
 
 import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
 import org.firstinspires.ftc.teamcode.modules.Tickable;
 import org.firstinspires.ftc.teamcode.util.FinishCondition;
@@ -13,7 +11,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import android.util.Size;
 
-public abstract class Webcam implements Modulable, Tickable, FinishCondition {
+public abstract class TFWebcam implements Modulable, Tickable, FinishCondition {
 
     //Declare model for object detection
     @SuppressLint("SdCardPath")
@@ -35,7 +33,6 @@ public abstract class Webcam implements Modulable, Tickable, FinishCondition {
 
     public boolean detectionComplete;
 
-    protected boolean getModelFromAsset = false;
 
     /**
      * Initialize the TensorFlow Object Detection engine.
@@ -89,18 +86,23 @@ public abstract class Webcam implements Modulable, Tickable, FinishCondition {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.3f);
+        tfod.setMinResultConfidence(0.55f);
 
         // Disable or re-enable the TFOD processor at any time.
         visionPortal.setProcessorEnabled(tfod, true);
 
     }
 
-    public void toggleTfod() {
+    public void toggle() {
         if (tfod != null) {
             isEnabled = !isEnabled;
             visionPortal.setProcessorEnabled(tfod, isEnabled);
         }
+    }
+
+    public void stop(){
+        // Save more CPU resources when camera is no longer needed.
+        visionPortal.close();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules.output;
 
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -15,7 +16,8 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
     private final double power;
     private DcMotorEx elevatorLeft;
     private DcMotorEx elevatorRight;
-    private TouchSensor elevatorBtn;
+    private TouchSensor elevatorBtnLeft;
+    private TouchSensor elevatorBtnRight;
     private boolean isBusy;
 
     public LinearSlide(String name, double power) {
@@ -23,13 +25,14 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
         this.power = power;
     }
 
-    public boolean isElevatorBtnPressed() {
-        return elevatorBtn.isPressed();
+    public boolean[] isElevatorBtnPressed() {
+        return new boolean[]{elevatorBtnLeft.isPressed(), elevatorBtnRight.isPressed()};
     }
 
     @Override
     public void init(HardwareMap map) {
-        //   elevatorBtn = map.get(RevTouchSensor.class, name + "Btn");
+        elevatorBtnLeft = map.get(RevTouchSensor.class, "leftBtn");
+        elevatorBtnRight = map.get(RevTouchSensor.class, "rightBtn");
         elevatorLeft = (DcMotorEx) map.get(DcMotor.class, name + "Left");
         elevatorLeft.setDirection(DcMotor.Direction.FORWARD);
         elevatorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -41,6 +44,7 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
         elevatorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elevatorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevatorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     /**
@@ -73,7 +77,7 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
      * YOU MUST call {@link #tick()} in a loop to stop the intakeSlide when it reaches the ground.
      */
     public void startRetraction() {
-        startMoveToPos(10);
+        startMoveToPos(-1000);
     }
 
     /**
@@ -81,6 +85,22 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
      */
     @Override
     public void tick() {
+        if (elevatorBtnLeft.isPressed()){
+            int targetPos = elevatorLeft.getTargetPosition();
+            double power = elevatorLeft.getPower();
+            elevatorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            elevatorLeft.setTargetPosition(Math.max(targetPos, 0));
+            elevatorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            elevatorLeft.setPower(power);
+        }
+        if (elevatorBtnRight.isPressed()){
+            int targetPos = elevatorRight.getTargetPosition();
+            double power = elevatorRight.getPower();
+            elevatorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            elevatorRight.setTargetPosition(Math.max(targetPos, 0));
+            elevatorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            elevatorRight.setPower(power);
+        }
         if (isBusy && !elevatorLeft.isBusy() && !elevatorRight.isBusy()) {
             isBusy = false;
         }
@@ -107,8 +127,8 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
         return elevatorLeft.getPower();
     }
 
-    public int getTargetPosition() {
-        return elevatorLeft.getTargetPosition();
+    public int[] getTargetPosition() {
+        return new int[]{elevatorLeft.getTargetPosition(), elevatorRight.getCurrentPosition()};
     }
 
     /**

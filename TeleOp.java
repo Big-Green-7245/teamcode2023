@@ -71,12 +71,22 @@ public class TeleOp extends LinearOpMode {
 
         // Wait for start
         TelemetryWrapper.setLine(1, "TeleOp v" + programVer + "\t Press start to start >");
-        waitForStart();
+
+        while (opModeInInit()) {
+            outputSlide.tickBeforeStart();
+            servoOutputPivot.tickBeforeStart();
+        }
+
 
         while (opModeIsActive()) {
             TelemetryWrapper.setLine(2, "Output Box Lock State " + currentLockState);
             TelemetryWrapper.setLine(3, "LeftSlidePos" + outputSlide.getCurrentPosition()[0]);
             TelemetryWrapper.setLine(4, "RightSlidePos" + outputSlide.getCurrentPosition()[1]);
+            TelemetryWrapper.setLine(5, "LeftSlideTargetPos" + outputSlide.getTargetPosition()[0]);
+            TelemetryWrapper.setLine(6, "RightSlideTargetPos" + outputSlide.getTargetPosition()[1]);
+            TelemetryWrapper.setLine(7, "LeftSlideButton" + outputSlide.isElevatorBtnPressed()[0]);
+            TelemetryWrapper.setLine(8, "RightSlideButton" + outputSlide.isElevatorBtnPressed()[1]);
+            TelemetryWrapper.setLine(9, "PivotButton" + servoOutputPivot.intakeButton.isPressed());
             // Update ButtonHelper
             gp1.update();
             gp2.update();

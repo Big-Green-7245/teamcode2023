@@ -94,5 +94,19 @@ public class ServoOutputPivot implements Modulable, Tickable {
             }
         }
     }
+
+    @Override
+    public void tickBeforeStart(){
+        if (isRunning) {
+            if (intakeButton.isPressed() && !output) {
+                isRunning = false;
+                setPower(0);
+            }
+            if (runtime.seconds() >= TARGET_TIME) {
+                isRunning = false;
+                setPower(0);
+            }
+        }
+    }
 }
 

@@ -12,7 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.modules.Tickable;
 import org.firstinspires.ftc.teamcode.modules.Webcams.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -24,7 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AprilTagWebcam  {
+public class AprilTagWebcam {
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -35,10 +37,10 @@ public class AprilTagWebcam  {
     // UNITS ARE PIXELS
     // NOTE: this calibration is for the C920 webcam at 800x448.
     // You will need to do your own calibration for other configurations!
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
+    double fx = 1385.92f;
+    double fy = 1385.92f;
+    double cx = 951.982f;
+    double cy = 534.084f;
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -52,6 +54,20 @@ public class AprilTagWebcam  {
      */
     private VisionPortal visionPortal;
 
+    /**
+     * Whether detection is active
+     */
+    private boolean isEnabled = false;
+
+    /**
+     * Whether currently detecting
+     */
+    public boolean isDetecting = false;
+
+    /**
+     * Last seen position
+     */
+    private double[] lastPosition = new double[]{0, 0, 0};
     /**
      * Initialize the AprilTag processor.
      */
@@ -94,7 +110,7 @@ public class AprilTagWebcam  {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(1920, 1080));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         builder.enableLiveView(true);
@@ -116,7 +132,14 @@ public class AprilTagWebcam  {
         // Disable or re-enable the aprilTag processor at any time.
         visionPortal.setProcessorEnabled(aprilTag, true);
 
+        isEnabled = true;
+
     }   // end method initAprilTag()
+
+    public void toggle(){
+        isEnabled = !isEnabled;
+        visionPortal.setProcessorEnabled(aprilTag, isEnabled);
+    }
 
 
     /**
@@ -129,9 +152,11 @@ public class AprilTagWebcam  {
         double avg_z = 0;
         double avg_y = 0;
         double avg_x = 0;
+        isDetecting = false;
         // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
+                isDetecting = true;
                 avg_z += detection.metadata.fieldPosition.get(2) - detection.ftcPose.z;
                 avg_y += detection.metadata.fieldPosition.get(1) - detection.ftcPose.y;
                 avg_x += detection.metadata.fieldPosition.get(0) - detection.ftcPose.x;
@@ -141,8 +166,12 @@ public class AprilTagWebcam  {
         avg_z /= currentDetections.size();
         avg_y /= currentDetections.size();
         avg_x /= currentDetections.size();
-
-       return new double[]{avg_x, avg_y, avg_z};
+        if (isDetecting) {
+            lastPosition = new double[]{avg_x, avg_y, avg_z};
+        }
+        return lastPosition;
 
     }   // end method telemetryAprilTag()
+
+
 }

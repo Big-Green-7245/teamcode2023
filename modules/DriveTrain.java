@@ -16,7 +16,7 @@ public class DriveTrain implements Modulable {
 
     final double XY_CORRECTION = 3.06 / 2.85;
     final double COUNTS_PER_INCH = 50 * 2.54 / 3.06;
-    final double COUNTS_PER_DEGREE = 10.75;
+    final double COUNTS_PER_DEGREE = 11.5;
     private final LinearOpMode opMode;
 
     public HardwareMap hwMap;
@@ -25,6 +25,7 @@ public class DriveTrain implements Modulable {
     public DcMotorEx frontRight;
     public DcMotorEx backLeft;
     public DcMotorEx frontLeft;
+
 
     public DriveTrain(@NonNull LinearOpMode opMode) {
         this.opMode = opMode;
@@ -63,9 +64,12 @@ public class DriveTrain implements Modulable {
      * @param factor applied to all power
      */
     public void move(double powerx, double powery, double turn, double factor) {
+        setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);
         double speedx = factor * powerx;
         double speedy = factor * powery;
         double offset = factor * turn;
+
+
 
         frontRight.setPower(Range.clip(speedy + speedx + offset, -1, 1));
         frontLeft.setPower(Range.clip(speedy - speedx - offset, -1, 1));

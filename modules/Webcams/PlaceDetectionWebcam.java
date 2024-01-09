@@ -7,29 +7,25 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 import java.util.List;
 
 
-public class PlaceDetectionWebcam extends Webcam {
+public class PlaceDetectionWebcam extends TFWebcam {
 
-    public int placeSpace = 2;
+    public int placeSpace = 0;
 
-    public final int CENTER = 0;
-    public final int LEFT = -1;
-    public final int RIGHT = 1;
+    public final static int CENTER = 0;
+    public final static int LEFT = -1;
+    public final static int RIGHT = 1;
 
-    private double leftThreshhold = 300;
-    private double rightThreshhold = 800;
+    private double leftThreshhold = 600;
+    private double rightThreshhold = 1500;
 
     public void init(HardwareMap map, String modelName) {
         TFOD_MODEL = modelName;
-        super.getModelFromAsset = true;
         super.initTfod(map);
-        super.toggleTfod();
     }
     @Override
     public void init(HardwareMap map) {
         TFOD_MODEL = "DEFAULT MODEL NAME HERE";
-        super.getModelFromAsset = false;
         super.initTfod(map);
-        super.toggleTfod();
     }
 
     @Override
@@ -41,13 +37,16 @@ public class PlaceDetectionWebcam extends Webcam {
                 if (updatedRecognitions.size() == 1) {
                     super.detectionComplete = true;
                     Recognition recognition = updatedRecognitions.get(0);
-                    TelemetryWrapper.setLine(2, "Detected: " + recognition.getLabel());
-                    if (recognition.getLeft() < leftThreshhold) {
+                    double xPos = (recognition.getLeft()+recognition.getRight())/2;
+                    if (xPos < leftThreshhold) {
                         placeSpace = LEFT;
-                    } else if (recognition.getLeft() > rightThreshhold) {
+                        TelemetryWrapper.setLine(2, "Detected: Left " + xPos);
+                    } else if (xPos > rightThreshhold) {
                         placeSpace = RIGHT;
+                        TelemetryWrapper.setLine(2, "Detected: Right " + xPos);
                     } else {
                         placeSpace = CENTER;
+                        TelemetryWrapper.setLine(2, "Detected: Center " + xPos);
                     }
                 } else {
                     TelemetryWrapper.setLine(2, "Detected: None");
