@@ -64,6 +64,8 @@ public class AprilTagWebcam {
      */
     public boolean isDetecting = false;
 
+    private final double[] tagCamOffset = new double[] {0, -8};
+
     /**
      * Last seen position
      */
@@ -144,12 +146,12 @@ public class AprilTagWebcam {
 
     /**
      * Add telemetry about AprilTag detections.
+     * @param bearing the bearing of the webcam in euler angles (x, y, z)
      */
-    public double[] detectIter() {
+    public double[] detectIter(double bearing) {
 
         List<org.firstinspires.ftc.vision.apriltag.AprilTagDetection> currentDetections = aprilTag.getDetections();
 
-        double avg_z = 0;
         double avg_y = 0;
         double avg_x = 0;
         isDetecting = false;
@@ -157,17 +159,17 @@ public class AprilTagWebcam {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 isDetecting = true;
-                avg_z += detection.metadata.fieldPosition.get(2) - detection.ftcPose.z;
-                avg_y += detection.metadata.fieldPosition.get(1) - detection.ftcPose.y;
-                avg_x += detection.metadata.fieldPosition.get(0) - detection.ftcPose.x;
+                avg_y += detection.metadata.fieldPosition.get(1)-(Math.sin(Math.toRadians(bearing-90))*(detection.ftcPose.x-tagCamOffset[0])+ Math.cos(Math.toRadians(bearing-90))*(detection.ftcPose.y-tagCamOffset[1]));
+                avg_x += detection.metadata.fieldPosition.get(0)-(Math.cos(Math.toRadians(bearing-90))*(detection.ftcPose.x-tagCamOffset[0]) - Math.sin(Math.toRadians(bearing-90))*(detection.ftcPose.y-tagCamOffset[1]));
             }
         }   // end for() loop
 
-        avg_z /= currentDetections.size();
         avg_y /= currentDetections.size();
         avg_x /= currentDetections.size();
+
+
         if (isDetecting) {
-            lastPosition = new double[]{avg_x, avg_y, avg_z};
+            lastPosition = new double[]{avg_x, avg_y};
         }
         return lastPosition;
 

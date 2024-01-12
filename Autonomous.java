@@ -52,20 +52,22 @@ public class Autonomous extends LinearOpMode {
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
 //        firstPixel = hardwareMap.get(Servo.class, "FirstPixel");
 //        secondPixel = hardwareMap.get(Servo.class, "SecondPixel");
-        randomizationWebcam = new PlaceDetectionWebcam();
-        randomizationWebcam.init(hardwareMap, "Blue.tflite");
-        int loc = 0;
-        while (!opModeIsActive()){
-            if (isStopRequested()){
-                break;
-            }
-            loc = detectTape(randomizationWebcam);
+//        randomizationWebcam = new PlaceDetectionWebcam();
+//        randomizationWebcam.init(hardwareMap, "Blue.tflite");
+//        int loc = 0;
+//        while (opModeInInit()){
+//            loc = detectTape(randomizationWebcam);
+//        }
+//        randomizationWebcam.stop();
+        navigation = new Navigation(new double[]{12, 60}, 0, this, hardwareMap);
+        while(opModeInInit()){
+            TelemetryWrapper.setLine(7, "x: " + navigation.getCurrentPos()[0] + " y: " +navigation.getCurrentPos()[1]);
+            TelemetryWrapper.setLine(8, "Gyro bearing: " + navigation.getGyroBearing());
         }
-        randomizationWebcam.stop();
-        navigation = new Navigation(new double[]{12, 50}, 270, this, hardwareMap);
 
+        navigation = new Navigation(new double[]{12, 60}, 270, this, hardwareMap);
         navigation.MoveToPosDirect(new double[]{12, 36});
-        navigation.MoveToPosDirect(new double[]{12, 12});
+        navigation.MoveToPosDirect(new double[]{36, 36});
 
 
 //        // Turn around

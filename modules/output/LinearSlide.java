@@ -85,7 +85,7 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
      */
     @Override
     public void tick() {
-        if (elevatorBtnLeft.isPressed()){
+        if (elevatorBtnLeft.isPressed() && elevatorLeft.isBusy()){
             int targetPos = elevatorLeft.getTargetPosition();
             double power = elevatorLeft.getPower();
             elevatorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -93,7 +93,7 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
             elevatorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             elevatorLeft.setPower(power);
         }
-        if (elevatorBtnRight.isPressed()){
+        if (elevatorBtnRight.isPressed() && elevatorRight.isBusy()){
             int targetPos = elevatorRight.getTargetPosition();
             double power = elevatorRight.getPower();
             elevatorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
