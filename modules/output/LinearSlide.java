@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
 import org.firstinspires.ftc.teamcode.modules.Tickable;
@@ -85,21 +84,19 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
      */
     @Override
     public void tick() {
-        if (elevatorBtnLeft.isPressed() && elevatorLeft.isBusy()){
-            int targetPos = elevatorLeft.getTargetPosition();
-            double power = elevatorLeft.getPower();
+        if ((elevatorBtnLeft.isPressed() && elevatorLeft.isBusy()) || (elevatorBtnRight.isPressed() && elevatorRight.isBusy())) {
+            int targetPosLeft = elevatorLeft.getTargetPosition();
+            int targetPosRight = elevatorRight.getTargetPosition();
+            double powerLeft = elevatorLeft.getPower();
+            double powerRight = elevatorRight.getPower();
             elevatorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            elevatorLeft.setTargetPosition(Math.max(targetPos, 0));
-            elevatorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elevatorLeft.setPower(power);
-        }
-        if (elevatorBtnRight.isPressed() && elevatorRight.isBusy()){
-            int targetPos = elevatorRight.getTargetPosition();
-            double power = elevatorRight.getPower();
             elevatorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            elevatorRight.setTargetPosition(Math.max(targetPos, 0));
+            elevatorLeft.setTargetPosition(Math.max(targetPosLeft, 0));
+            elevatorRight.setTargetPosition(Math.max(targetPosRight, 0));
+            elevatorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             elevatorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elevatorRight.setPower(power);
+            elevatorLeft.setPower(powerLeft);
+            elevatorRight.setPower(powerRight);
         }
         if (isBusy && !elevatorLeft.isBusy() && !elevatorRight.isBusy()) {
             isBusy = false;

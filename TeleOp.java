@@ -96,9 +96,7 @@ public class TeleOp extends LinearOpMode {
 
             intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
 
-            if (Math.abs(gamepad2.left_stick_y) > 0.001) {
-                outputSlide.startMoveToRelativePos((int) -gamepad2.left_stick_y * 500);
-            }
+            outputSlide.startMoveToRelativePos((int) -gamepad2.left_stick_y * 1000);
             if (gp2.pressing(ButtonHelper.b)) {
                 outputSlide.startMoveToPos(1430);
             }
