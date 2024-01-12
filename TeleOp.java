@@ -51,10 +51,10 @@ public class TeleOp extends LinearOpMode {
         driveTrain = new DriveTrain(this);
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         outputSlide = new LinearSlide("linearSlide", 0.5);
-        servoOutputPivot = new ServoOutputPivot("outputClaw");
+        pivot = new MotorOutputPivot("outputClaw", 0.5);
         driveTrain.init(hardwareMap);
         outputSlide.init(hardwareMap);
-        servoOutputPivot.init(hardwareMap);
+        pivot.init(hardwareMap);
         lockStates[0] = new boolean[]{false, false};
         lockStates[1] = new boolean[]{true, true};
         lockStates[2] = new boolean[]{false, true};
@@ -74,7 +74,7 @@ public class TeleOp extends LinearOpMode {
 
         while (opModeInInit()) {
             outputSlide.tickBeforeStart();
-            servoOutputPivot.tickBeforeStart();
+            pivot.tickBeforeStart();
         }
 
 
@@ -86,7 +86,7 @@ public class TeleOp extends LinearOpMode {
             TelemetryWrapper.setLine(6, "RightSlideTargetPos" + outputSlide.getTargetPosition()[1]);
             TelemetryWrapper.setLine(7, "LeftSlideButton" + outputSlide.isElevatorBtnPressed()[0]);
             TelemetryWrapper.setLine(8, "RightSlideButton" + outputSlide.isElevatorBtnPressed()[1]);
-            TelemetryWrapper.setLine(9, "PivotButton" + servoOutputPivot.intakeButton.isPressed());
+            TelemetryWrapper.setLine(9, "PivotButton" + pivot.intakeButton.isPressed());
             // Update ButtonHelper
             gp1.update();
             gp2.update();
@@ -105,20 +105,17 @@ public class TeleOp extends LinearOpMode {
             }
             outputSlide.tick();
 
-//            if (gp2.pressing(ButtonHelper.dpad_left)) {
-//                servoOutputPivot.togglePivot();
-//            } else
             if (gp1.pressed(ButtonHelper.right_bumper)) {
-                servoOutputPivot.setPower(1);
-            } else if (gp1.pressed(ButtonHelper.left_bumper) && !servoOutputPivot.intakeButton.isPressed()) {
-                servoOutputPivot.setPower(-1);
-            } else if (servoOutputPivot.isFinished()) {
-                servoOutputPivot.setPower(0);
+                pivot.startMoveToRelativePos(1000);
+            } else if (gp1.pressed(ButtonHelper.left_bumper) && !pivot.isPressed()) {
+                pivot.startMoveToRelativePos(-1000);
+            } else if (pivot.isBusy()) {
+                pivot.startMoveToRelativePos(0);
             }
             if (gp2.pressed(ButtonHelper.dpad_up)) {
-                servoOutputPivot.togglePivot();
+                pivot.startMoveToPosToggle();
             }
-            servoOutputPivot.tick();
+            pivot.tick();
 
             if (gp2.pressing(ButtonHelper.left_bumper)) {
                 firstPixel.toggleAction();

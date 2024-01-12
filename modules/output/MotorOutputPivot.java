@@ -3,17 +3,22 @@ package org.firstinspires.ftc.teamcode.modules.output;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
+import org.firstinspires.ftc.teamcode.modules.Tickable;
 
-public class MotorOutputPivot implements Modulable {
+public class MotorOutputPivot implements Modulable, Tickable {
     public static final int OUTPUT_POS = 0;
     private static final int RELOAD_POS = 0;
     private final String name;
+    private final double power;
     protected DcMotor pivot;
+    public TouchSensor intakeButton;
     private boolean atOutput;
 
-    public MotorOutputPivot(String name) {
+    public MotorOutputPivot(String name, double power) {
         this.name = name;
+        this.power = power;
     }
 
     public void moveUsingEncoder(double power){
@@ -29,10 +34,22 @@ public class MotorOutputPivot implements Modulable {
         pivot.setTargetPosition(position);
     }
 
+    public boolean isBusy() {
+        return pivot.isBusy();
+    }
+
+    public boolean isPressed() {
+        return intakeButton.isPressed();
+    }
 
     @Override
     public void init(HardwareMap map) {
         pivot = map.get(DcMotor.class, name);
+        pivot.setDirection(DcMotor.Direction.FORWARD);
+        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeButton = map.get(TouchSensor.class, "intakeButton");
     }
 
     public void startMovePivot(){
@@ -40,34 +57,37 @@ public class MotorOutputPivot implements Modulable {
     }
 
     /**
-     * Makes the claw start to move towards the specified position. (Currently blocks)
+     * Makes the pivot start to move towards the specified position.
      *
-     * @param open open or close the claw
+     * @param atOutput start move towards the intake or output position of the pivot
      */
-    public void setOutputPosition(boolean atOutput) {
-        this.atOutput = atOutput;
-        if (atOutput) {
-            pivot.setTargetPosition(OUTPUT_POS);
-        }else{
-            pivot.setTargetPosition(RELOAD_POS);
-        }
-        startMovePivot();
-        while(pivot.isBusy()){}
-        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void startMoveToPos(boolean atOutput) {
+        startMoveToPos(atOutput ? OUTPUT_POS : RELOAD_POS);
     }
 
-    /**
-     * Start to move the claw opposite to the current state. (Currently blocks)
-     */
-    public void toggleClaw() {
-        if (atOutput) {
-            pivot.setTargetPosition(OUTPUT_POS);
-        }else{
-            pivot.setTargetPosition(RELOAD_POS);
-        }
-        startMovePivot();
-        while(pivot.isBusy()){}
-        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void startMoveToPosToggle() {
+        startMoveToPos(atOutput = !atOutput);
     }
 
+    public void startMoveToRelativePos(int relativePosition) {
+        startMoveToPos(Math.max(pivot.getCurrentPosition() + relativePosition, 10));
+    }
+
+    public void startMoveToPos(int position) {
+        pivot.setTargetPosition(position);
+        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivot.setPower(power);
+    }
+
+    @Override
+    public void tick() {
+        if (pivot.isBusy() && intakeButton.isPressed()) {
+            int targetPos = pivot.getTargetPosition();
+            double power = pivot.getPower();
+            pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            pivot.setTargetPosition(Math.max(targetPos, 0));
+            pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            pivot.setPower(power);
+        }
+    }
 }
