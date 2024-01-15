@@ -12,7 +12,7 @@ public class ButtonHelper {
     private final Gamepad gamepad;
 
     private final boolean[] buttons = new boolean[15];
-    private final boolean[] held = new boolean[15];
+    private final boolean[] prev = new boolean[15];
 
     /**
      * Buttons for use in the pressed(), released(), and pressing() methods
@@ -64,7 +64,7 @@ public class ButtonHelper {
         buttons[left_stick_button] = gamepad.left_stick_button;
         buttons[right_stick_button] = gamepad.right_stick_button;
         for (int i = 0; i < 15; i++) {
-            held[i] = buttons[i] && buttons2[i];
+            prev[i] = buttons[i] && buttons2[i];
         }
     }
 
@@ -72,7 +72,7 @@ public class ButtonHelper {
      * Return whether button is pressed on gamepad
      * @param idx Gamepad button value
      */
-    public boolean pressed(int idx) {
+    public boolean held(int idx) {
         return buttons[idx];
     }
 
@@ -81,7 +81,7 @@ public class ButtonHelper {
      * @param idx Gamepad button value
      */
     public boolean released(int idx) {
-        return !pressed(idx);
+        return !held(idx);
     }
 
     /**
@@ -91,6 +91,6 @@ public class ButtonHelper {
      * @param idx Gamepad button value
      */
     public boolean pressing(int idx) {
-        return !held[idx] && pressed(idx);
+        return !prev[idx] && held(idx);
     }
 }

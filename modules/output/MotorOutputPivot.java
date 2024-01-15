@@ -2,18 +2,24 @@ package org.firstinspires.ftc.teamcode.modules.output;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.modules.Modulable;
 import org.firstinspires.ftc.teamcode.modules.Tickable;
 
 public class MotorOutputPivot implements Modulable, Tickable {
-    public static final int OUTPUT_POS = 0;
-    private static final int RELOAD_POS = 0;
+    /**
+     * The position to start moving towards when moving to intake.
+     * -1000 because this ensures the pivot moves all the way back and activates the button,
+     * no matter where the pivot was initialized.
+     * The encoder is then reset to 0 when the button is pressed and {@link #tick()} is called.
+     */
+    private static final int INTAKE_TARGET_POS = -1000;
+    private static final int INTAKE_POS = -5;
+    public static final int OUTPUT_POS = 480;
     private final String name;
     private final double power;
-    protected DcMotor pivot;
-    public TouchSensor intakeButton;
+    private DcMotor pivot;
+    private TouchSensor intakeButton;
     private boolean atOutput;
 
     public MotorOutputPivot(String name, double power) {
@@ -21,17 +27,17 @@ public class MotorOutputPivot implements Modulable, Tickable {
         this.power = power;
     }
 
-    public void moveUsingEncoder(double power){
+    public void moveUsingEncoder(double power) {
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivot.setPower(power);
     }
 
-    public int getPosition() {
+    public int getCurrentPosition() {
         return pivot.getCurrentPosition();
     }
 
-    public void setPosition(int position) {
-        pivot.setTargetPosition(position);
+    public int getTargetPosition() {
+        return pivot.getTargetPosition();
     }
 
     public boolean isBusy() {
@@ -52,7 +58,7 @@ public class MotorOutputPivot implements Modulable, Tickable {
         intakeButton = map.get(TouchSensor.class, "intakeButton");
     }
 
-    public void startMovePivot(){
+    public void startMovePivot() {
         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
@@ -62,7 +68,8 @@ public class MotorOutputPivot implements Modulable, Tickable {
      * @param atOutput start move towards the intake or output position of the pivot
      */
     public void startMoveToPos(boolean atOutput) {
-        startMoveToPos(atOutput ? OUTPUT_POS : RELOAD_POS);
+        this.atOutput = atOutput;
+        startMoveToPos(atOutput ? OUTPUT_POS : INTAKE_TARGET_POS);
     }
 
     public void startMoveToPosToggle() {
@@ -70,7 +77,7 @@ public class MotorOutputPivot implements Modulable, Tickable {
     }
 
     public void startMoveToRelativePos(int relativePosition) {
-        startMoveToPos(Math.max(pivot.getCurrentPosition() + relativePosition, 10));
+        startMoveToPos(Math.max(pivot.getCurrentPosition() + relativePosition, INTAKE_TARGET_POS));
     }
 
     public void startMoveToPos(int position) {
@@ -81,11 +88,14 @@ public class MotorOutputPivot implements Modulable, Tickable {
 
     @Override
     public void tick() {
-        if (pivot.isBusy() && intakeButton.isPressed()) {
+        if (pivot.getTargetPosition() <= INTAKE_POS && !intakeButton.isPressed()) {
+            startMoveToPos(false);
+        }
+        if (pivot.isBusy() && pivot.getTargetPosition() < INTAKE_POS && intakeButton.isPressed()) {
             int targetPos = pivot.getTargetPosition();
             double power = pivot.getPower();
             pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            pivot.setTargetPosition(Math.max(targetPos, 0));
+            pivot.setTargetPosition(Math.max(targetPos, INTAKE_POS));
             pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             pivot.setPower(power);
         }

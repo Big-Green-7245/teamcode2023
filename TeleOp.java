@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
@@ -51,7 +50,7 @@ public class TeleOp extends LinearOpMode {
         driveTrain = new DriveTrain(this);
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         outputSlide = new LinearSlide("linearSlide", 0.5);
-        pivot = new MotorOutputPivot("outputClaw", 0.5);
+        pivot = new MotorOutputPivot("outputPivot", 0.5);
         driveTrain.init(hardwareMap);
         outputSlide.init(hardwareMap);
         pivot.init(hardwareMap);
@@ -86,7 +85,9 @@ public class TeleOp extends LinearOpMode {
             TelemetryWrapper.setLine(6, "RightSlideTargetPos" + outputSlide.getTargetPosition()[1]);
             TelemetryWrapper.setLine(7, "LeftSlideButton" + outputSlide.isElevatorBtnPressed()[0]);
             TelemetryWrapper.setLine(8, "RightSlideButton" + outputSlide.isElevatorBtnPressed()[1]);
-            TelemetryWrapper.setLine(9, "PivotButton" + pivot.intakeButton.isPressed());
+            TelemetryWrapper.setLine(9, "PivotPos" + pivot.getCurrentPosition());
+            TelemetryWrapper.setLine(10, "PivotTargetPos" + pivot.getTargetPosition());
+            TelemetryWrapper.setLine(11, "PivotButton" + pivot.isPressed());
             // Update ButtonHelper
             gp1.update();
             gp2.update();
@@ -96,23 +97,24 @@ public class TeleOp extends LinearOpMode {
 
             intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
 
-            outputSlide.startMoveToRelativePos((int) -gamepad2.left_stick_y * 1000);
+            if (Math.abs(gamepad2.left_stick_y) > 0.001) {
+                outputSlide.startMoveToRelativePos((int) -gamepad2.left_stick_y * 1000);
+            }
             if (gp2.pressing(ButtonHelper.b)) {
                 outputSlide.startMoveToPos(1430);
             }
             if (gp2.pressing(ButtonHelper.a)) {
+                pivot.startMoveToPos(false);
                 outputSlide.startRetraction();
             }
             outputSlide.tick();
 
-            if (gp1.pressed(ButtonHelper.right_bumper)) {
-                pivot.startMoveToRelativePos(1000);
-            } else if (gp1.pressed(ButtonHelper.left_bumper) && !pivot.isPressed()) {
-                pivot.startMoveToRelativePos(-1000);
-            } else if (pivot.isBusy()) {
-                pivot.startMoveToRelativePos(0);
+            if (gamepad1.right_trigger > 0.001 && !pivot.isPressed()) {
+                pivot.startMoveToRelativePos((int) -gamepad1.right_trigger * 1000);
+            } else if (gamepad1.left_trigger > 0.001) {
+                pivot.startMoveToRelativePos((int) gamepad1.left_trigger * 1000);
             }
-            if (gp2.pressed(ButtonHelper.dpad_up)) {
+            if (gp2.pressing(ButtonHelper.dpad_up)) {
                 pivot.startMoveToPosToggle();
             }
             pivot.tick();
