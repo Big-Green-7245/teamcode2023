@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 public class DriveTrain implements Modulable {
     private final ElapsedTime runtime = new ElapsedTime();
 
-    final double XY_CORRECTION = 3.06 / 2.85;
-    final double COUNTS_PER_INCH = 50 * 2.54 / 3.06;
+    final double XY_CORRECTION = 3.06*(10/9.5)*(20/19)/(24/33.25)*(8.5/10) / 2.85;
+    final double COUNTS_PER_INCH = 54*(10/8.5)*(24/33.25) * 2.54 / 3.06;
     final double COUNTS_PER_DEGREE = 11.5;
     private final LinearOpMode opMode;
 
@@ -89,9 +89,8 @@ public class DriveTrain implements Modulable {
     public void translate(double power, double dX, double dY, double dTheta, double timeout) {
         int newFLTarget, newFRTarget, newBLTarget, newBRTarget;
         int dFL, dFR, dBL, dBR;
-
         // Determine new target position, and pass to motor controller
-        dFL = (int) ((-dY + dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE);
+        dFL = (int) ((-dY + dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE );
         dFR = (int) ((-dY - dX * XY_CORRECTION) * COUNTS_PER_INCH - dTheta * COUNTS_PER_DEGREE);
         dBL = (int) ((-dY - dX * XY_CORRECTION) * COUNTS_PER_INCH + dTheta * COUNTS_PER_DEGREE);
         dBR = (int) ((-dY + dX * XY_CORRECTION) * COUNTS_PER_INCH - dTheta * COUNTS_PER_DEGREE);

@@ -82,12 +82,20 @@ public class Navigation {
     }
 
     public void setBearing(double targetBearing){
-        targetBearing = (targetBearing%360)+360;
-        double dir =((targetBearing-currentBearing < 180)? -1 : 1);
-        driveTrain.move(0, 0, 0.1*dir, 1);
-        while (Math.abs(targetBearing - currentBearing) > 0.5){
+        targetBearing = ((targetBearing%360)+360)%360;
+        double dir;
+        while (Math.abs(targetBearing - currentBearing) > 10 && Math.abs(360-(targetBearing-currentBearing))> 10){
             TelemetryWrapper.setLine(6, "Target Bearing: " + targetBearing + " | " + "Current Bearing: " + currentBearing);
             currentBearing = getGyroBearing();
+            dir =((targetBearing-currentBearing < 180)? -1 : 1);
+            driveTrain.move(0, 0, 0.5*dir, 1);
+        }
+        currentBearing = getGyroBearing();
+        while (Math.abs(targetBearing - currentBearing) > 1 && Math.abs(360-(targetBearing-currentBearing))> 1){
+            TelemetryWrapper.setLine(6, "Target Bearing: " + targetBearing + " | " + "Current Bearing: " + currentBearing);
+            currentBearing = getGyroBearing();
+            dir =((targetBearing-currentBearing < 180)? -1 : 1);
+            driveTrain.move(0, 0, 0.05*dir, 1);
         }
         driveTrain.stopStayInPlace();
     }
@@ -99,13 +107,14 @@ public class Navigation {
         double[] lastEncoderPos = driveTrain.getEncPos();
         double[] displacement = new double[]{targetPos[0]- currentPos[0], targetPos[1] - currentPos[1]};
         driveTrain.move(0,0.7, 0, 1);
-        while (magnitude(displacement) > 2){
+        while (magnitude(displacement) > 4){
             TelemetryWrapper.setLine(5, "x: "+ currentPos[0] + "| y: " + currentPos[1] + "| theta: " + currentBearing);
             double[] currentEncPos = driveTrain.getEncPos();
             currentBearing = getGyroBearing();
             lastAprilTagPos = tagCam.detectIter(currentBearing);
             if (tagCam.isDetecting){
                 currentPos = lastAprilTagPos;
+                TelemetryWrapper.setLine(9, "CAM");
                 TelemetryWrapper.setLine(7, "CAM");
             }else {
                 TelemetryWrapper.setLine(7, "ENC");
@@ -125,8 +134,8 @@ public class Navigation {
 
     public void strafeToPos(double[] targetPos){
         double[] displacement = new double[]{targetPos[0]- currentPos[0], targetPos[1] - currentPos[1]};
-        double dx = Math.cos(Math.toRadians(currentBearing-90))*(displacement[0]) - Math.sin(Math.toRadians(currentBearing-90))*(displacement[1]);
-        double dy = Math.sin(Math.toRadians(currentBearing-90))*(displacement[0]) + Math.cos(Math.toRadians(currentBearing-90))*(displacement[1]);
+        double dx = Math.cos(Math.toRadians(currentBearing+90))*(displacement[0]) - Math.sin(Math.toRadians(currentBearing+90))*(displacement[1]);
+        double dy = Math.sin(Math.toRadians(currentBearing+90))*(displacement[0]) + Math.cos(Math.toRadians(currentBearing+90))*(displacement[1]);
 
         driveTrain.translate(0.4, dx, 0, 0, 10);
         driveTrain.translate(0.4, 0, dy, 0, 10);
@@ -134,9 +143,11 @@ public class Navigation {
         if(tagCam.isDetecting){
             currentPos = lastAprilTagPos;
             TelemetryWrapper.setLine(7, "CAM");
+            TelemetryWrapper.setLine(5, "x: "+ currentPos[0] + "| y: " + currentPos[1] + "| theta: " + currentBearing);
         }else{
             currentPos = targetPos;
             TelemetryWrapper.setLine(7, "ENC");
+            TelemetryWrapper.setLine(5, "x: "+ currentPos[0] + "| y: " + currentPos[1] + "| theta: " + currentBearing);
         }
         driveTrain.stopStayInPlace();
     }
