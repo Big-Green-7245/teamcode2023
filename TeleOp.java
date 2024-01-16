@@ -97,8 +97,8 @@ public class TeleOp extends LinearOpMode {
 
             intakeWheel.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.8);
 
-            if (Math.abs(gamepad2.left_stick_y) > 0.001) {
-                outputSlide.startMoveToRelativePos((int) -gamepad2.left_stick_y * 1000);
+            if (Math.abs(gamepad2.left_stick_y) > 0.0001) {
+                outputSlide.startMoveToRelativePos((int) -gamepad2.left_stick_y * 500);
             }
             if (gp2.pressing(ButtonHelper.b)) {
                 outputSlide.startMoveToPos(1430);
@@ -109,10 +109,10 @@ public class TeleOp extends LinearOpMode {
             }
             outputSlide.tick();
 
-            if (gamepad1.right_trigger > 0.001 && !pivot.isPressed()) {
-                pivot.startMoveToRelativePos((int) -gamepad1.right_trigger * 1000);
-            } else if (gamepad1.left_trigger > 0.001) {
-                pivot.startMoveToRelativePos((int) gamepad1.left_trigger * 1000);
+            if (gamepad1.right_trigger > 0.0001 && !pivot.isPressed()) {
+                pivot.startMoveToRelativePos((int) -gamepad1.right_trigger * 200);
+            } else if (gamepad1.left_trigger > 0.0001) {
+                pivot.startMoveToRelativePos((int) gamepad1.left_trigger * 200);
             }
             if (gp2.pressing(ButtonHelper.dpad_up)) {
                 pivot.startMoveToPosToggle();
