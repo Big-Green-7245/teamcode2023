@@ -125,7 +125,7 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
     }
 
     public int[] getTargetPosition() {
-        return new int[]{elevatorLeft.getTargetPosition(), elevatorRight.getCurrentPosition()};
+        return new int[]{elevatorLeft.getTargetPosition(), elevatorRight.getTargetPosition()};
     }
 
     /**
