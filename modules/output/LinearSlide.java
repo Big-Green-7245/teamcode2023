@@ -60,8 +60,13 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
         startMoveToPos(Math.max((elevatorLeft.getCurrentPosition() + elevatorRight.getCurrentPosition()) / 2 + relativePosition, 10));
     }
 
-    public void startMoveToPos(int position) {
+    public void startMoveToPosSetBusy(int position) {
+        startMoveToPos(position);
         isBusy = true;
+    }
+
+    public void startMoveToPos(int position) {
+        isBusy = false;
         elevatorLeft.setTargetPosition(position);
         elevatorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevatorLeft.setPower(power);
@@ -76,7 +81,7 @@ public class LinearSlide implements Modulable, Tickable, FinishCondition {
      * YOU MUST call {@link #tick()} in a loop to stop the intakeSlide when it reaches the ground.
      */
     public void startRetraction() {
-        startMoveToPos(-1000);
+        startMoveToPosSetBusy(-1000);
     }
 
     /**
