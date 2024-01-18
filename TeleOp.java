@@ -50,7 +50,7 @@ public class TeleOp extends LinearOpMode {
         driveTrain = new DriveTrain(this);
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         outputSlide = new LinearSlide("linearSlide", 0.5);
-        pivot = new MotorOutputPivot("outputPivot", 0.5);
+        pivot = new MotorOutputPivot("outputPivot", 0.3);
         driveTrain.init(hardwareMap);
         outputSlide.init(hardwareMap);
         pivot.init(hardwareMap);
@@ -65,7 +65,7 @@ public class TeleOp extends LinearOpMode {
         secondPixel.setAction(false);
 
         planeLaunch = new ServoToggle();
-        planeLaunch.init(hardwareMap, "launcher", 0.3, 0, true);
+        planeLaunch.init(hardwareMap, "launcher", 0.2, 0, true);
 
 
         // Wait for start
