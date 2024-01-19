@@ -91,10 +91,10 @@ public class Navigation {
         targetBearing = ((targetBearing % 360) + 360) % 360;
         double dir;
         double dAngle;
-        while ((dAngle = (targetBearing - currentBearing + 180) % 360 - 180) > 1) {
+        while (opMode.opModeIsActive() && (dAngle = (targetBearing - currentBearing + 180) % 360 - 180) > 1) {
             TelemetryWrapper.setLine(6, "Target Bearing: " + targetBearing + " | " + "Current Bearing: " + currentBearing);
             currentBearing = getGyroBearing();
-            driveTrain.move(0, 0, dAngle / 180, 1);
+            driveTrain.move(0, 0, Math.min(dAngle / 2, 1), 1); // TODO turning broken
         }
         driveTrain.stopStayInPlace();
     }
@@ -107,7 +107,7 @@ public class Navigation {
         double[] displacement = new double[]{targetPos[0] - currentPos[0], targetPos[1] - currentPos[1]};
         long prevTime = System.currentTimeMillis(); // TODO debug remove
         driveTrain.move(0, 0.7, 0, 1);
-        while (magnitude(displacement) > 5) {
+        while (opMode.opModeIsActive() && magnitude(displacement) > 5) {
             long curTime = System.currentTimeMillis(); // TODO debug remove
             System.out.println("Navigation movement time for tick: " + (curTime - prevTime)); // TODO debug remove
             prevTime = curTime; // TODO debug remove
@@ -177,7 +177,7 @@ public class Navigation {
         double[] lastEncoderPos = driveTrain.getEncPos();
         double[] displacement = new double[]{targetPos[0] - currentPos[0], targetPos[1] - currentPos[1]};
 
-        while (magnitude(displacement) > 4) {
+        while (opMode.opModeIsActive() && magnitude(displacement) > 4) {
             TelemetryWrapper.setLine(5, "x: " + currentPos[0] + "| y: " + currentPos[1] + "| theta: " + currentBearing);
             double[] currentEncPos = driveTrain.getEncPos();
             currentBearing = getGyroBearing();

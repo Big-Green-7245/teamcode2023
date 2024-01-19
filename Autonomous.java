@@ -58,13 +58,12 @@ public class Autonomous extends LinearOpMode {
 //            loc = detectTape(randomizationWebcam);
 //        }
 //        randomizationWebcam.stop();
-        navigation = new Navigation(new double[]{12, 66}, 0, this, hardwareMap);
+        navigation = new Navigation(new double[]{12, 66}, 270, this, hardwareMap);
         while (opModeInInit()) {
             TelemetryWrapper.setLine(7, "x: " + navigation.getCurrentPos()[0] + " y: " + navigation.getCurrentPos()[1]);
             TelemetryWrapper.setLine(8, "Gyro bearing: " + navigation.getGyroBearing());
         }
 
-        navigation = new Navigation(new double[]{12, 66}, 270, this, hardwareMap);
         navigation.MoveToPosDirect(new double[]{12, 33});
         navigation.setBearing(0);
         while (!navigation.tagCam.isDetecting) {
