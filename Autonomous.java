@@ -29,7 +29,6 @@ public class Autonomous extends LinearOpMode {
     private Servo secondPixel;
 
 
-
     private PlaceDetectionWebcam randomizationWebcam;
 
     private Navigation navigation;
@@ -60,19 +59,28 @@ public class Autonomous extends LinearOpMode {
 //        }
 //        randomizationWebcam.stop();
         navigation = new Navigation(new double[]{12, 66}, 0, this, hardwareMap);
-        while(opModeInInit()){
-            TelemetryWrapper.setLine(7, "x: " + navigation.getCurrentPos()[0] + " y: " +navigation.getCurrentPos()[1]);
+        while (opModeInInit()) {
+            TelemetryWrapper.setLine(7, "x: " + navigation.getCurrentPos()[0] + " y: " + navigation.getCurrentPos()[1]);
             TelemetryWrapper.setLine(8, "Gyro bearing: " + navigation.getGyroBearing());
         }
 
         navigation = new Navigation(new double[]{12, 66}, 270, this, hardwareMap);
         navigation.MoveToPosDirect(new double[]{12, 33});
+        navigation.setBearing(0);
+        while (!navigation.tagCam.isDetecting) {
+            navigation.tagCam.detectIter(navigation.getGyroBearing());
+        }
         navigation.MoveToPosDirect(new double[]{39, 33});
         navigation.setBearing(0);
         intakeWheel.setPower(-0.8);
         sleep(1000);
         intakeWheel.setPower(0);
 
+        navigation.tagCam.close();
+
+        while (opModeIsActive()) ;
+
+        navigation.tagCam.close();
 
 //        // Turn around
 //        driveTrain.translate(0.8, 0, -32, 0, 10);
@@ -159,11 +167,9 @@ public class Autonomous extends LinearOpMode {
 //        driveTrain.stopStayInPlace();
 
 
-
-
     }
 
-    public int detectTape(PlaceDetectionWebcam webcam){
+    public int detectTape(PlaceDetectionWebcam webcam) {
         webcam.detect();
         return webcam.placeSpace;
     }

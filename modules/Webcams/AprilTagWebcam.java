@@ -175,5 +175,9 @@ public class AprilTagWebcam {
 
     }   // end method telemetryAprilTag()
 
+    public void close() {
+        visionPortal.close();
+    }
+
 
 }
