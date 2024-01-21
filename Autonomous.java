@@ -64,16 +64,20 @@ public class Autonomous extends LinearOpMode {
             TelemetryWrapper.setLine(8, "Gyro bearing: " + navigation.getGyroBearing());
         }
 
+//        navigation.calibrate();
+
         navigation.MoveToPosDirect(new double[]{12, 33});
         navigation.setBearing(0);
-        while (!navigation.tagCam.isDetecting) {
+        while(opModeIsActive() && !navigation.tagCam.isDetecting){
             navigation.tagCam.detectIter(navigation.getGyroBearing());
+            TelemetryWrapper.setLine(10, "Waiting for detection...");
         }
-        navigation.MoveToPosDirect(new double[]{39, 33});
-        navigation.setBearing(0);
+        navigation.MoveToPosDirect(new double[]{28.5, 33});
         intakeWheel.setPower(-0.8);
         sleep(1000);
         intakeWheel.setPower(0);
+        navigation.MoveToPosDirect(new double[]{45, 33});
+        navigation.setBearing(0);
 
         navigation.tagCam.close();
 

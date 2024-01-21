@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -15,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+import java.util.Arrays;
+
 public class Navigation {
     private double[] currentPos;
     private double currentBearing;
@@ -25,7 +29,7 @@ public class Navigation {
 
     private double lastDriveTrainBearing;
 
-    private final LinearOpMode opMode;
+    private LinearOpMode opMode;
 
     private DriveTrain driveTrain;
 
@@ -87,40 +91,67 @@ public class Navigation {
         return lastDriveTrainPos;
     }
 
+    public double clamp(double value, double bound1, double bound2){
+        double max = Math.max(bound1, bound2);
+        double min = Math.min(bound1, bound2);
+        if (value < min){
+            return min;
+        }else if (value > max){
+            return max;
+        }
+        return value;
+    }
+
+    public double getMinAngle(double currentAngle, double targetAngle){
+        double delta1 = targetAngle - currentAngle;
+        double delta2 = targetAngle - currentAngle + 360;
+        double delta3 = targetAngle - currentAngle - 360;
+        if (Math.abs(delta1) < Math.abs(delta2) && Math.abs(delta1) < Math.abs(delta3)){
+            return -delta1;
+        }else if (Math.abs(delta2) < Math.abs(delta1) && Math.abs(delta2) < Math.abs(delta3)){
+            return -delta2;
+        }
+        return -delta3;
+    }
     public void setBearing(double targetBearing) {
         targetBearing = ((targetBearing % 360) + 360) % 360;
-        double dir;
-        double dAngle;
-        while (opMode.opModeIsActive() && (dAngle = (targetBearing - currentBearing + 180) % 360 - 180) > 1) {
+        currentBearing = getGyroBearing();
+        double dAngle = getMinAngle(currentBearing, targetBearing);
+        while (opMode.opModeIsActive() && Math.abs(dAngle)  > 1){
             TelemetryWrapper.setLine(6, "Target Bearing: " + targetBearing + " | " + "Current Bearing: " + currentBearing);
+            driveTrain.move(0, 0, clamp(dAngle / 50, Math.abs(dAngle)/dAngle * 0.1, Math.abs(dAngle)/dAngle), 1); // TODO turning broken
             currentBearing = getGyroBearing();
-            driveTrain.move(0, 0, Math.min(dAngle / 2, 1), 1); // TODO turning broken
+            dAngle = getMinAngle(currentBearing, targetBearing);
         }
         driveTrain.stopStayInPlace();
     }
 
 
-    public void MoveToPosDirect(double[] targetPos) {
+    public void MoveToPosDirect(double[] targetPos) throws InterruptedException {
         double targetBearing = Math.toDegrees(Math.atan2(targetPos[1] - currentPos[1], targetPos[0] - currentPos[0]));
         setBearing(targetBearing);
         double[] lastEncoderPos = driveTrain.getEncPos();
+        double[] startPos = Arrays.copyOf(currentPos, 2);
         double[] displacement = new double[]{targetPos[0] - currentPos[0], targetPos[1] - currentPos[1]};
         long prevTime = System.currentTimeMillis(); // TODO debug remove
-        driveTrain.move(0, 0.7, 0, 1);
-        while (opMode.opModeIsActive() && magnitude(displacement) > 5) {
+
+        while (opMode.opModeIsActive() && magnitude(displacement) > 3) {
+            // Dot product between the vector from targetPos to startPos and the vector targetPos to currentPos to calculate which direction to go towards
+            int positivePower = (startPos[0] - targetPos[0]) * (currentPos[0] - targetPos[0]) + (startPos[1] - targetPos[1]) * (currentPos[1] - targetPos[1]) >= 0 ? 1 : -1;
+            driveTrain.move(0, positivePower * Math.min(0.7, Math.max(magnitude(displacement)/30, 0.1)), 0, 1);
             long curTime = System.currentTimeMillis(); // TODO debug remove
-            System.out.println("Navigation movement time for tick: " + (curTime - prevTime)); // TODO debug remove
+            TelemetryWrapper.setLine(11, "Navigation movement time for tick: " + (curTime - prevTime)); // TODO debug remove
             prevTime = curTime; // TODO debug remove
 
             TelemetryWrapper.setLine(5, "x: " + currentPos[0] + "| y: " + currentPos[1] + "| theta: " + currentBearing);
             double[] currentEncPos = driveTrain.getEncPos();
             currentBearing = getGyroBearing();
-            System.out.println("Detecting april tags..."); // TODO debug remove
+            TelemetryWrapper.setLine(10, "Detecting april tags..."); // TODO debug remove
             lastAprilTagPos = tagCam.detectIter(currentBearing);
             if (tagCam.isDetecting) {
                 currentPos = lastAprilTagPos;
-                System.out.println("April tag detected."); // TODO debug remove
-                TelemetryWrapper.setLine(9, "CAM");
+                TelemetryWrapper.setLine(10, ""); // TODO debug remove
+                TelemetryWrapper.setLine(9, "April tag detected."); // TODO debug remove
                 TelemetryWrapper.setLine(7, "CAM");
             } else {
                 TelemetryWrapper.setLine(7, "ENC");
@@ -143,8 +174,8 @@ public class Navigation {
         double dx = Math.cos(Math.toRadians(currentBearing + 90)) * (displacement[0]) - Math.sin(Math.toRadians(currentBearing + 90)) * (displacement[1]);
         double dy = Math.sin(Math.toRadians(currentBearing + 90)) * (displacement[0]) + Math.cos(Math.toRadians(currentBearing + 90)) * (displacement[1]);
 
-        driveTrain.translate(0.4, dx, 0, 0, 10);
-        driveTrain.translate(0.4, 0, dy, 0, 10);
+        driveTrain.translate(0.3, dx, 0, 0, 10);
+        driveTrain.translate(0.3, 0, dy, 0, 10);
         lastAprilTagPos = tagCam.detectIter(currentBearing);
         if (tagCam.isDetecting) {
             currentPos = lastAprilTagPos;
@@ -156,6 +187,23 @@ public class Navigation {
             TelemetryWrapper.setLine(5, "x: " + currentPos[0] + "| y: " + currentPos[1] + "| theta: " + currentBearing);
         }
         driveTrain.stopStayInPlace();
+    }
+
+    public void calibrate() throws InterruptedException {
+        lastAprilTagPos = tagCam.detectIter(getGyroBearing());
+        while(!tagCam.isDetecting && opMode.opModeIsActive()){
+            lastAprilTagPos = tagCam.detectIter(getGyroBearing());
+        }
+        double[] startPos = new double[]{lastAprilTagPos[0], lastAprilTagPos[1]};
+        driveTrain.translate(0.7, 0, -20, 0, 10);
+        sleep(3000);
+        lastAprilTagPos = tagCam.detectIter(getGyroBearing());
+        while(!tagCam.isDetecting && opMode.opModeIsActive()){
+            lastAprilTagPos = tagCam.detectIter(getGyroBearing());
+        }
+        TelemetryWrapper.setLine(11, "Correction: " + 20/(startPos[0]-lastAprilTagPos[0]));
+        TelemetryWrapper.setLine(12, "x: " + startPos[0] + "y: "+ startPos[1]);
+        TelemetryWrapper.setLine(13, "x: " + lastAprilTagPos[0] + "y: "+ lastAprilTagPos[1]);
     }
 
     public void MoveToPosAtAngle(double[] targetPos, double angle) {
