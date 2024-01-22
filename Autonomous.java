@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.modules.Webcams.AprilTagWebcam;
 import org.firstinspires.ftc.teamcode.modules.Webcams.PlaceDetectionWebcam;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
+import org.firstinspires.ftc.teamcode.modules.output.ServoToggle;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Autonomous", group = "opmode")
@@ -25,8 +26,8 @@ public class Autonomous extends LinearOpMode {
     private LinearSlide linearSlide;
     private MotorOutputPivot pivot;
     private DcMotor intakeWheel;
-    private Servo firstPixel;
-    private Servo secondPixel;
+    private ServoToggle firstPixel;
+    private ServoToggle secondPixel;
 
 
     private PlaceDetectionWebcam randomizationWebcam;
@@ -46,11 +47,17 @@ public class Autonomous extends LinearOpMode {
 
         driveTrain = new DriveTrain(this);
         driveTrain.init(hardwareMap);
-        linearSlide = new LinearSlide("OutputSlide", 0.5);
-//        pivot = new OutputPivot("OutputPivot");
+        linearSlide = new LinearSlide("linearSlide", 0.5);
+        linearSlide.init(hardwareMap);
+        pivot = new MotorOutputPivot("outputPivot", 0.3);
+        pivot.init(hardwareMap);
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
-//        firstPixel = hardwareMap.get(Servo.class, "FirstPixel");
-//        secondPixel = hardwareMap.get(Servo.class, "SecondPixel");
+        firstPixel = new ServoToggle();
+        secondPixel = new ServoToggle();
+        firstPixel.init(hardwareMap, "firstPixel", 0, 0.3, false);
+        secondPixel.init(hardwareMap, "secondPixel", 0, 0.3, false);
+        firstPixel.setAction(true);
+        secondPixel.setAction(true);
 //        randomizationWebcam = new PlaceDetectionWebcam();
 //        randomizationWebcam.init(hardwareMap, "Blue.tflite");
 //        int loc = 0;
@@ -59,25 +66,39 @@ public class Autonomous extends LinearOpMode {
 //        }
 //        randomizationWebcam.stop();
         navigation = new Navigation(new double[]{12, 66}, 270, this, hardwareMap);
+        pivot.startMoveToPos(false);
         while (opModeInInit()) {
+            linearSlide.tickBeforeStart();
+            pivot.tickBeforeStart();
             TelemetryWrapper.setLine(7, "x: " + navigation.getCurrentPos()[0] + " y: " + navigation.getCurrentPos()[1]);
             TelemetryWrapper.setLine(8, "Gyro bearing: " + navigation.getGyroBearing());
         }
 
-//        navigation.calibrate();
-
-        navigation.MoveToPosDirect(new double[]{12, 33});
+        navigation.MoveToPosDirect(new double[]{12, 32});
         navigation.setBearing(0);
         while(opModeIsActive() && !navigation.tagCam.isDetecting){
             navigation.tagCam.detectIter(navigation.getGyroBearing());
             TelemetryWrapper.setLine(10, "Waiting for detection...");
         }
-        navigation.MoveToPosDirect(new double[]{28.5, 33});
+        navigation.MoveToPosDirect(new double[]{28.5, 32});
+        navigation.setBearing(0);
         intakeWheel.setPower(-0.8);
         sleep(1000);
         intakeWheel.setPower(0);
-        navigation.MoveToPosDirect(new double[]{45, 33});
+        navigation.MoveToPosDirect(new double[]{45.5, 32});
         navigation.setBearing(0);
+        linearSlide.startMoveToPos(1430);
+        while(!linearSlide.isFinished()){
+            linearSlide.tick();
+        }
+        sleep(500);
+        pivot.startMoveToPos(true);
+        while(pivot.isBusy()){
+            pivot.tick();
+        }
+        sleep(1000);
+        firstPixel.setAction(false);
+        secondPixel.setAction(false);
 
         navigation.tagCam.close();
 

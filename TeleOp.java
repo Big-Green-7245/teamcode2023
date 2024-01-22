@@ -51,9 +51,9 @@ public class TeleOp extends LinearOpMode {
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         outputSlide = new LinearSlide("linearSlide", 0.5);
         pivot = new MotorOutputPivot("outputPivot", 0.3);
+        pivot.init(hardwareMap);
         driveTrain.init(hardwareMap);
         outputSlide.init(hardwareMap);
-        pivot.init(hardwareMap);
         lockStates[0] = new boolean[]{false, false};
         lockStates[1] = new boolean[]{true, true};
         lockStates[2] = new boolean[]{false, true};
