@@ -50,7 +50,7 @@ public class TeleOp extends LinearOpMode {
         driveTrain = new DriveTrain(this);
         intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
         outputSlide = new LinearSlide("linearSlide", 0.5);
-        pivot = new MotorOutputPivot("outputPivot", 0.3);
+        pivot = new MotorOutputPivot("outputPivot", 0.5);
         pivot.init(hardwareMap);
         driveTrain.init(hardwareMap);
         outputSlide.init(hardwareMap);
@@ -65,7 +65,7 @@ public class TeleOp extends LinearOpMode {
         secondPixel.setAction(false);
 
         planeLaunch = new ServoToggle();
-        planeLaunch.init(hardwareMap, "launcher", 0.2, 0, true);
+        planeLaunch.init(hardwareMap, "launcher", 0.3, 0, true);
 
 
         // Wait for start
@@ -113,9 +113,9 @@ public class TeleOp extends LinearOpMode {
             outputSlide.tick();
 
             if (gamepad1.right_trigger > 0.0001 && !pivot.isPressed()) {
-                pivot.startMoveToRelativePos((int) -gamepad1.right_trigger * 200);
+                pivot.startMoveToRelativePos((int) -gamepad1.right_trigger * 100);
             } else if (gamepad1.left_trigger > 0.0001) {
-                pivot.startMoveToRelativePos((int) gamepad1.left_trigger * 200);
+                pivot.startMoveToRelativePos((int) gamepad1.left_trigger * 100);
             }
             if (gp2.pressing(ButtonHelper.dpad_up)) {
                 pivot.startMoveToPosToggle();
