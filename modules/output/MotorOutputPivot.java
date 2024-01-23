@@ -15,7 +15,7 @@ public class MotorOutputPivot implements Modulable, Tickable {
      */
     private static final int INTAKE_TARGET_POS = -1000;
     private static final int INTAKE_POS = -2;
-    public static final int OUTPUT_POS = 480;
+    public static final int OUTPUT_POS = 500;
     private final String name;
     private final double power;
     private DcMotor pivot;

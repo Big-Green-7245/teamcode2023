@@ -2,11 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.Navigation;
-import org.firstinspires.ftc.teamcode.modules.Webcams.AprilTagWebcam;
 import org.firstinspires.ftc.teamcode.modules.Webcams.PlaceDetectionWebcam;
 import org.firstinspires.ftc.teamcode.modules.output.LinearSlide;
 import org.firstinspires.ftc.teamcode.modules.output.MotorOutputPivot;
@@ -76,7 +73,7 @@ public class Autonomous extends LinearOpMode {
 
         navigation.MoveToPosDirect(new double[]{12, 32});
         navigation.setBearing(0);
-        while(opModeIsActive() && !navigation.tagCam.isDetecting){
+        while (opModeIsActive() && !navigation.tagCam.isDetecting) {
             navigation.tagCam.detectIter(navigation.getGyroBearing());
             TelemetryWrapper.setLine(10, "Waiting for detection...");
         }
@@ -87,20 +84,32 @@ public class Autonomous extends LinearOpMode {
         intakeWheel.setPower(0);
         navigation.MoveToPosDirect(new double[]{45.5, 32});
         navigation.setBearing(0);
+
         linearSlide.startMoveToPos(1430);
-        while(!linearSlide.isFinished()){
+        while (opModeIsActive() && !linearSlide.isFinished()) {
             linearSlide.tick();
         }
         sleep(500);
+
         pivot.startMoveToPos(true);
-        while(pivot.isBusy()){
+        while (opModeIsActive() && pivot.isBusy()) {
             pivot.tick();
         }
         sleep(1000);
+
         firstPixel.setAction(false);
         secondPixel.setAction(false);
+        sleep(500);
 
-        navigation.tagCam.close();
+        pivot.startMoveToPos(false);
+        while (opModeIsActive() && pivot.isBusy()) {
+            pivot.tick();
+        }
+
+        linearSlide.startRetraction();
+        while (opModeIsActive() && !linearSlide.isFinished()) {
+            linearSlide.tick();
+        }
 
         while (opModeIsActive()) ;
 
