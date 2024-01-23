@@ -127,18 +127,19 @@ public class Navigation {
     }
 
 
-    public void MoveToPosDirect(double[] targetPos) throws InterruptedException {
+    public void MoveToPosDirect(double[] targetPos) {
         double targetBearing = Math.toDegrees(Math.atan2(targetPos[1] - currentPos[1], targetPos[0] - currentPos[0]));
         setBearing(targetBearing);
         double[] lastEncoderPos = driveTrain.getEncPos();
         double[] startPos = Arrays.copyOf(currentPos, 2);
         double[] displacement = new double[]{targetPos[0] - currentPos[0], targetPos[1] - currentPos[1]};
+        double displacementMagnitude;
         long prevTime = System.currentTimeMillis(); // TODO debug remove
 
-        while (opMode.opModeIsActive() && magnitude(displacement) > 3) {
+        while (opMode.opModeIsActive() && (displacementMagnitude = magnitude(displacement)) > 3) {
             // Dot product between the vector from targetPos to startPos and the vector targetPos to currentPos to calculate which direction to go towards
             int positivePower = (startPos[0] - targetPos[0]) * (currentPos[0] - targetPos[0]) + (startPos[1] - targetPos[1]) * (currentPos[1] - targetPos[1]) >= 0 ? 1 : -1;
-            driveTrain.move(0, positivePower * Math.min(0.7, Math.max(magnitude(displacement)/30, 0.1)), 0, 1);
+            driveTrain.move(0, positivePower * Math.min(0.9, Math.max(displacementMagnitude * displacementMagnitude / 100, 0.1)), 0, 1);
             long curTime = System.currentTimeMillis(); // TODO debug remove
             TelemetryWrapper.setLine(11, "Navigation movement time for tick: " + (curTime - prevTime)); // TODO debug remove
             prevTime = curTime; // TODO debug remove
