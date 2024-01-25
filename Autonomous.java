@@ -77,7 +77,7 @@ public class Autonomous extends LinearOpMode {
             navigation.tagCam.detectIter(navigation.getGyroBearing());
             TelemetryWrapper.setLine(10, "Waiting for detection...");
         }
-        navigation.MoveToPosDirect(new double[]{28.5, 32});
+        navigation.MoveToPosDirect(new double[]{27, 32});
         navigation.setBearing(0);
         intakeWheel.setPower(-0.8);
         sleep(1000);
@@ -85,7 +85,7 @@ public class Autonomous extends LinearOpMode {
         navigation.MoveToPosDirect(new double[]{45.5, 32});
         navigation.setBearing(0);
 
-        linearSlide.startMoveToPos(1430);
+        linearSlide.startMoveToPos(1300);
         while (opModeIsActive() && !linearSlide.isFinished()) {
             linearSlide.tick();
         }
@@ -110,6 +110,8 @@ public class Autonomous extends LinearOpMode {
         while (opModeIsActive() && !linearSlide.isFinished()) {
             linearSlide.tick();
         }
+
+        navigation.strafeToPos(new double[]{45.5, 60});
 
         while (opModeIsActive()) ;
 

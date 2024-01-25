@@ -1,23 +1,18 @@
 package org.firstinspires.ftc.teamcode.modules;
 
-import static java.lang.Thread.sleep;
-
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.teamcode.modules.Webcams.AprilTagWebcam;
-import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
-
+import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.teamcode.modules.Webcams.AprilTagWebcam;
+import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import java.util.Arrays;
+
+import static java.lang.Thread.sleep;
 
 public class Navigation {
     private double[] currentPos;
@@ -117,9 +112,9 @@ public class Navigation {
         targetBearing = ((targetBearing % 360) + 360) % 360;
         currentBearing = getGyroBearing();
         double dAngle = getMinAngle(currentBearing, targetBearing);
-        while (opMode.opModeIsActive() && Math.abs(dAngle)  > 1){
+        while (opMode.opModeIsActive() && Math.abs(dAngle) > 1) {
             TelemetryWrapper.setLine(6, "Target Bearing: " + targetBearing + " | " + "Current Bearing: " + currentBearing);
-            driveTrain.move(0, 0, clamp(dAngle / 50, Math.abs(dAngle)/dAngle * 0.1, Math.abs(dAngle)/dAngle), 1); // TODO turning broken
+            driveTrain.move(0, 0, Math.signum(dAngle) * Range.clip(dAngle * dAngle / 1000, 0.1, 1), 1);
             currentBearing = getGyroBearing();
             dAngle = getMinAngle(currentBearing, targetBearing);
         }
@@ -138,8 +133,8 @@ public class Navigation {
 
         while (opMode.opModeIsActive() && (displacementMagnitude = magnitude(displacement)) > 3) {
             // Dot product between the vector from targetPos to startPos and the vector targetPos to currentPos to calculate which direction to go towards
-            int positivePower = (startPos[0] - targetPos[0]) * (currentPos[0] - targetPos[0]) + (startPos[1] - targetPos[1]) * (currentPos[1] - targetPos[1]) >= 0 ? 1 : -1;
-            driveTrain.move(0, positivePower * Math.min(0.9, Math.max(displacementMagnitude * displacementMagnitude / 100, 0.1)), 0, 1);
+            double positivePower = Math.signum((startPos[0] - targetPos[0]) * (currentPos[0] - targetPos[0]) + (startPos[1] - targetPos[1]) * (currentPos[1] - targetPos[1]));
+            driveTrain.move(0, positivePower * Range.clip(displacementMagnitude * displacementMagnitude / 100, 0.1, 0.7), 0, 1);
             long curTime = System.currentTimeMillis(); // TODO debug remove
             TelemetryWrapper.setLine(11, "Navigation movement time for tick: " + (curTime - prevTime)); // TODO debug remove
             prevTime = curTime; // TODO debug remove
@@ -175,7 +170,7 @@ public class Navigation {
         double dx = Math.cos(Math.toRadians(currentBearing + 90)) * (displacement[0]) - Math.sin(Math.toRadians(currentBearing + 90)) * (displacement[1]);
         double dy = Math.sin(Math.toRadians(currentBearing + 90)) * (displacement[0]) + Math.cos(Math.toRadians(currentBearing + 90)) * (displacement[1]);
 
-        driveTrain.translate(0.3, dx, 0, 0, 10);
+        driveTrain.translate(0.3, -dx, 0, 0, 10);
         driveTrain.translate(0.3, 0, dy, 0, 10);
         lastAprilTagPos = tagCam.detectIter(currentBearing);
         if (tagCam.isDetecting) {

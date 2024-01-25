@@ -1,29 +1,17 @@
 package org.firstinspires.ftc.teamcode.modules.Webcams;
 
 import android.util.Size;
-
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.modules.Tickable;
-import org.firstinspires.ftc.teamcode.modules.Webcams.AprilTagDetectionPipeline;
-import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AprilTagWebcam {
@@ -159,13 +147,13 @@ public class AprilTagWebcam {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 isDetecting = true;
-                avg_y += detection.metadata.fieldPosition.get(1)-(Math.sin(Math.toRadians(bearing-90))*(detection.ftcPose.x-tagCamOffset[0])+ Math.cos(Math.toRadians(bearing-90))*(detection.ftcPose.y-tagCamOffset[1]));
-                avg_x += detection.metadata.fieldPosition.get(0)-(Math.cos(Math.toRadians(bearing-90))*(detection.ftcPose.x-tagCamOffset[0]) - Math.sin(Math.toRadians(bearing-90))*(detection.ftcPose.y-tagCamOffset[1]));
+                avg_x += detection.metadata.fieldPosition.get(0) - (Math.cos(Math.toRadians(bearing - 90)) * (detection.ftcPose.x - tagCamOffset[0]) - Math.sin(Math.toRadians(bearing - 90)) * (detection.ftcPose.y - tagCamOffset[1]));
+                avg_y += detection.metadata.fieldPosition.get(1) - (Math.sin(Math.toRadians(bearing - 90)) * (detection.ftcPose.x - tagCamOffset[0]) + Math.cos(Math.toRadians(bearing - 90)) * (detection.ftcPose.y - tagCamOffset[1]));
             }
         }   // end for() loop
 
-        avg_y /= currentDetections.size();
         avg_x /= currentDetections.size();
+        avg_y /= currentDetections.size();
 
 
         if (isDetecting) {
