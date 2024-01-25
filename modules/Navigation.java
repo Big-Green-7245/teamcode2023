@@ -122,7 +122,7 @@ public class Navigation {
     }
 
 
-    public void MoveToPosDirect(double[] targetPos) {
+    public void moveToPosDirect(double[] targetPos) {
         double targetBearing = Math.toDegrees(Math.atan2(targetPos[1] - currentPos[1], targetPos[0] - currentPos[0]));
         setBearing(targetBearing);
         double[] lastEncoderPos = driveTrain.getEncPos();
@@ -202,7 +202,7 @@ public class Navigation {
         TelemetryWrapper.setLine(13, "x: " + lastAprilTagPos[0] + "y: "+ lastAprilTagPos[1]);
     }
 
-    public void MoveToPosAtAngle(double[] targetPos, double angle) {
+    public void moveToPosAtAngle(double[] targetPos, double angle) {
         double directAngle = Math.toDegrees(Math.atan2(targetPos[1] - currentPos[1], targetPos[0] - currentPos[0]));
         directAngle = ((directAngle % 360) + 360) % 360;
         double deltaTheta = directAngle - angle;

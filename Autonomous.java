@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 public class Autonomous extends LinearOpMode {
     protected static final boolean LEFT = false;
     protected static final boolean RIGHT = true;
+    protected static final boolean BLUE = false;
+    protected static final boolean RED = true;
+    private final boolean alliance;
     /**
      * Whether the robot is on the left or right side of the alliance station.
      */
@@ -32,12 +35,13 @@ public class Autonomous extends LinearOpMode {
     private Navigation navigation;
 
 
-    public Autonomous(boolean sideOfField) {
+    public Autonomous(boolean alliance, boolean sideOfField) {
+        this.alliance = alliance;
         this.sideOfField = sideOfField;
     }
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         TelemetryWrapper.init(telemetry, 20);
 
         TelemetryWrapper.setLine(1, "Autonomous " + "\t Initializing");
@@ -55,37 +59,50 @@ public class Autonomous extends LinearOpMode {
         secondPixel.init(hardwareMap, "secondPixel", 0, 0.3, false);
         firstPixel.setAction(true);
         secondPixel.setAction(true);
-//        randomizationWebcam = new PlaceDetectionWebcam();
-//        randomizationWebcam.init(hardwareMap, "Blue.tflite");
-//        int loc = 0;
-//        while (opModeInInit()){
-//            loc = detectTape(randomizationWebcam);
-//        }
-//        randomizationWebcam.stop();
+
+        // Team element detection
+        randomizationWebcam = new PlaceDetectionWebcam();
+        randomizationWebcam.init(hardwareMap, alliance ? "Red.tflite" : "Blue.tflite");
+        int randomization = 0;
+
         navigation = new Navigation(new double[]{12, 66}, 270, this, hardwareMap);
         pivot.startMoveToPos(false);
         while (opModeInInit()) {
             linearSlide.tickBeforeStart();
             pivot.tickBeforeStart();
+            randomization = detectTape(randomizationWebcam);
             TelemetryWrapper.setLine(7, "x: " + navigation.getCurrentPos()[0] + " y: " + navigation.getCurrentPos()[1]);
             TelemetryWrapper.setLine(8, "Gyro bearing: " + navigation.getGyroBearing());
         }
+        randomizationWebcam.stop();
 
-        navigation.MoveToPosDirect(new double[]{12, 32});
+        navigation.moveToPosDirect(new double[]{12, 32});
+        if (randomization == PlaceDetectionWebcam.CENTER) {
+            navigation.setBearing(90);
+            intakeWheel.setPower(-0.8);
+            sleep(1000);
+            intakeWheel.setPower(0);
+        }
         navigation.setBearing(0);
         while (opModeIsActive() && !navigation.tagCam.isDetecting) {
             navigation.tagCam.detectIter(navigation.getGyroBearing());
             TelemetryWrapper.setLine(10, "Waiting for detection...");
         }
-        navigation.MoveToPosDirect(new double[]{27, 32});
-        navigation.setBearing(0);
-        intakeWheel.setPower(-0.8);
-        sleep(1000);
-        intakeWheel.setPower(0);
-        navigation.MoveToPosDirect(new double[]{45.5, 32});
+        if (randomization == PlaceDetectionWebcam.RIGHT || randomization == PlaceDetectionWebcam.LEFT) {
+            if (randomization == PlaceDetectionWebcam.RIGHT) {
+                navigation.moveToPosDirect(new double[]{27, 32});
+            } else {
+                navigation.moveToPosDirect(new double[]{10, 32});
+            }
+            navigation.setBearing(0);
+            intakeWheel.setPower(-0.8);
+            sleep(1000);
+            intakeWheel.setPower(0);
+        }
+        navigation.moveToPosDirect(new double[]{45.5, 32});
         navigation.setBearing(0);
 
-        linearSlide.startMoveToPos(1300);
+        linearSlide.startMoveToPos(1250);
         while (opModeIsActive() && !linearSlide.isFinished()) {
             linearSlide.tick();
         }
@@ -120,7 +137,7 @@ public class Autonomous extends LinearOpMode {
 //        // Turn around
 //        driveTrain.translate(0.8, 0, -32, 0, 10);
 //
-//        if (loc == PlaceDetectionWebcam.LEFT){
+//        if (loc == PlaceDetectionWebcam.BLUE){
 //            driveTrain.translate(0.8, 0, 0, -90, 10);
 //            double[] currentPos = aprilTagWebcam.detectIter();
 //            TelemetryWrapper.setLine(8, "Is detecting :" + aprilTagWebcam.isDetecting);
