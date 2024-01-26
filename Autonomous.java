@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.modules.DriveTrain;
 import org.firstinspires.ftc.teamcode.modules.Navigation;
 import org.firstinspires.ftc.teamcode.modules.Webcams.PlaceDetectionWebcam;
@@ -34,6 +36,8 @@ public class Autonomous extends LinearOpMode {
 
     private Navigation navigation;
 
+    private ElapsedTime runtime = new ElapsedTime();
+
 
     public Autonomous(boolean alliance, boolean sideOfField) {
         this.alliance = alliance;
@@ -65,44 +69,63 @@ public class Autonomous extends LinearOpMode {
         randomizationWebcam.init(hardwareMap, alliance ? "Red.tflite" : "Blue.tflite");
         int randomization = 0;
 
-        navigation = new Navigation(new double[]{12, 66}, 270, this, hardwareMap);
+
         pivot.startMoveToPos(false);
         while (opModeInInit()) {
             linearSlide.tickBeforeStart();
             pivot.tickBeforeStart();
             randomization = detectTape(randomizationWebcam);
-            TelemetryWrapper.setLine(7, "x: " + navigation.getCurrentPos()[0] + " y: " + navigation.getCurrentPos()[1]);
-            TelemetryWrapper.setLine(8, "Gyro bearing: " + navigation.getGyroBearing());
+//            TelemetryWrapper.setLine(7, "x: " + navigation.getCurrentPos()[0] + " y: " + navigation.getCurrentPos()[1]);
+//            TelemetryWrapper.setLine(8, "Gyro bearing: " + navigation.getGyroBearing());
         }
         randomizationWebcam.stop();
+        navigation = new Navigation(new double[]{12, 66}, 270, this, hardwareMap);
 
-        navigation.moveToPosDirect(new double[]{12, 32});
+
         if (randomization == PlaceDetectionWebcam.CENTER) {
+            navigation.moveToPosDirect(new double[]{12, 32});
             navigation.setBearing(90);
             intakeWheel.setPower(-0.8);
             sleep(1000);
             intakeWheel.setPower(0);
-        }
-        navigation.setBearing(0);
-        while (opModeIsActive() && !navigation.tagCam.isDetecting) {
-            navigation.tagCam.detectIter(navigation.getGyroBearing());
-            TelemetryWrapper.setLine(10, "Waiting for detection...");
-        }
-        if (randomization == PlaceDetectionWebcam.RIGHT || randomization == PlaceDetectionWebcam.LEFT) {
-            if (randomization == PlaceDetectionWebcam.RIGHT) {
-                navigation.moveToPosDirect(new double[]{27, 32});
-            } else {
-                navigation.moveToPosDirect(new double[]{10, 32});
+            navigation.moveToPosDirect(new double[]{12, 38});
+            navigation.setBearing(0);
+            while (opModeIsActive() && !navigation.tagCam.isDetecting) {
+                navigation.tagCam.detectIter(navigation.getGyroBearing());
+                TelemetryWrapper.setLine(10, "Waiting for detection...");
             }
+            navigation.strafeToPos(new double[]{43.5, 36});
+        } else if (randomization == PlaceDetectionWebcam.RIGHT) {
+            navigation.moveToPosDirect(new double[]{12, 34});
+            navigation.setBearing(0);
+            while (opModeIsActive() && !navigation.tagCam.isDetecting) {
+                navigation.tagCam.detectIter(navigation.getGyroBearing());
+                TelemetryWrapper.setLine(10, "Waiting for detection...");
+            }
+            navigation.strafeToPos(new double[]{7, 30});
+            intakeWheel.setPower(-0.8);
+            sleep(1000);
+            intakeWheel.setPower(0);
+            navigation.strafeToPos(new double[]{43.5, 30});
+        } else {
+            navigation.moveToPosDirect(new double[]{12, 32});
+            navigation.moveToPosDirect(new double[]{32, 32});
+            while (opModeIsActive() && !navigation.tagCam.isDetecting) {
+                navigation.tagCam.detectIter(navigation.getGyroBearing());
+                TelemetryWrapper.setLine(10, "Waiting for detection...");
+            }
+            navigation.setBearing(270);
             navigation.setBearing(0);
             intakeWheel.setPower(-0.8);
             sleep(1000);
             intakeWheel.setPower(0);
+            navigation.strafeToPos(new double[]{43.5, 42});
         }
-        navigation.moveToPosDirect(new double[]{45.5, 32});
+
+
         navigation.setBearing(0);
 
-        linearSlide.startMoveToPos(1250);
+        linearSlide.startMoveToPos(1100);
         while (opModeIsActive() && !linearSlide.isFinished()) {
             linearSlide.tick();
         }
@@ -118,6 +141,12 @@ public class Autonomous extends LinearOpMode {
         secondPixel.setAction(false);
         sleep(500);
 
+        linearSlide.startMoveToPos(1250);
+        while (opModeIsActive() && !linearSlide.isFinished()) {
+            linearSlide.tick();
+        }
+
+        sleep(200);
         pivot.startMoveToPos(false);
         while (opModeIsActive() && pivot.isBusy()) {
             pivot.tick();
@@ -128,7 +157,7 @@ public class Autonomous extends LinearOpMode {
             linearSlide.tick();
         }
 
-        navigation.strafeToPos(new double[]{45.5, 60});
+        navigation.strafeToPos(new double[]{45.5, 55});
 
         while (opModeIsActive()) ;
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.modules;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -129,15 +130,15 @@ public class Navigation {
         double[] startPos = Arrays.copyOf(currentPos, 2);
         double[] displacement = new double[]{targetPos[0] - currentPos[0], targetPos[1] - currentPos[1]};
         double displacementMagnitude;
+        double speed = 0;
         long prevTime = System.currentTimeMillis(); // TODO debug remove
 
         while (opMode.opModeIsActive() && (displacementMagnitude = magnitude(displacement)) > 3) {
             // Dot product between the vector from targetPos to startPos and the vector targetPos to currentPos to calculate which direction to go towards
             double positivePower = Math.signum((startPos[0] - targetPos[0]) * (currentPos[0] - targetPos[0]) + (startPos[1] - targetPos[1]) * (currentPos[1] - targetPos[1]));
-            driveTrain.move(0, positivePower * Range.clip(displacementMagnitude * displacementMagnitude / 100, 0.1, 0.7), 0, 1);
+            driveTrain.move(0, positivePower * (Range.clip(displacementMagnitude * displacementMagnitude / 100, 0.1, 0.7)-speed/10), 0, 1);
             long curTime = System.currentTimeMillis(); // TODO debug remove
             TelemetryWrapper.setLine(11, "Navigation movement time for tick: " + (curTime - prevTime)); // TODO debug remove
-            prevTime = curTime; // TODO debug remove
 
             TelemetryWrapper.setLine(5, "x: " + currentPos[0] + "| y: " + currentPos[1] + "| theta: " + currentBearing);
             double[] currentEncPos = driveTrain.getEncPos();
@@ -158,8 +159,11 @@ public class Navigation {
                 delta /= lastEncoderPos.length;
                 currentPos = new double[]{currentPos[0] + Math.cos(Math.toRadians(currentBearing)) * delta, currentPos[1] + Math.sin(Math.toRadians(currentBearing)) * delta};
             }
+            double[] newDisplacement = new double[]{targetPos[0] - currentPos[0], targetPos[1] - currentPos[1]};
+            speed = magnitude(new double[] {newDisplacement[0]-displacement[0], newDisplacement[1]-displacement[1]});
             displacement = new double[]{targetPos[0] - currentPos[0], targetPos[1] - currentPos[1]};
             lastEncoderPos = currentEncPos;
+            prevTime = curTime; // TODO debug remove
         }
         driveTrain.stopStayInPlace();
         strafeToPos(targetPos);
@@ -167,12 +171,18 @@ public class Navigation {
 
     public void strafeToPos(double[] targetPos) {
         double[] displacement = new double[]{targetPos[0] - currentPos[0], targetPos[1] - currentPos[1]};
-        double dx = Math.cos(Math.toRadians(currentBearing + 90)) * (displacement[0]) - Math.sin(Math.toRadians(currentBearing + 90)) * (displacement[1]);
-        double dy = Math.sin(Math.toRadians(currentBearing + 90)) * (displacement[0]) + Math.cos(Math.toRadians(currentBearing + 90)) * (displacement[1]);
+        double dx = Math.cos(Math.toRadians(-currentBearing - 90)) * (displacement[0]) - Math.sin(Math.toRadians(-currentBearing - 90)) * (displacement[1]);
+        double dy = Math.sin(Math.toRadians(-currentBearing - 90)) * (displacement[0]) + Math.cos(Math.toRadians(-currentBearing - 90)) * (displacement[1]);
 
-        driveTrain.translate(0.3, -dx, 0, 0, 10);
+        driveTrain.translate(0.3, dx, 0, 0, 10);
         driveTrain.translate(0.3, 0, dy, 0, 10);
+        double startTime = opMode.getRuntime();
+        double time = startTime;
         lastAprilTagPos = tagCam.detectIter(currentBearing);
+        while (time-startTime < 0.2 && !tagCam.isDetecting && opMode.opModeIsActive()){
+            time = opMode.getRuntime();
+            lastAprilTagPos = tagCam.detectIter(currentBearing);
+        }
         if (tagCam.isDetecting) {
             currentPos = lastAprilTagPos;
             TelemetryWrapper.setLine(7, "CAM");
