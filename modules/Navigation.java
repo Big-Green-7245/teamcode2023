@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.modules;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -79,23 +78,23 @@ public class Navigation {
         return Math.sqrt(sum);
     }
 
+    /**
+     * Linear Algebra Three.VI.1.14
+     * Magnitude of the projection of vector onto bearing.
+     */
+    public double projMag(double[] vector, double bearing) {
+        // return the vector projected on to the vector cos(bearing), sin(bearing)
+        double[] bearingVector = new double[]{Math.cos(Math.toRadians(bearing)), Math.sin(Math.toRadians(bearing))};
+        double proj = vector[0] * bearingVector[0] + vector[1] * bearingVector[1];
+        return proj / magnitude(bearingVector);
+    }
+
     public double[] getCurrentPos() {
         lastAprilTagPos = tagCam.detectIter(currentBearing);
         if (tagCam.isDetecting) {
             return lastAprilTagPos;
         }
         return lastDriveTrainPos;
-    }
-
-    public double clamp(double value, double bound1, double bound2){
-        double max = Math.max(bound1, bound2);
-        double min = Math.min(bound1, bound2);
-        if (value < min){
-            return min;
-        }else if (value > max){
-            return max;
-        }
-        return value;
     }
 
     public double getMinAngle(double currentAngle, double targetAngle){
@@ -127,23 +126,31 @@ public class Navigation {
         moveToPosDirect(targetPos, 1);
     }
 
+    public void moveToPosDirectNoCorrection(double[] targetPos) {
+        moveToPosDirect(targetPos, 1, false);
+    }
+
+    public void moveToPosDirect(double[] targetPos, int direction) {
+        moveToPosDirect(targetPos, direction, true);
+    }
+
     /**
      * @param direction 1 for normal behavior, where the camera faces the robot motion direction, -1 for opposite behavior
      */
-    public void moveToPosDirect(double[] targetPos, int direction) {
+    public void moveToPosDirect(double[] targetPos, int direction, boolean correction) {
         double targetBearing = Math.toDegrees(Math.atan2(targetPos[1] - currentPos[1], targetPos[0] - currentPos[0]));
         setBearing(direction == 1 ? targetBearing : targetBearing + 180);
         double[] lastEncoderPos = driveTrain.getEncPos();
         double[] startPos = Arrays.copyOf(currentPos, 2);
         double[] displacement = new double[]{targetPos[0] - currentPos[0], targetPos[1] - currentPos[1]};
-        double displacementMagnitude;
+        double projectedDisplacementMagnitude;
         double speed = 0;
         long prevTime = System.currentTimeMillis(); // TODO debug remove
 
-        while (opMode.opModeIsActive() && (displacementMagnitude = magnitude(displacement)) > 2) {
+        while (opMode.opModeIsActive() && (projectedDisplacementMagnitude = projMag(displacement, currentBearing)) > (correction ? 2 : 4)) {
             // Dot product between the vector from targetPos to startPos and the vector targetPos to currentPos to calculate which direction to go towards
             double positivePower = direction * Math.signum((startPos[0] - targetPos[0]) * (currentPos[0] - targetPos[0]) + (startPos[1] - targetPos[1]) * (currentPos[1] - targetPos[1]));
-            driveTrain.move(0, positivePower * (Range.clip(displacementMagnitude * displacementMagnitude / 250, 0.01, 0.7) - speed / 10), 0, 1);
+            driveTrain.move(0, positivePower * (Range.clip(projectedDisplacementMagnitude * projectedDisplacementMagnitude / 200, 0.05, 0.7) - speed / 10), 0, 1);
             long curTime = System.currentTimeMillis(); // TODO debug remove
             TelemetryWrapper.setLine(11, "Navigation movement time for tick: " + (curTime - prevTime)); // TODO debug remove
 
@@ -173,7 +180,9 @@ public class Navigation {
             prevTime = curTime; // TODO debug remove
         }
         driveTrain.stopStayInPlace();
-        strafeToPos(targetPos);
+        if (correction) {
+            strafeToPos(targetPos);
+        }
     }
 
     public void strafeToPos(double[] targetPos) {
