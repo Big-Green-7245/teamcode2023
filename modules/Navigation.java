@@ -124,8 +124,15 @@ public class Navigation {
 
 
     public void moveToPosDirect(double[] targetPos) {
+        moveToPosDirect(targetPos, 1);
+    }
+
+    /**
+     * @param direction 1 for normal behavior, where the camera faces the robot motion direction, -1 for opposite behavior
+     */
+    public void moveToPosDirect(double[] targetPos, int direction) {
         double targetBearing = Math.toDegrees(Math.atan2(targetPos[1] - currentPos[1], targetPos[0] - currentPos[0]));
-        setBearing(targetBearing);
+        setBearing(direction == 1 ? targetBearing : targetBearing + 180);
         double[] lastEncoderPos = driveTrain.getEncPos();
         double[] startPos = Arrays.copyOf(currentPos, 2);
         double[] displacement = new double[]{targetPos[0] - currentPos[0], targetPos[1] - currentPos[1]};
@@ -133,10 +140,10 @@ public class Navigation {
         double speed = 0;
         long prevTime = System.currentTimeMillis(); // TODO debug remove
 
-        while (opMode.opModeIsActive() && (displacementMagnitude = magnitude(displacement)) > 3) {
+        while (opMode.opModeIsActive() && (displacementMagnitude = magnitude(displacement)) > 2) {
             // Dot product between the vector from targetPos to startPos and the vector targetPos to currentPos to calculate which direction to go towards
-            double positivePower = Math.signum((startPos[0] - targetPos[0]) * (currentPos[0] - targetPos[0]) + (startPos[1] - targetPos[1]) * (currentPos[1] - targetPos[1]));
-            driveTrain.move(0, positivePower * (Range.clip(displacementMagnitude * displacementMagnitude / 100, 0.1, 0.7)-speed/10), 0, 1);
+            double positivePower = direction * Math.signum((startPos[0] - targetPos[0]) * (currentPos[0] - targetPos[0]) + (startPos[1] - targetPos[1]) * (currentPos[1] - targetPos[1]));
+            driveTrain.move(0, positivePower * (Range.clip(displacementMagnitude * displacementMagnitude / 250, 0.01, 0.7) - speed / 10), 0, 1);
             long curTime = System.currentTimeMillis(); // TODO debug remove
             TelemetryWrapper.setLine(11, "Navigation movement time for tick: " + (curTime - prevTime)); // TODO debug remove
 

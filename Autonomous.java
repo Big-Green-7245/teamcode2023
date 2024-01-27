@@ -82,44 +82,50 @@ public class Autonomous extends LinearOpMode {
         navigation = new Navigation(new double[]{12, 66}, 270, this, hardwareMap);
 
 
-        if (randomization == PlaceDetectionWebcam.CENTER) {
-            navigation.moveToPosDirect(new double[]{12, 32});
-            navigation.setBearing(90);
-            intakeWheel.setPower(-0.8);
-            sleep(1000);
-            intakeWheel.setPower(0);
-            navigation.moveToPosDirect(new double[]{12, 38});
-            navigation.setBearing(0);
-            while (opModeIsActive() && !navigation.tagCam.isDetecting) {
-                navigation.tagCam.detectIter(navigation.getGyroBearing());
-                TelemetryWrapper.setLine(10, "Waiting for detection...");
+        if (alliance == BLUE) {
+            if (randomization == PlaceDetectionWebcam.CENTER) {
+                navigation.moveToPosDirect(new double[]{12, 32});
+                navigation.setBearing(90);
+                intakeWheel.setPower(-0.8);
+                sleep(1000);
+                intakeWheel.setPower(0);
+                navigation.moveToPosDirect(new double[]{12, 38});
+                navigation.setBearing(0);
+                while (opModeIsActive() && !navigation.tagCam.isDetecting) {
+                    navigation.tagCam.detectIter(navigation.getGyroBearing());
+                    TelemetryWrapper.setLine(10, "Waiting for detection...");
+                }
+                navigation.moveToPosDirect(new double[]{42, 36});
+            } else if (randomization == PlaceDetectionWebcam.RIGHT) {
+                navigation.moveToPosDirect(new double[]{12, 34});
+                navigation.setBearing(0);
+                while (opModeIsActive() && !navigation.tagCam.isDetecting) {
+                    navigation.tagCam.detectIter(navigation.getGyroBearing());
+                    TelemetryWrapper.setLine(10, "Waiting for detection...");
+                }
+                navigation.moveToPosDirect(new double[]{7, 34}, -1);
+                intakeWheel.setPower(-0.8);
+                sleep(1000);
+                intakeWheel.setPower(0);
+                navigation.moveToPosDirect(new double[]{12, 34});
+                navigation.moveToPosDirect(new double[]{42, 30});
+            } else {
+                navigation.moveToPosDirect(new double[]{12, 34});
+                navigation.setBearing(0);
+                while (opModeIsActive() && !navigation.tagCam.isDetecting) {
+                    navigation.tagCam.detectIter(navigation.getGyroBearing());
+                    TelemetryWrapper.setLine(10, "Waiting for detection...");
+                }
+                navigation.moveToPosDirect(new double[]{27.5, 34});
+                navigation.setBearing(270);
+                navigation.setBearing(0);
+                intakeWheel.setPower(-0.8);
+                sleep(1000);
+                intakeWheel.setPower(0);
+                navigation.moveToPosDirect(new double[]{35, 34});
+                navigation.strafeToPos(new double[]{35, 42});
+                navigation.moveToPosDirect(new double[]{42, 42});
             }
-            navigation.strafeToPos(new double[]{43.5, 36});
-        } else if (randomization == PlaceDetectionWebcam.RIGHT) {
-            navigation.moveToPosDirect(new double[]{12, 34});
-            navigation.setBearing(0);
-            while (opModeIsActive() && !navigation.tagCam.isDetecting) {
-                navigation.tagCam.detectIter(navigation.getGyroBearing());
-                TelemetryWrapper.setLine(10, "Waiting for detection...");
-            }
-            navigation.strafeToPos(new double[]{7, 30});
-            intakeWheel.setPower(-0.8);
-            sleep(1000);
-            intakeWheel.setPower(0);
-            navigation.strafeToPos(new double[]{43.5, 30});
-        } else {
-            navigation.moveToPosDirect(new double[]{12, 32});
-            navigation.moveToPosDirect(new double[]{32, 32});
-            while (opModeIsActive() && !navigation.tagCam.isDetecting) {
-                navigation.tagCam.detectIter(navigation.getGyroBearing());
-                TelemetryWrapper.setLine(10, "Waiting for detection...");
-            }
-            navigation.setBearing(270);
-            navigation.setBearing(0);
-            intakeWheel.setPower(-0.8);
-            sleep(1000);
-            intakeWheel.setPower(0);
-            navigation.strafeToPos(new double[]{43.5, 42});
         }
 
 
@@ -157,7 +163,7 @@ public class Autonomous extends LinearOpMode {
             linearSlide.tick();
         }
 
-        navigation.strafeToPos(new double[]{45.5, 55});
+        navigation.strafeToPos(new double[]{45.5, 60});
 
         while (opModeIsActive()) ;
 

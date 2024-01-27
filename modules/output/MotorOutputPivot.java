@@ -14,7 +14,7 @@ public class MotorOutputPivot implements Modulable, Tickable {
      * The encoder is then reset to 0 when the button is pressed and {@link #tick()} is called.
      */
     private static final int INTAKE_TARGET_POS = -1000;
-    private static final int INTAKE_POS = -1;
+    private static final int INTAKE_POS = -2;
     public static final int OUTPUT_POS = 800;
     private final String name;
     private final double power;
