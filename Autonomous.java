@@ -89,7 +89,7 @@ public class Autonomous extends LinearOpMode {
             if (sideOfField == LEFT) {
                 navigation = new Navigation(new double[]{12, 66}, 270, this, hardwareMap);
                 if (randomization == PlaceDetectionWebcam.CENTER) {
-                    navigation.moveToPosDirect(new double[]{12, 32});
+                    navigation.moveToPosDirect(new double[]{12, 31});
                     navigation.setBearing(90);
                     intakeWheel.setPower(-0.8);
                     sleep(300);
@@ -145,13 +145,13 @@ public class Autonomous extends LinearOpMode {
                     intakeWheel.setPower(-0.8);
                     sleep(300);
                     intakeWheel.setPower(0);
-                    navigation.moveToPosDirect(new double[]{-36, 3});
+                    navigation.moveToPosDirect(new double[]{-36, 2});
                     navigation.setBearing(0);
 //                    while (opModeIsActive() && !navigation.tagCam.isDetecting) {
 //                        navigation.tagCam.detectIter(navigation.getGyroBearing());
 //                        TelemetryWrapper.setLine(10, "Waiting for detection...");
 //                    }
-                    navigation.moveToPosDirectNoCorrection(new double[]{40, 3});
+                    navigation.moveToPosDirectNoCorrection(new double[]{40, 2});
                     navigation.moveToPosDirectNoCorrection(new double[]{40, 32});
                     navigation.moveToPosDirect(new double[]{45, 32});
                     navigation.setBearing(0);
@@ -196,7 +196,7 @@ public class Autonomous extends LinearOpMode {
             if (sideOfField == RIGHT) {
                 navigation = new Navigation(new double[]{12, -66}, 90, this, hardwareMap);
                 if (randomization == PlaceDetectionWebcam.CENTER) {
-                    navigation.moveToPosDirect(new double[]{12, -32});
+                    navigation.moveToPosDirect(new double[]{12, -31});
                     navigation.setBearing(270);
                     intakeWheel.setPower(-0.8);
                     sleep(300);
@@ -252,13 +252,13 @@ public class Autonomous extends LinearOpMode {
                     intakeWheel.setPower(-0.8);
                     sleep(300);
                     intakeWheel.setPower(0);
-                    navigation.moveToPosDirect(new double[]{-36, -3});
+                    navigation.moveToPosDirect(new double[]{-36, -2});
                     navigation.setBearing(0);
                     //                    while (opModeIsActive() && !navigation.tagCam.isDetecting) {
                     //                        navigation.tagCam.detectIter(navigation.getGyroBearing());
                     //                        TelemetryWrapper.setLine(10, "Waiting for detection...");
                     //                    }
-                    navigation.moveToPosDirectNoCorrection(new double[]{40, -3});
+                    navigation.moveToPosDirectNoCorrection(new double[]{40, -2});
                     navigation.moveToPosDirectNoCorrection(new double[]{40, -32});
                     navigation.moveToPosDirect(new double[]{45, -32});
                     navigation.setBearing(0);
