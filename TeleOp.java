@@ -78,7 +78,17 @@ public class TeleOp extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            TelemetryWrapper.setLineNoRender(2, "Output Box Lock State " + currentLockState);
+            switch (currentLockState) {
+                case 0:
+                    TelemetryWrapper.setLineNoRender(2, "Output Box Lock State UNLOCKED");
+                    break;
+                case 1:
+                    TelemetryWrapper.setLineNoRender(2, "Output Box Lock State LOCKED");
+                    break;
+                default:
+                    TelemetryWrapper.setLineNoRender(2, "Output Box Lock State HALF UNLOCKED");
+                    break;
+            }
             TelemetryWrapper.setLineNoRender(3, "LeftSlidePos" + outputSlide.getCurrentPosition()[0]);
             TelemetryWrapper.setLineNoRender(4, "RightSlidePos" + outputSlide.getCurrentPosition()[1]);
             TelemetryWrapper.setLineNoRender(5, "LeftSlideTargetPos" + outputSlide.getTargetPosition()[0]);
