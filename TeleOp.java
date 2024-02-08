@@ -65,7 +65,7 @@ public class TeleOp extends LinearOpMode {
         secondPixel.setAction(false);
 
         planeLaunch = new ServoToggle();
-        planeLaunch.init(hardwareMap, "launcher", 0.3, 0, true);
+        planeLaunch.init(hardwareMap, "launcher", 0.3, 0, false);
 
 
         // Wait for start
