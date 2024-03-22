@@ -126,7 +126,7 @@ public class Autonomous extends LinearOpMode {
                         navigation.tagCam.detectIter(navigation.getGyroBearing());
                         TelemetryWrapper.setLine(10, "Waiting for detection...");
                     }
-                    navigation.moveToPosDirect(new double[]{27.5, 34});
+                    navigation.moveToPosDirect(new double[]{26.5, 34});
                     navigation.setBearing(270);
                     navigation.setBearing(0);
                     intakeWheel.setPower(-0.8);
@@ -233,7 +233,7 @@ public class Autonomous extends LinearOpMode {
                         navigation.tagCam.detectIter(navigation.getGyroBearing());
                         TelemetryWrapper.setLine(10, "Waiting for detection...");
                     }
-                    navigation.moveToPosDirect(new double[]{27.5, -34});
+                    navigation.moveToPosDirect(new double[]{26.5, -34});
                     navigation.setBearing(90);
                     navigation.setBearing(0);
                     intakeWheel.setPower(-0.8);
